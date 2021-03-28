@@ -1,6 +1,5 @@
 import * as fs from 'fs/promises';
 import { parseOptionInfo, parseOptionsPage, parseStockList } from '../src/parse-data';
-import { JSDOM } from 'jsdom';
 import * as util from 'util';
 
 import * as cheerio from 'cheerio';
@@ -24,7 +23,7 @@ describe("parse tests", () => {
         const doc = cheerio.load(data);
 
         const res = await parseOptionsPage(doc);
-        console.log(util.inspect(res, {showHidden: false, depth: null}))
+        // console.log(util.inspect(res, {showHidden: false, depth: null}))
         expect(res).not.toBeNull();
     });
 
@@ -34,7 +33,7 @@ describe("parse tests", () => {
         const doc = cheerio.load(data);
         const res = await parseOptionInfo(doc);
 
-        // console.log(util.inspect(res, {showHidden: false, depth: null}))
+        console.log(util.inspect(res, {showHidden: false, depth: null}))
         expect(res).not.toBeNull();
     });
 });
