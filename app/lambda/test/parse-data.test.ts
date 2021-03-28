@@ -33,7 +33,7 @@ describe("parse tests", () => {
         const doc = cheerio.load(data);
         const res = await parseOptionInfo(doc);
 
-        console.log(util.inspect(res, {showHidden: false, depth: null}))
+        // console.log(util.inspect(res, {showHidden: false, depth: null}))
         expect(res).not.toBeNull();
     });
 });

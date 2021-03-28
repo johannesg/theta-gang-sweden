@@ -7,7 +7,6 @@ describe.skip("fetch data tests", () => {
 
         await fs.writeFile("optionslist.html", res);
 
-        // console.log(res);
         expect(res).not.toBeNull();
     });
 
@@ -16,8 +15,6 @@ describe.skip("fetch data tests", () => {
 
         await fs.writeFile("optioninfo.html", res);
 
-        console.log(res);
         expect(res).not.toBeNull();
-
     });
 });
