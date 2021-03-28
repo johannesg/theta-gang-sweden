@@ -11,7 +11,7 @@ services:
   lambda:
     image: lambci/lambda:nodejs12.x
     volumes:
-      - ./lambda:/var/task
+      - ./build:/var/task
     ports:
       - '9229:9229'
     environment:

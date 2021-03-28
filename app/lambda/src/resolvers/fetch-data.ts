@@ -1,7 +1,15 @@
 
 import axios from 'axios';
 
-export async function getOptionsList(id: number) {
+export async function getInstruments() {
+    return getOptionsList("5429");
+    // const url = 'https://www.avanza.se/optioner-lista.html'
+
+    // const res = await axios.get(url);
+    // return res.data;
+}
+
+export async function getOptionsList(id: string) {
     const url = 'https://www.avanza.se/optioner-lista.html'
 
     const params = {

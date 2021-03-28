@@ -1,9 +1,9 @@
-import { getOptionsList, getOptionInfo } from "../src/fetch-data";
+import { getOptionsList, getOptionInfo } from "../src/resolvers/fetch-data";
 import * as fs from 'fs/promises';
 
 describe.skip("fetch data tests", () => {
     test("can get options list", async () => {
-        const res = await getOptionsList(52636);
+        const res = await getOptionsList('52636');
 
         await fs.writeFile("optionslist.html", res);
 

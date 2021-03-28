@@ -1,5 +1,5 @@
 import * as fs from 'fs/promises';
-import { parseOptionInfo, parseOptionsPage, parseStockList } from '../src/parse-data';
+import { parseOptionInfo, parseOptionsPage, parseStockList } from '../src/resolvers/parse-data';
 import * as util from 'util';
 
 import * as cheerio from 'cheerio';

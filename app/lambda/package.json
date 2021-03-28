@@ -8,9 +8,8 @@
     "testw": "jest --watch",
     "generate": "graphql-codegen",
     "watch": "concurrently \"npm:watch-*\" --raw",
-    "watch-ts": "tsc -w",
     "watch-ql": "graphql-codegen -w",
-    "esbuild": "esbuild index.ts --bundle --outfile=index.js --platform=node --target=node12 --external:aws-sdk --sourcemap"
+    "watch-esb": "esbuild src/index.ts --bundle --outfile=build/index.js --platform=node --target=node12 --external:aws-sdk --sourcemap --watch"
   },
   "author": "",
   "license": "ISC",

@@ -5,7 +5,50 @@ schema {
 
 type Query {
     # me: User
-    hello: String
+    instruments: [Instrument]
+    options(id: ID!): OptionsList
+    optionDetails(id: ID!): OptionDetails
+}
+
+type Instrument {
+    id: ID!
+    name: String!
+}
+
+type OptionsList {
+    underlying: InstrumentDetails
+    options: [OptionInfo]
+}
+
+type InstrumentDetails {
+    name: String!
+    href: String!
+}
+
+type OptionInfo {
+    call: CallOrPut
+    strike: Float
+    put: CallOrPut
+}
+
+type CallOrPut {
+    name: String!
+    href: String!
+    buyVolume: Int
+    buy: Float
+    sell: Float
+    sellVolume: Int
+}
+
+type OptionDetails {
+        buyIV: String,
+        delta: Float,
+        theta: Float,
+        vega: Float,
+        sellIV: String,
+        gamma: Float,
+        rho: Float,
+        IV: String,
 }
 
 # type Mutation {

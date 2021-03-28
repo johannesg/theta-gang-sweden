@@ -1,9 +1,10 @@
 import * as cheerio from 'cheerio';
 
-import './utils/numeral';
+import '../utils/numeral';
 import numeral from 'numeral';
+import { Instrument, InstrumentDetails, OptionDetails, OptionInfo } from '../types';
 
-export function parseStockList($: cheerio.Selector) {
+export function parseStockList($: cheerio.Selector) : Instrument[] {
     return $("#underlyingInstrumentId")
         .children()
         .map((i, e) => {
@@ -28,7 +29,7 @@ export async function parseOptionsPage($: cheerio.Selector) {
     };
 }
 
-function parseUnderlyingTable(table: cheerio.Cheerio) {
+function parseUnderlyingTable(table: cheerio.Cheerio) : InstrumentDetails {
     const getAttr = (name: string) => {
         var value = table.find(`td.${name}`).text();
 
@@ -44,8 +45,8 @@ function parseUnderlyingTable(table: cheerio.Cheerio) {
 
     var nameNode = table.find("td.instrumentName a");
     return {
-        name: nameNode.attr("title"),
-        href: nameNode.attr("href"),
+        name: nameNode.attr("title") ?? "",
+        href: nameNode.attr("href") ?? "",
 
         ...getAttr("change").num(),
         ...getAttr("changePercent").num(),
@@ -59,19 +60,19 @@ function parseUnderlyingTable(table: cheerio.Cheerio) {
     };
 }
 
-function parseOptionsTable($: cheerio.Selector, table: cheerio.Cheerio) {
+function parseOptionsTable($: cheerio.Selector, table: cheerio.Cheerio) : OptionInfo[] {
     return table.find("tbody > tr")
         .map((i, elem) => parseOptionItem(i, $(elem)))
         .get();
 }
 
-function parseOptionItem(i: number, tr: cheerio.Cheerio) {
-    const getName = (cl: string) => {
+function parseOptionItem(i: number, tr: cheerio.Cheerio) : OptionInfo {
+    const getName = (cl: string) : { name: string, href: string} => {
         var nameNode = tr.find(`td.matrix.${cl}.instrumentName a`);
 
         return {
-            name: nameNode.attr("title"),
-            href: nameNode.attr("href"),
+            name: nameNode.attr("title") ?? "",
+            href: nameNode.attr("href") ?? "",
         };
     };
 
@@ -100,7 +101,7 @@ function parseOptionItem(i: number, tr: cheerio.Cheerio) {
     }
 }
 
-export async function parseOptionInfo(doc: cheerio.Selector) {
+export function parseOptionInfo(doc: cheerio.Selector) : OptionDetails {
     const dd = doc("div.derivative_greeks_data dd");
 
     // const dd = greeks.find("dd");
@@ -118,7 +119,7 @@ export async function parseOptionInfo(doc: cheerio.Selector) {
         delta: get(2).num(),
         theta: get(3).num(),
         vega: get(4).num(),
-        sellIV: get(5).num(),
+        sellIV: get(5).text(),
         gamma: get(7).num(),
         rho: get(8).num(),
         IV: get(9).text(),
