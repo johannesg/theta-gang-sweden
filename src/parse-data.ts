@@ -1,37 +1,42 @@
-export async function parseStockList(doc: Document) {
-    var elem = doc.getElementById("underlyingInstrumentId");
-    if (!elem)
-        return null;
+import * as cheerio from 'cheerio';
 
-    return Array.from(elem.children)
-        .map(elem => ({ id: elem.attributes.getNamedItem("value").value, name: elem.textContent }));
+export async function parseStockList(doc: cheerio.Selector) {
+    return doc("#underlyingInstrumentId")
+        .children().toArray()
+        .map((e) => {
+            const t = e as cheerio.TagElement;
+            return {
+                id: t.attribs["value"],
+                name: t.lastChild.data
+            };
+        });
 }
 
-export async function parseOptionsPage(doc: Document) {
+export async function parseOptionsPage(doc: cheerio.Selector) {
 
-    const listFilterResult = doc.getElementById("listFilterResult")
+    const listFilterResult = doc("#listFilterResult");
 
-    const underlyingTable = listFilterResult.querySelector("table.optionLists");
-    const optionsTable = listFilterResult.querySelector("table.optionMatrix");
+    const underlyingTable = listFilterResult.find("table.optionLists").first();
+    const optionsTable = listFilterResult.find("table.optionMatrix").first();
 
 
     return {
         underlying: parseUnderlyingTable(underlyingTable),
-        options: parseOptionsTable(optionsTable as HTMLTableElement)
+        options: parseOptionsTable(optionsTable)
     };
 }
 
-function parseUnderlyingTable(table: Element) {
+function parseUnderlyingTable(table: cheerio.Cheerio) {
     const getAttr = (name: string) => {
-        var value = table.querySelector(`td.${name}`).textContent;
+        var value = table.find(`td.${name}`).text();
 
         return { [name]: value };
     };
 
-    var nameNode = table.querySelector("td.instrumentName a");
+    var nameNode = table.find("td.instrumentName a");
     return {
-        name: nameNode.getAttribute("title"),
-        href: nameNode.getAttribute("href"),
+        name: nameNode.attr("title"),
+        href: nameNode.attr("href"),
 
         ...getAttr("change"),
         ...getAttr("changePercent"),
@@ -45,26 +50,29 @@ function parseUnderlyingTable(table: Element) {
     };
 }
 
-function parseOptionsTable(table: HTMLTableElement) {
-    return Array.from(table.tBodies.item(0).rows)
-        .map(parseOptionItem);
+function parseOptionsTable(table: cheerio.Cheerio) {
+    return table.find("tr")
+        .map(parseOptionItem)
+        .get();
 }
 
-function parseOptionItem(tr: HTMLTableRowElement) {
+function parseOptionItem(i : number, tr: cheerio.Element) {
+
+    const row = cheerio(tr)
 
     const getName = (cl: string) => {
-        var nameNode = tr.querySelector(`td.matrix.${cl}.instrumentName a`);
+        var nameNode = row.find(`td.matrix.${cl}.instrumentName a`);
 
         return {
-            name: nameNode.getAttribute("title"),
-            href: nameNode.getAttribute("href"),
+            name: nameNode.attr("title"),
+            href: nameNode.attr("href"),
         };
     };
 
     const getAttr = (i: number) => {
-        return tr.cells.item(i).textContent;
+        return row.find("rd").eq(i).text();
     };
-    
+
     return {
         call: {
             ...getName("tLeft"),
@@ -84,26 +92,20 @@ function parseOptionItem(tr: HTMLTableRowElement) {
     }
 }
 
-export async function parseOptionInfo(doc: Document) {
-    const greeks = doc.querySelector("div.derivative_greeks_data");
+export async function parseOptionInfo(doc: cheerio.Selector) {
+    const greeks = doc("div.derivative_greeks_data");
 
-    const dls = greeks.querySelectorAll("dl");
-    const dd1 = dls.item(0).getElementsByTagName("dd");
-    const dd2 = dls.item(1).getElementsByTagName("dd");
-
-    const get = (dd: HTMLCollectionOf<HTMLElement>, i : number) => {
-        return dd.item(i).querySelector("span").textContent;
-    };
+    const dd = greeks.find("dd");
 
     return {
-        buyIV: get(dd1, 0),
-        delta: get(dd1, 2),
-        theta: get(dd1, 3),
-        vega: get(dd1, 4),
-        sellIV: get(dd2, 0),
-        gamma: get(dd2, 2),
-        rho: get(dd2, 3),
-        IV: get(dd2, 4),
+        buyIV: dd.eq(0).text(),
+        delta: dd.eq(2).text(),
+        theta: dd.eq(3).text(),
+        vega: dd.eq(4).text(),
+        sellIV: dd.eq(0).text(),
+        gamma: dd.eq(2).text(),
+        rho: dd.eq(3).text(),
+        IV: dd.eq(4).text(),
     };
 }
 

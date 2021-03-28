@@ -3,26 +3,27 @@ import { parseOptionInfo, parseOptionsPage, parseStockList } from '../src/parse-
 import { JSDOM } from 'jsdom';
 import * as util from 'util';
 
+import * as cheerio from 'cheerio';
+
 describe("parse tests", () => {
-    test.skip("can parse stock list", async() => {
+    test("can parse stock list", async() => {
         const data = await fs.readFile("test/optionslist.html");
 
-        const dom = new JSDOM(data);
+        const $ = cheerio.load(data);
 
-        const res = await parseStockList(dom.window.document);
+        const res = await parseStockList($);
         // console.log(res);
         expect(res).not.toBeNull();
         expect(res).toContainEqual({ id: "26188", name: "AAK"});
     });
 
 
-    test.skip("can parse options list", async () => {
+    test("can parse options list", async () => {
         const data = await fs.readFile("test/optionslist.html");
 
-        const dom = new JSDOM(data);
+        const doc = cheerio.load(data);
 
-        const res = await parseOptionsPage(dom.window.document);
-        // console.log(res);
+        const res = await parseOptionsPage(doc);
         console.log(util.inspect(res, {showHidden: false, depth: null}))
         expect(res).not.toBeNull();
     });
@@ -30,11 +31,10 @@ describe("parse tests", () => {
     test("can parse option info", async () => {
         const data = await fs.readFile("test/optioninfo.html");
 
-        const dom = new JSDOM(data);
+        const doc = cheerio.load(data);
+        const res = await parseOptionInfo(doc);
 
-        const res = await parseOptionInfo(dom.window.document);
-
-        console.log(util.inspect(res, {showHidden: false, depth: null}))
+        // console.log(util.inspect(res, {showHidden: false, depth: null}))
         expect(res).not.toBeNull();
     });
 });
