@@ -8,9 +8,9 @@ describe("parse tests", () => {
     test("can parse stock list", async() => {
         const data = await fs.readFile("test/optionslist.html");
 
-        const $ = cheerio.load(data);
+        const doc = cheerio.load(data);
 
-        const res = await parseStockList($);
+        const res = parseStockList(doc);
         // console.log(res);
         expect(res).not.toBeNull();
         expect(res).toContainEqual({ id: "26188", name: "AAK"});

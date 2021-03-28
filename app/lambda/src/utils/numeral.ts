@@ -11,7 +11,7 @@ const language = {
         billion: 'md',
         trillion: 'bn'
     },
-    ordinal: function (number) {
+    ordinal: function (number: number) {
         var str = number.toString();
         var endsWith = str[str.length - 1];
         return (endsWith === '1' || endsWith === '2') ? ':a' : ':e';

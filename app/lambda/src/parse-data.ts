@@ -1,22 +1,22 @@
 import * as cheerio from 'cheerio';
 
-import numeral from './utils/numeral';
+import './utils/numeral';
+import numeral from 'numeral';
 
-export async function parseStockList(doc: cheerio.Selector) {
-    return doc("#underlyingInstrumentId")
+export function parseStockList($: cheerio.Selector) {
+    return $("#underlyingInstrumentId")
         .children()
         .map((i, e) => {
             const t = e as cheerio.TagElement;
             return {
                 id: t.attribs["value"],
-                name: t.lastChild.data.trim()
+                name: t.lastChild?.data?.trim()
             };
         }).get();
 }
 
-export async function parseOptionsPage(doc: cheerio.Selector) {
-
-    const listFilterResult = doc("#listFilterResult");
+export async function parseOptionsPage($: cheerio.Selector) {
+    const listFilterResult = $("#listFilterResult");
 
     const underlyingTable = listFilterResult.find("table.optionLists").first();
     const optionsTable = listFilterResult.find("table.optionMatrix").first();
@@ -24,7 +24,7 @@ export async function parseOptionsPage(doc: cheerio.Selector) {
 
     return {
         underlying: parseUnderlyingTable(underlyingTable),
-        options: parseOptionsTable(optionsTable)
+        options: parseOptionsTable($, optionsTable)
     };
 }
 
@@ -32,7 +32,7 @@ function parseUnderlyingTable(table: cheerio.Cheerio) {
     const getAttr = (name: string) => {
         var value = table.find(`td.${name}`).text();
 
-        return { 
+        return {
             num: () => {
                 return { [name]: numeral(value).value() };
             },
@@ -59,18 +59,15 @@ function parseUnderlyingTable(table: cheerio.Cheerio) {
     };
 }
 
-function parseOptionsTable(table: cheerio.Cheerio) {
+function parseOptionsTable($: cheerio.Selector, table: cheerio.Cheerio) {
     return table.find("tbody > tr")
-        .map(parseOptionItem)
+        .map((i, elem) => parseOptionItem(i, $(elem)))
         .get();
 }
 
-function parseOptionItem(i : number, tr: cheerio.Element) {
-
-    const row = cheerio(tr)
-
+function parseOptionItem(i: number, tr: cheerio.Cheerio) {
     const getName = (cl: string) => {
-        var nameNode = row.find(`td.matrix.${cl}.instrumentName a`);
+        var nameNode = tr.find(`td.matrix.${cl}.instrumentName a`);
 
         return {
             name: nameNode.attr("title"),
@@ -78,9 +75,8 @@ function parseOptionItem(i : number, tr: cheerio.Element) {
         };
     };
 
-
     const getAttr = (i: number) => {
-        const val = row.find("td").eq(i).text();
+        const val = tr.find("td").eq(i).text();
         // return val;
         return numeral(val).value();
     };
@@ -109,7 +105,7 @@ export async function parseOptionInfo(doc: cheerio.Selector) {
 
     // const dd = greeks.find("dd");
 
-    const get = (i) => {
+    const get = (i: number) => {
         const val = dd.eq(i).text();
         return {
             num: () => numeral(val).value(),
