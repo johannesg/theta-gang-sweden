@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react';
 import { Button, Grid, IconButton, makeStyles, Toolbar, Typography } from '@material-ui/core'
 import { AppBar } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
-// import { logout, subscribeToUser, UserInfo } from '../auth';
-import NotLoggedIn from '../components/Layout/NotLoggedIn';
 
 type LayoutProps = {
     title: string

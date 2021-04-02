@@ -4,7 +4,7 @@ module.exports = {
   },
   // flags: { PRESERVE_WEBPACK_CACHE: true },
   plugins: [
-    'amplify',
+    // 'amplify',
     'top-layout',
     {
       resolve: 'gatsby-plugin-material-ui',

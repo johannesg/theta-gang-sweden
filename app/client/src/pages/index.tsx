@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useState, useEffect, useContext } from "react"
 
-import AuthProvider, { AuthContext } from '../components/AuthProvider';
+// import AuthProvider, { AuthContext } from '../components/AuthProvider';
 import Layout from '../components/Layout'
 
 // import { useMeQuery, useGetRandomCatsQuery, Cat, Maybe } from '../apollo/types'
@@ -11,9 +11,9 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 
-import catList from '../cats';
+// import catList from '../cats';
 import { green, red } from '@material-ui/core/colors';
-import { NetworkStatus } from '@apollo/client';
+// import { NetworkStatus } from '@apollo/client';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Header() {
-  const authInfo = useContext(AuthContext);
+  // const authInfo = useContext(AuthContext);
   const classes = useStyles();
 
   // const { loading, error, data } = useMeQuery();

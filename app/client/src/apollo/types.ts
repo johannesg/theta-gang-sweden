@@ -5,6 +5,7 @@ export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+const defaultOptions =  {}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -141,10 +142,12 @@ export const GetInstrumentsDocument = gql`
  * });
  */
 export function useGetInstrumentsQuery(baseOptions?: Apollo.QueryHookOptions<GetInstrumentsQuery, GetInstrumentsQueryVariables>) {
-        return Apollo.useQuery<GetInstrumentsQuery, GetInstrumentsQueryVariables>(GetInstrumentsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetInstrumentsQuery, GetInstrumentsQueryVariables>(GetInstrumentsDocument, options);
       }
 export function useGetInstrumentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetInstrumentsQuery, GetInstrumentsQueryVariables>) {
-          return Apollo.useLazyQuery<GetInstrumentsQuery, GetInstrumentsQueryVariables>(GetInstrumentsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetInstrumentsQuery, GetInstrumentsQueryVariables>(GetInstrumentsDocument, options);
         }
 export type GetInstrumentsQueryHookResult = ReturnType<typeof useGetInstrumentsQuery>;
 export type GetInstrumentsLazyQueryHookResult = ReturnType<typeof useGetInstrumentsLazyQuery>;
@@ -196,10 +199,12 @@ export const GetOptionsDocument = gql`
  * });
  */
 export function useGetOptionsQuery(baseOptions: Apollo.QueryHookOptions<GetOptionsQuery, GetOptionsQueryVariables>) {
-        return Apollo.useQuery<GetOptionsQuery, GetOptionsQueryVariables>(GetOptionsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetOptionsQuery, GetOptionsQueryVariables>(GetOptionsDocument, options);
       }
 export function useGetOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOptionsQuery, GetOptionsQueryVariables>) {
-          return Apollo.useLazyQuery<GetOptionsQuery, GetOptionsQueryVariables>(GetOptionsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetOptionsQuery, GetOptionsQueryVariables>(GetOptionsDocument, options);
         }
 export type GetOptionsQueryHookResult = ReturnType<typeof useGetOptionsQuery>;
 export type GetOptionsLazyQueryHookResult = ReturnType<typeof useGetOptionsLazyQuery>;
