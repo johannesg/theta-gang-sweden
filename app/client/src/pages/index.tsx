@@ -1,10 +1,14 @@
 import * as React from 'react'
 import { useState, useEffect, useContext } from "react"
 
+import { ApolloProvider } from "@apollo/client"
+import { createApolloClient } from '../apollo/client';
+
 // import AuthProvider, { AuthContext } from '../components/AuthProvider';
 import Layout from '../components/Layout'
 
 // import { useMeQuery, useGetRandomCatsQuery, Cat, Maybe } from '../apollo/types'
+import { useGetInstrumentsQuery } from '../apollo/types';
 
 import { GridList, GridListTile, ListSubheader, Button, Typography, Grid, Card, makeStyles, CardMedia, CardHeader, CardActions, IconButton, CardContent, Box, LinearProgress } from '@material-ui/core'
 import FavoriteIcon from '@material-ui/icons/Favorite';
@@ -13,6 +17,8 @@ import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 
 // import catList from '../cats';
 import { green, red } from '@material-ui/core/colors';
+import { SelectInstrument } from '../components/SelectInstrument';
+import OptionList from '../components/OptionList';
 // import { NetworkStatus } from '@apollo/client';
 
 const useStyles = makeStyles((theme) => ({
@@ -103,27 +109,30 @@ function App() {
     <Grid item xs={12}>
       <Box className={classes.actions}>
         {/* <Button variant="contained" color="primary" onClick={() => refetch()}>Give me some other cats</Button> */}
+        <SelectInstrument />
       </Box>
+
+
     </Grid>
     {/* {
       loading
       ? <Grid item xs={12}><LinearProgress className={classes.progress} /></Grid>
       : null
     } */}
-    {
-      // (loading && networkStatus !== NetworkStatus.refetch)
-      // ? <Grid item xs={12}></Grid>
-      // : data?.cats?.random?.map(cat => <Grid key={cat?.id} item xs={12} sm={4}><CatCard item={cat} /></Grid>)
-    }
+    <Grid item xs={12}>
+      <OptionList></OptionList>
+    </Grid>
   </Grid>
 }
 
 export default function Index() {
+  const apolloClient = createApolloClient("");
+
   return (
     <Layout title="Cats V3">
-      {/* <AuthProvider> */}
+      <ApolloProvider client={apolloClient}>
         <App />
-      {/* </AuthProvider> */}
+      </ApolloProvider>
     </Layout>
   );
 }
