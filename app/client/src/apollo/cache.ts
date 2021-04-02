@@ -3,4 +3,4 @@ import { Instrument } from "./types";
 
 export const cache = new InMemoryCache();
 
-export const currentInstrument = makeVar<Instrument>({ id: "", name: ""});
+export const currentInstrument = makeVar<string>("");

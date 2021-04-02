@@ -8,6 +8,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { useGetOptionsQuery } from '../apollo/types';
+import { currentInstrument } from '../apollo/cache';
+import { useReactiveVar } from '@apollo/client';
 
 const useStyles = makeStyles({
     table: {
@@ -18,9 +20,11 @@ const useStyles = makeStyles({
 export default function OptionTable() {
     const classes = useStyles();
 
-    const { loading, error, data } = useGetOptionsQuery({ variables: { id: "5429" } });
+    const instrumentVar = useReactiveVar(currentInstrument);
 
-    const rows = data?.options?.options;
+    const { loading, error, data } = useGetOptionsQuery({ variables: { id: instrumentVar } });
+
+    const rows = data?.options?.options ?? [];
 
     return (
         <TableContainer component={Paper}>
@@ -41,7 +45,7 @@ export default function OptionTable() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows?.map((row) => (
+                    {rows.map((row) => (
                         <TableRow key={row?.call?.name}>
                             <TableCell>{row?.call?.name}</TableCell>
                             <TableCell>{row?.call?.buyVolume}</TableCell>
