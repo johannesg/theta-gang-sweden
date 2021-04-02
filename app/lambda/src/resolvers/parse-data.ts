@@ -1,7 +1,6 @@
 import * as cheerio from 'cheerio';
 
-import '../utils/numeral';
-import numeral from 'numeral';
+import numeral from '../utils/numeral';
 import { Instrument, InstrumentDetails, OptionDetails, OptionInfo } from '../types';
 
 export function parseStockList($: cheerio.Selector) : Instrument[] {
