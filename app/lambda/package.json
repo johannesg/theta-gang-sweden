@@ -9,7 +9,8 @@
     "generate": "graphql-codegen",
     "watch": "concurrently \"npm:watch-*\" --raw",
     "watch-ql": "graphql-codegen -w",
-    "watch-esb": "esbuild src/index.ts --bundle --outfile=build/index.js --platform=node --target=node12 --external:aws-sdk --sourcemap --watch"
+    "watch-esb": "esbuild src/index.ts --bundle --outfile=build/index.js --platform=node --target=node12 --external:aws-sdk --sourcemap --watch",
+    "build": "graphql-codegen && esbuild src/index.ts --bundle --outfile=build/index.js --platform=node --target=node12 --external:aws-sdk --sourcemap"
   },
   "author": "",
   "license": "ISC",
