@@ -17,6 +17,7 @@ const QUERIES = gql`
                 changePercent
                 buyPrice
                 sellPrice
+                lastPrice
                 highestPrice
                 lowestPrice
                 updated

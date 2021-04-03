@@ -9,8 +9,8 @@ import { Typography, Grid, makeStyles, Box } from '@material-ui/core'
 
 // import catList from '../cats';
 import { green, red } from '@material-ui/core/colors';
-import { SelectInstrument, SelectFilters } from '../components/Filters';
-import OptionList from '../components/OptionList';
+import { OptionFilters } from '../components/Filters';
+import { UnderlyingTable, OptionsTable } from '../components/OptionList';
 // import { NetworkStatus } from '@apollo/client';
 
 const useStyles = makeStyles((theme) => ({
@@ -55,15 +55,18 @@ function Header() {
 function App() {
   const classes = useStyles();
 
-  return <Grid container>
+  return <Grid container spacing={2}>
     <Grid item xs={12}><Header /></Grid>
     <Grid item xs={12}>
       <Box className={classes.actions}>
-        <SelectFilters />
+        <OptionFilters />
       </Box>
     </Grid>
     <Grid item xs={12}>
-      <OptionList></OptionList>
+      <UnderlyingTable></UnderlyingTable>
+    </Grid>
+    <Grid item xs={12}>
+      <OptionsTable></OptionsTable>
     </Grid>
   </Grid>
 }

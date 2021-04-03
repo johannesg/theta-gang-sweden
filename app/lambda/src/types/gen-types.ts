@@ -38,6 +38,7 @@ export type InstrumentDetails = {
   changePercent?: Maybe<Scalars['Float']>;
   buyPrice?: Maybe<Scalars['Float']>;
   sellPrice?: Maybe<Scalars['Float']>;
+  lastPrice?: Maybe<Scalars['Float']>;
   highestPrice?: Maybe<Scalars['Float']>;
   lowestPrice?: Maybe<Scalars['Float']>;
   updated?: Maybe<Scalars['String']>;
@@ -226,6 +227,7 @@ export type InstrumentDetailsResolvers<ContextType = ContextWithDataSources, Par
   changePercent?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   buyPrice?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   sellPrice?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  lastPrice?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   highestPrice?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   lowestPrice?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   updated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;

@@ -35,6 +35,15 @@ export type InstrumentDetails = {
   __typename?: 'InstrumentDetails';
   name: Scalars['String'];
   href: Scalars['String'];
+  change: Maybe<Scalars['Float']>;
+  changePercent: Maybe<Scalars['Float']>;
+  buyPrice: Maybe<Scalars['Float']>;
+  sellPrice: Maybe<Scalars['Float']>;
+  lastPrice: Maybe<Scalars['Float']>;
+  highestPrice: Maybe<Scalars['Float']>;
+  lowestPrice: Maybe<Scalars['Float']>;
+  updated: Maybe<Scalars['String']>;
+  totalVolumeTraded: Maybe<Scalars['Int']>;
 };
 
 export type OptionDetails = {
@@ -110,7 +119,7 @@ export type GetOptionsQuery = (
     { __typename?: 'OptionsList' }
     & { underlying: Maybe<(
       { __typename?: 'InstrumentDetails' }
-      & Pick<InstrumentDetails, 'name' | 'href'>
+      & Pick<InstrumentDetails, 'name' | 'href' | 'change' | 'changePercent' | 'buyPrice' | 'sellPrice' | 'lastPrice' | 'highestPrice' | 'lowestPrice' | 'updated' | 'totalVolumeTraded'>
     )>, options: Maybe<Array<Maybe<(
       { __typename?: 'OptionInfo' }
       & Pick<OptionInfo, 'strike'>
@@ -167,6 +176,15 @@ export const GetOptionsDocument = gql`
     underlying {
       name
       href
+      change
+      changePercent
+      buyPrice
+      sellPrice
+      lastPrice
+      highestPrice
+      lowestPrice
+      updated
+      totalVolumeTraded
     }
     options {
       call {

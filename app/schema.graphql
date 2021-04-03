@@ -27,6 +27,7 @@ type InstrumentDetails {
     changePercent: Float
     buyPrice: Float
     sellPrice: Float
+    lastPrice: Float
     highestPrice: Float
     lowestPrice: Float
     updated: String

@@ -1,6 +1,6 @@
 import React from "react";
-import { Instrument, OptionType, useGetInstrumentsQuery } from "../apollo/types";
-import { currentInstrument, currentExpiry, currentOptionType} from '../apollo/cache';
+import { OptionType, useGetInstrumentsQuery } from "../apollo/types";
+import { currentInstrument, currentExpiry, currentOptionType} from '../apollo/vars';
 import { useReactiveVar } from "@apollo/client";
 import { createStyles, FormControl, InputLabel, makeStyles, MenuItem, Select, Theme } from "@material-ui/core";
 import { getNextMonths } from "../utils/date";
@@ -94,7 +94,7 @@ function SelectExpiry() {
     </FormControl>
 }
 
-export function SelectFilters() {
+export function OptionFilters() {
     return <div>
         <SelectInstrument></SelectInstrument>
         <SelectOptionType></SelectOptionType>
