@@ -8,7 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { useGetOptionsQuery } from '../apollo/types';
-import { currentInstrument } from '../apollo/cache';
+import { currentExpiry, currentInstrument, currentOptionType } from '../apollo/cache';
 import { useReactiveVar } from '@apollo/client';
 
 const useStyles = makeStyles({
@@ -20,9 +20,16 @@ const useStyles = makeStyles({
 export default function OptionTable() {
     const classes = useStyles();
 
-    const instrumentVar = useReactiveVar(currentInstrument);
+    const instrument = useReactiveVar(currentInstrument);
+    const optionType = useReactiveVar(currentOptionType);
+    const expires = useReactiveVar(currentExpiry);
 
-    const { loading, error, data } = useGetOptionsQuery({ variables: { id: instrumentVar } });
+    const skip = !instrument;
+
+    const { loading, error, data } = useGetOptionsQuery({ variables: { id: instrument, type: optionType, expires: expires }, skip });
+
+    if (skip)
+        return <div></div>
 
     const rows = data?.options?.options ?? [];
 

@@ -56,6 +56,11 @@ export type OptionInfo = {
   put: Maybe<CallOrPut>;
 };
 
+export enum OptionType {
+  Weekly = 'WEEKLY',
+  Standard = 'STANDARD'
+}
+
 export type OptionsList = {
   __typename?: 'OptionsList';
   underlying: Maybe<InstrumentDetails>;
@@ -72,6 +77,8 @@ export type Query = {
 
 export type QueryOptionsArgs = {
   id: Scalars['ID'];
+  type: Maybe<OptionType>;
+  expires: Maybe<Scalars['String']>;
 };
 
 
@@ -92,6 +99,8 @@ export type GetInstrumentsQuery = (
 
 export type GetOptionsQueryVariables = Exact<{
   id: Scalars['ID'];
+  type: OptionType;
+  expires: Scalars['String'];
 }>;
 
 
@@ -153,8 +162,8 @@ export type GetInstrumentsQueryHookResult = ReturnType<typeof useGetInstrumentsQ
 export type GetInstrumentsLazyQueryHookResult = ReturnType<typeof useGetInstrumentsLazyQuery>;
 export type GetInstrumentsQueryResult = Apollo.QueryResult<GetInstrumentsQuery, GetInstrumentsQueryVariables>;
 export const GetOptionsDocument = gql`
-    query getOptions($id: ID!) {
-  options(id: $id) {
+    query getOptions($id: ID!, $type: OptionType!, $expires: String!) {
+  options(id: $id, type: $type, expires: $expires) {
     underlying {
       name
       href
@@ -195,6 +204,8 @@ export const GetOptionsDocument = gql`
  * const { data, loading, error } = useGetOptionsQuery({
  *   variables: {
  *      id: // value for 'id'
+ *      type: // value for 'type'
+ *      expires: // value for 'expires'
  *   },
  * });
  */

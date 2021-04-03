@@ -1,24 +1,24 @@
 
 import axios from 'axios';
+import { OptionType } from '../types';
 
-import moment from 'moment';
 import { getNextMonth } from '../utils/date';
 
 export async function getInstruments() {
-    return getOptionsList("5668", getNextMonth()); // 5668 = XACT OMX30
+    return getOptionsList("5668", OptionType.Standard, getNextMonth()); // 5668 = XACT OMX30
 }
 
-export async function getOptionsList(id: string, endDate: string) {
+export async function getOptionsList(id: string, optionType: OptionType, expiry: string) {
     const url = 'https://www.avanza.se/optioner-lista.html'
 
     const params = {
         name: "",
         underlyingInstrumentId: id,
-        selectedEndDates: endDate,
+        selectedEndDates: expiry,
         sortField: "NAME",
         sortOrder: "ASCENDING",
         activeTab: "matrix",
-        optionTypes: "STANDARD"
+        optionTypes: optionType.toUpperCase()
     }
 
     const res = await axios.get(url, { params });

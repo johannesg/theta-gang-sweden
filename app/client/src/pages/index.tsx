@@ -1,23 +1,15 @@
 import * as React from 'react'
-import { useState, useEffect, useContext } from "react"
 
 import { ApolloProvider } from "@apollo/client"
 import { createApolloClient } from '../apollo/client';
 
-// import AuthProvider, { AuthContext } from '../components/AuthProvider';
 import Layout from '../components/Layout'
 
-// import { useMeQuery, useGetRandomCatsQuery, Cat, Maybe } from '../apollo/types'
-import { useGetInstrumentsQuery } from '../apollo/types';
-
-import { GridList, GridListTile, ListSubheader, Button, Typography, Grid, Card, makeStyles, CardMedia, CardHeader, CardActions, IconButton, CardContent, Box, LinearProgress } from '@material-ui/core'
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import { Typography, Grid, makeStyles, Box } from '@material-ui/core'
 
 // import catList from '../cats';
 import { green, red } from '@material-ui/core/colors';
-import { SelectInstrument } from '../components/SelectInstrument';
+import { SelectInstrument, SelectFilters } from '../components/Filters';
 import OptionList from '../components/OptionList';
 // import { NetworkStatus } from '@apollo/client';
 
@@ -51,74 +43,25 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Header() {
-  // const authInfo = useContext(AuthContext);
   const classes = useStyles();
 
-  // const { loading, error, data } = useMeQuery();
-
-  // let username = authInfo.user.username;
-  const username = "Asshole";
-
-
-  // if (!loading && data?.me?.id)
-  //   username = data?.me?.id;
+  const username = "Theta Warrior";
 
   return <Typography className={classes.header} variant="h5" align="center" component="h1" gutterBottom>
-    Hello {username}. Here's some cats
+    Hello {username}. Here's some options
    </Typography>
-
-  // return <Typography className={classes.header} variant="h5" align="center" component="h1" gutterBottom>
-  //   Hello {username}. Here's some cats
-  // </Typography>
 }
-
-// function CatCard({ item }: { item: Maybe<Cat> }) {
-//   const classes = useStyles();
-
-//   return <Card className={classes.card}>
-//     {/* <CardHeader title="Some Cat"></CardHeader> */}
-//     <CardMedia
-//       className={classes.media}
-//       image={item.url}
-//       title="Paella dish"
-//     />
-//     <CardActions>
-//       <IconButton className={classes.favourite}>
-//         <FavoriteIcon />
-//       </IconButton>
-//       <IconButton className={classes.thumbUp}>
-//         <ThumbUpIcon />
-//       </IconButton>
-//       <IconButton className={classes.thumbDown}>
-//         <ThumbDownIcon />
-//       </IconButton>
-//     </CardActions>
-//   </Card>
-// }
 
 function App() {
   const classes = useStyles();
-
-  // const { loading, error, data, refetch, networkStatus } = useGetRandomCatsQuery({ 
-  //   variables: { pageSize: 9 },
-  //   notifyOnNetworkStatusChange: true 
-  //  });
 
   return <Grid container>
     <Grid item xs={12}><Header /></Grid>
     <Grid item xs={12}>
       <Box className={classes.actions}>
-        {/* <Button variant="contained" color="primary" onClick={() => refetch()}>Give me some other cats</Button> */}
-        <SelectInstrument />
+        <SelectFilters />
       </Box>
-
-
     </Grid>
-    {/* {
-      loading
-      ? <Grid item xs={12}><LinearProgress className={classes.progress} /></Grid>
-      : null
-    } */}
     <Grid item xs={12}>
       <OptionList></OptionList>
     </Grid>
@@ -129,7 +72,7 @@ export default function Index() {
   const apolloClient = createApolloClient("");
 
   return (
-    <Layout title="Cats V3">
+    <Layout title="Theta Gang Sweden">
       <ApolloProvider client={apolloClient}>
         <App />
       </ApolloProvider>

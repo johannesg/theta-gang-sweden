@@ -6,7 +6,7 @@ schema {
 type Query {
     # me: User
     instruments: [Instrument]
-    options(id: ID!): OptionsList
+    options(id: ID!, type: OptionType, expires: String): OptionsList
     optionDetails(id: ID!): OptionDetails
 }
 
@@ -41,14 +41,19 @@ type CallOrPut {
 }
 
 type OptionDetails {
-        buyIV: String,
-        delta: Float,
-        theta: Float,
-        vega: Float,
-        sellIV: String,
-        gamma: Float,
-        rho: Float,
-        IV: String,
+    buyIV: String
+    delta: Float
+    theta: Float
+    vega: Float
+    sellIV: String
+    gamma: Float
+    rho: Float
+    IV: String
+}
+
+enum OptionType {
+    WEEKLY
+    STANDARD
 }
 
 # type Mutation {

@@ -55,6 +55,11 @@ export type OptionInfo = {
   put?: Maybe<CallOrPut>;
 };
 
+export enum OptionType {
+  Weekly = 'WEEKLY',
+  Standard = 'STANDARD'
+}
+
 export type OptionsList = {
   __typename?: 'OptionsList';
   underlying?: Maybe<InstrumentDetails>;
@@ -71,6 +76,8 @@ export type Query = {
 
 export type QueryOptionsArgs = {
   id: Scalars['ID'];
+  type?: Maybe<OptionType>;
+  expires?: Maybe<Scalars['String']>;
 };
 
 
@@ -166,6 +173,7 @@ export type ResolversTypes = ResolversObject<{
   InstrumentDetails: ResolverTypeWrapper<InstrumentDetails>;
   OptionDetails: ResolverTypeWrapper<OptionDetails>;
   OptionInfo: ResolverTypeWrapper<OptionInfo>;
+  OptionType: OptionType;
   OptionsList: ResolverTypeWrapper<OptionsList>;
   Query: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;

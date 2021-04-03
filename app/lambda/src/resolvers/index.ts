@@ -11,8 +11,8 @@ export const resolvers : Resolvers = {
             const doc = cheerio.load(html);
             return parseStockList(doc);
         },
-        options: async (_, { id }) => {
-            const html = await getOptionsList(id, getNextMonth());
+        options: async (_, { id, type, expires }) => {
+            const html = await getOptionsList(id, type, expires);
             const doc = cheerio.load(html);
             return parseOptionsPage(doc);
         },

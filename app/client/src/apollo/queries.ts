@@ -8,8 +8,8 @@ const QUERIES = gql`
         }
     }
 
-    query getOptions($id: ID!) {
-        options(id: $id) {
+    query getOptions($id: ID!, $type: OptionType!, $expires : String!) {
+        options(id: $id, type: $type, expires: $expires) {
             underlying {
                 name
                 href
