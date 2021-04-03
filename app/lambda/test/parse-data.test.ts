@@ -23,7 +23,7 @@ describe("parse tests", () => {
         const doc = cheerio.load(data);
 
         const res = await parseOptionsPage(doc);
-        // console.log(util.inspect(res, {showHidden: false, depth: null}))
+        console.log(util.inspect(res.underlying, {showHidden: false, depth: null}))
         expect(res).not.toBeNull();
     });
 

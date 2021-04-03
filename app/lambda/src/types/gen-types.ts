@@ -34,6 +34,14 @@ export type InstrumentDetails = {
   __typename?: 'InstrumentDetails';
   name: Scalars['String'];
   href: Scalars['String'];
+  change?: Maybe<Scalars['Float']>;
+  changePercent?: Maybe<Scalars['Float']>;
+  buyPrice?: Maybe<Scalars['Float']>;
+  sellPrice?: Maybe<Scalars['Float']>;
+  highestPrice?: Maybe<Scalars['Float']>;
+  lowestPrice?: Maybe<Scalars['Float']>;
+  updated?: Maybe<Scalars['String']>;
+  totalVolumeTraded?: Maybe<Scalars['Int']>;
 };
 
 export type OptionDetails = {
@@ -214,6 +222,14 @@ export type InstrumentResolvers<ContextType = ContextWithDataSources, ParentType
 export type InstrumentDetailsResolvers<ContextType = ContextWithDataSources, ParentType extends ResolversParentTypes['InstrumentDetails'] = ResolversParentTypes['InstrumentDetails']> = ResolversObject<{
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   href?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  change?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  changePercent?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  buyPrice?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  sellPrice?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  highestPrice?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  lowestPrice?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  updated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  totalVolumeTraded?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

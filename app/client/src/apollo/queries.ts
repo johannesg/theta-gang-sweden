@@ -13,6 +13,14 @@ const QUERIES = gql`
             underlying {
                 name
                 href
+                change
+                changePercent
+                buyPrice
+                sellPrice
+                highestPrice
+                lowestPrice
+                updated
+                totalVolumeTraded
             }
             options {
                 call {

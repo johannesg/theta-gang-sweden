@@ -21,14 +21,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-
-function Profile({ user }: { user?: UserInfo }) {
-    if (!user)
-        return <NotLoggedIn/>
-    else
-        return <Button color="inherit" onClick={() => logout()}>Logout</Button>
-}
-
 export default ({ title, children }: LayoutProps) => {
     const classes = useStyles();
     // const [user, setUser] = useState<UserInfo | undefined>();
