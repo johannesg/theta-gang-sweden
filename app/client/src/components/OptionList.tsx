@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { useOptionsQuery } from '../apollo/hooks';
 import { CallOrPut } from '../apollo/types';
-import { selectedOption } from '../apollo/vars';
+import { activeOption } from '../apollo/vars';
 import { useReactiveVar } from '@apollo/client';
 import clsx from 'clsx';
 import { yellow } from '@material-ui/core/colors';
@@ -30,10 +30,8 @@ const useStyles = makeStyles({
     },
     mark: {
         borderTop: "2px solid red"
-
         // : red[500]
     },
-    nomark: {},
     selected: {
         backgroundColor: yellow[500]
     }
@@ -44,7 +42,6 @@ export function UnderlyingTable() {
     const classes = useStyles();
 
     const { loading, error, data } = useOptionsQuery();
-
 
     if (!data)
         return <div></div>
@@ -89,7 +86,7 @@ export function OptionsTable() {
     const classes = useStyles();
 
     const { loading, error, data } = useOptionsQuery();
-    const selectedVar = useReactiveVar(selectedOption);
+    const activeOptionVar = useReactiveVar(activeOption);
 
     if (!data)
         return <div></div>
@@ -98,22 +95,21 @@ export function OptionsTable() {
 
     const price = data?.options?.underlying?.lastPrice ?? 0;
 
-    function onClickCall(call: CallOrPut) {
-        selectCallOrPut(call);
-    };
-
     function onClickPut(put: CallOrPut) {
         selectCallOrPut(put);
     };
 
-    function selectCallOrPut(callOrPut: CallOrPut) {
-        if (selectedVar && callOrPut.name == selectedVar.name)
-            selectedOption(null);
-        else
-            selectedOption(callOrPut);
+    function isActive(item: CallOrPut) : boolean {
+        return activeOptionVar === item;
+    }
 
-        selectedOption(callOrPut);
-        console.log(`Selected: ${selectedOption()?.name}`)
+    function selectItem(item: CallOrPut) {
+        if (item === activeOptionVar)
+            activeOption(null);
+        else
+            activeOption(item);
+
+        console.log(`Selected: ${activeOption()?.name}`)
     }
 
     return <TableContainer component={Paper}>
@@ -140,28 +136,26 @@ export function OptionsTable() {
                     const strike = row!.strike!;
 
                     const prevStrike = (i == 0 ? row?.strike : rows[i - 1]?.strike) ?? 0;
-                    const cl = price >= strike && price <= prevStrike
-                        ? classes.mark
-                        : classes.nomark;
-                    
-                    const callSelected = selectedVar && selectedVar.name == call.name;
-                    const putSelected = selectedVar && selectedVar.name == put.name;
 
-                    const tdClassCall = clsx(callSelected && classes.selected);
-                    const tdClassPut = clsx(putSelected && classes.selected);
+                    const rowClass = clsx((price >= strike && price <= prevStrike) && classes.mark);
+                    const cellClassCall = clsx(isActive(call) && classes.selected);
+                    const cellClassPut = clsx(isActive(put) && classes.selected);
 
-                    return <TableRow hover className={cl} key={call.name}>
-                        <TableCell className={tdClassCall} onClick={() => onClickCall(call)}>{call.name}</TableCell>
-                        <TableCell className={tdClassCall} align="right" onClick={() => onClickCall(call)}>{call.buyVolume}</TableCell>
-                        <TableCell className={tdClassCall} align="right" onClick={() => onClickCall(call)}>{call.buy}</TableCell>
-                        <TableCell className={tdClassCall} align="right" onClick={() => onClickCall(call)}>{call.sell}</TableCell>
-                        <TableCell className={tdClassCall} align="right" onClick={() => onClickCall(call)}>{call.sellVolume}</TableCell>
+                    const callHandler = () => selectItem(call);
+                    const putHandler = () => selectItem(put);
+
+                    return <TableRow hover className={rowClass} key={call.name}>
+                        <TableCell className={cellClassCall} onClick={callHandler}>{call.name}</TableCell>
+                        <TableCell className={cellClassCall} align="right" onClick={callHandler}>{call.buyVolume}</TableCell>
+                        <TableCell className={cellClassCall} align="right" onClick={callHandler}>{call.buy}</TableCell>
+                        <TableCell className={cellClassCall} align="right" onClick={callHandler}>{call.sell}</TableCell>
+                        <TableCell className={cellClassCall} align="right" onClick={callHandler}>{call.sellVolume}</TableCell>
                         <TableCell className={classes.strike} align="center">{strike}</TableCell>
-                        <TableCell className={tdClassPut} align="right" onClick={() => onClickPut(put)} >{put.buyVolume}</TableCell>
-                        <TableCell className={tdClassPut} align="right" onClick={() => onClickPut(put)}>{put.buy}</TableCell>
-                        <TableCell className={tdClassPut} align="right" onClick={() => onClickPut(put)}>{put.sell}</TableCell>
-                        <TableCell className={tdClassPut} align="right" onClick={() => onClickPut(put)}>{put.sellVolume}</TableCell>
-                        <TableCell className={tdClassPut} onClick={() => onClickPut(put)}>{row?.put?.name}</TableCell>
+                        <TableCell className={cellClassPut} align="right" onClick={putHandler} >{put.buyVolume}</TableCell>
+                        <TableCell className={cellClassPut} align="right" onClick={putHandler}>{put.buy}</TableCell>
+                        <TableCell className={cellClassPut} align="right" onClick={putHandler}>{put.sell}</TableCell>
+                        <TableCell className={cellClassPut} align="right" onClick={putHandler}>{put.sellVolume}</TableCell>
+                        <TableCell className={cellClassPut} onClick={putHandler}>{put.name}</TableCell>
                     </TableRow>
                 })}
             </TableBody>

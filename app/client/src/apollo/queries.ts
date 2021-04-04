@@ -43,7 +43,18 @@ const QUERIES = gql`
                 }
             }
         }
+    }
 
+    query Greeks($href: ID!) {
+        optionDetails(id: $href) {
+            buyIV
+            delta
+            gamma
+            theta
+            vega
+            sellIV
+            IV
+        }
     }
 `;
 

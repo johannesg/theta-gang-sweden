@@ -134,6 +134,19 @@ export type GetOptionsQuery = (
   )> }
 );
 
+export type GreeksQueryVariables = Exact<{
+  href: Scalars['ID'];
+}>;
+
+
+export type GreeksQuery = (
+  { __typename?: 'Query' }
+  & { optionDetails: Maybe<(
+    { __typename?: 'OptionDetails' }
+    & Pick<OptionDetails, 'buyIV' | 'delta' | 'gamma' | 'theta' | 'vega' | 'sellIV' | 'IV'>
+  )> }
+);
+
 
 export const GetInstrumentsDocument = gql`
     query getInstruments {
@@ -238,3 +251,44 @@ export function useGetOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetOptionsQueryHookResult = ReturnType<typeof useGetOptionsQuery>;
 export type GetOptionsLazyQueryHookResult = ReturnType<typeof useGetOptionsLazyQuery>;
 export type GetOptionsQueryResult = Apollo.QueryResult<GetOptionsQuery, GetOptionsQueryVariables>;
+export const GreeksDocument = gql`
+    query Greeks($href: ID!) {
+  optionDetails(id: $href) {
+    buyIV
+    delta
+    gamma
+    theta
+    vega
+    sellIV
+    IV
+  }
+}
+    `;
+
+/**
+ * __useGreeksQuery__
+ *
+ * To run a query within a React component, call `useGreeksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGreeksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGreeksQuery({
+ *   variables: {
+ *      href: // value for 'href'
+ *   },
+ * });
+ */
+export function useGreeksQuery(baseOptions: Apollo.QueryHookOptions<GreeksQuery, GreeksQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GreeksQuery, GreeksQueryVariables>(GreeksDocument, options);
+      }
+export function useGreeksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GreeksQuery, GreeksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GreeksQuery, GreeksQueryVariables>(GreeksDocument, options);
+        }
+export type GreeksQueryHookResult = ReturnType<typeof useGreeksQuery>;
+export type GreeksLazyQueryHookResult = ReturnType<typeof useGreeksLazyQuery>;
+export type GreeksQueryResult = Apollo.QueryResult<GreeksQuery, GreeksQueryVariables>;

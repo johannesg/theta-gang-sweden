@@ -8,4 +8,4 @@ export const currentOptionType = makeVar<OptionType>(OptionType.Standard);
 
 export const currentExpiry = makeVar<string>(getCurrentMonth());
 
-export const selectedOption = makeVar<CallOrPut | null>(null);
+export const activeOption = makeVar<CallOrPut | null>(null);
