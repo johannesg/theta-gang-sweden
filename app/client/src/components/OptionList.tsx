@@ -8,6 +8,11 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { useOptionsQuery } from '../apollo/hooks';
+import { CallOrPut } from '../apollo/types';
+import { selectedOption } from '../apollo/vars';
+import { useReactiveVar } from '@apollo/client';
+import clsx from 'clsx';
+import { yellow } from '@material-ui/core/colors';
 
 const useStyles = makeStyles({
     table: {
@@ -28,13 +33,18 @@ const useStyles = makeStyles({
 
         // : red[500]
     },
-    nomark: {}
+    nomark: {},
+    selected: {
+        backgroundColor: yellow[500]
+    }
+
 });
 
 export function UnderlyingTable() {
     const classes = useStyles();
 
     const { loading, error, data } = useOptionsQuery();
+
 
     if (!data)
         return <div></div>
@@ -79,6 +89,7 @@ export function OptionsTable() {
     const classes = useStyles();
 
     const { loading, error, data } = useOptionsQuery();
+    const selectedVar = useReactiveVar(selectedOption);
 
     if (!data)
         return <div></div>
@@ -86,6 +97,24 @@ export function OptionsTable() {
     const rows = data?.options?.options ?? [];
 
     const price = data?.options?.underlying?.lastPrice ?? 0;
+
+    function onClickCall(call: CallOrPut) {
+        selectCallOrPut(call);
+    };
+
+    function onClickPut(put: CallOrPut) {
+        selectCallOrPut(put);
+    };
+
+    function selectCallOrPut(callOrPut: CallOrPut) {
+        if (selectedVar && callOrPut.name == selectedVar.name)
+            selectedOption(null);
+        else
+            selectedOption(callOrPut);
+
+        selectedOption(callOrPut);
+        console.log(`Selected: ${selectedOption()?.name}`)
+    }
 
     return <TableContainer component={Paper}>
         <Table className={classes.table} size="small" aria-label="a dense table">
@@ -106,24 +135,33 @@ export function OptionsTable() {
             </TableHead>
             <TableBody>
                 {rows.map((row, i) => {
-                    const prevStrike = (i == 0 ? row?.strike : rows[i-1]?.strike) ?? 0;
-                    const strike = row?.strike ?? 0;
-                    const cl = price >= strike && price <=prevStrike
-                     ? classes.mark
-                     : classes.nomark;
+                    const call = row!.call!;
+                    const put = row!.put!;
+                    const strike = row!.strike!;
 
-                    return <TableRow hover className={cl} key={row?.call?.name}>
-                        <TableCell>{row?.call?.name}</TableCell>
-                        <TableCell align="right">{row?.call?.buyVolume}</TableCell>
-                        <TableCell align="right">{row?.call?.buy}</TableCell>
-                        <TableCell align="right">{row?.call?.sell}</TableCell>
-                        <TableCell align="right">{row?.call?.sellVolume}</TableCell>
-                        <TableCell className={classes.strike} align="center">{row?.strike}</TableCell>
-                        <TableCell align="right">{row?.put?.buyVolume}</TableCell>
-                        <TableCell align="right">{row?.put?.buy}</TableCell>
-                        <TableCell align="right">{row?.put?.sell}</TableCell>
-                        <TableCell align="right">{row?.put?.sellVolume}</TableCell>
-                        <TableCell>{row?.put?.name}</TableCell>
+                    const prevStrike = (i == 0 ? row?.strike : rows[i - 1]?.strike) ?? 0;
+                    const cl = price >= strike && price <= prevStrike
+                        ? classes.mark
+                        : classes.nomark;
+                    
+                    const callSelected = selectedVar && selectedVar.name == call.name;
+                    const putSelected = selectedVar && selectedVar.name == put.name;
+
+                    const tdClassCall = clsx(callSelected && classes.selected);
+                    const tdClassPut = clsx(putSelected && classes.selected);
+
+                    return <TableRow hover className={cl} key={call.name}>
+                        <TableCell className={tdClassCall} onClick={() => onClickCall(call)}>{call.name}</TableCell>
+                        <TableCell className={tdClassCall} align="right" onClick={() => onClickCall(call)}>{call.buyVolume}</TableCell>
+                        <TableCell className={tdClassCall} align="right" onClick={() => onClickCall(call)}>{call.buy}</TableCell>
+                        <TableCell className={tdClassCall} align="right" onClick={() => onClickCall(call)}>{call.sell}</TableCell>
+                        <TableCell className={tdClassCall} align="right" onClick={() => onClickCall(call)}>{call.sellVolume}</TableCell>
+                        <TableCell className={classes.strike} align="center">{strike}</TableCell>
+                        <TableCell className={tdClassPut} align="right" onClick={() => onClickPut(put)} >{put.buyVolume}</TableCell>
+                        <TableCell className={tdClassPut} align="right" onClick={() => onClickPut(put)}>{put.buy}</TableCell>
+                        <TableCell className={tdClassPut} align="right" onClick={() => onClickPut(put)}>{put.sell}</TableCell>
+                        <TableCell className={tdClassPut} align="right" onClick={() => onClickPut(put)}>{put.sellVolume}</TableCell>
+                        <TableCell className={tdClassPut} onClick={() => onClickPut(put)}>{row?.put?.name}</TableCell>
                     </TableRow>
                 })}
             </TableBody>

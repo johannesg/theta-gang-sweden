@@ -3,17 +3,19 @@ import { Table, TableBody, TableCell, TableHead, TableRow, Theme, useTheme } fro
 
 export function OptionActions() {
   return <Table>
-      <TableHead>
+    <TableHead>
+      <TableRow>
         <TableCell>Name</TableCell>
         <TableCell>A</TableCell>
         <TableCell>C</TableCell>
-      </TableHead>
-      <TableBody>
-        <TableRow>
-          <TableCell>Name</TableCell>
-          <TableCell>A</TableCell>
-          <TableCell>C</TableCell>
-        </TableRow>
-      </TableBody>
-    </Table>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      <TableRow>
+        <TableCell>Name</TableCell>
+        <TableCell>A</TableCell>
+        <TableCell>C</TableCell>
+      </TableRow>
+    </TableBody>
+  </Table>
 }
