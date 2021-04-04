@@ -3,42 +3,50 @@ import * as React from 'react'
 import { ApolloProvider } from "@apollo/client"
 import { createApolloClient } from '../apollo/client';
 
-import Layout from '../components/Layout'
+import { Typography, Grid, makeStyles, Box, Drawer, AppBar, Toolbar, Divider, Table, TableHead, TableCell, TableBody, TableRow } from '@material-ui/core'
 
-import { Typography, Grid, makeStyles, Box } from '@material-ui/core'
-
-// import catList from '../cats';
-import { green, red } from '@material-ui/core/colors';
 import { OptionFilters } from '../components/Filters';
 import { UnderlyingTable, OptionsTable } from '../components/OptionList';
-// import { NetworkStatus } from '@apollo/client';
+import { OptionActions } from '../components/OptionActions';
+
+const drawerWidth = 400;
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  drawerHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-start',
+  },
+  drawerContainer: {
+    overflow: 'auto',
+  },
+  content: {
+    flexGrow: 1,
+    padding: theme.spacing(3),
+    marginRight: 0,
+  },
   header: {
     margin: theme.spacing(1)
 
   },
   actions: {
     margin: theme.spacing(1)
-  },
-  card: {
-    margin: theme.spacing(1)
-  },
-  progress: {
-    margin: theme.spacing(1)
-  },
-  media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
-  favourite: {
-    color: red[600]
-  },
-  thumbUp: {
-    color: green[600]
-  },
-  thumbDown: {
-    color: red[600]
   },
 }));
 
@@ -55,30 +63,57 @@ function Header() {
 function App() {
   const classes = useStyles();
 
-  return <Grid container spacing={2}>
-    <Grid item xs={12}><Header /></Grid>
-    <Grid item xs={12}>
-      <Box className={classes.actions}>
-        <OptionFilters />
-      </Box>
-    </Grid>
-    <Grid item xs={12}>
-      <UnderlyingTable></UnderlyingTable>
-    </Grid>
-    <Grid item xs={12}>
-      <OptionsTable></OptionsTable>
-    </Grid>
-  </Grid>
+  return <div className={classes.root}>
+    <AppBar position="fixed" className={classes.appBar}>
+      <Toolbar>
+        <Typography variant="h6" noWrap>
+          Theta Gang Sweden
+          </Typography>
+      </Toolbar>
+    </AppBar>
+    <main className={classes.content}>
+      <Grid container spacing={2}>
+        <Grid item xs={12}><Header /></Grid>
+        <Grid item xs={12}>
+          <Box className={classes.actions}>
+            <OptionFilters />
+          </Box>
+        </Grid>
+        <Grid item xs={12}>
+          <UnderlyingTable></UnderlyingTable>
+        </Grid>
+        <Grid item xs={12}>
+          <OptionsTable></OptionsTable>
+        </Grid>
+      </Grid>
+    </main>
+    <Drawer
+      className={classes.drawer}
+      variant="permanent"
+      anchor="right"
+      classes={{
+        paper: classes.drawerPaper,
+      }}
+    >
+      <Toolbar />
+      <div className={classes.drawerHeader}>
+        <Typography variant="h6">Actions</Typography>
+      </div>
+      <Divider />
+      <div className={classes.drawerContainer}>
+        <OptionActions></OptionActions>
+      </div>
+    </Drawer>
+
+  </div>
 }
 
 export default function Index() {
   const apolloClient = createApolloClient("");
 
   return (
-    <Layout title="Theta Gang Sweden">
-      <ApolloProvider client={apolloClient}>
-        <App />
-      </ApolloProvider>
-    </Layout>
+    <ApolloProvider client={apolloClient}>
+      <App />
+    </ApolloProvider>
   );
 }

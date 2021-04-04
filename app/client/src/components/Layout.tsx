@@ -13,6 +13,9 @@ const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
     },
+    appBar: {
+        zIndex: theme.zIndex.drawer + 1,
+      },
     menuButton: {
         marginRight: theme.spacing(2),
     },
@@ -33,7 +36,7 @@ export default ({ title, children }: LayoutProps) => {
 
     return <Grid container>
         <Grid item xs={12}>
-            <AppBar position="static">
+            <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
                     <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
                         <MenuIcon />
