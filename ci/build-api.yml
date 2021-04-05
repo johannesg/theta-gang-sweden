@@ -1,0 +1,15 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - cd app/lambda
+      - npm ci
+  build:
+    commands:
+      - npm run esbuild
+artifacts:
+  base-directory: app/lambda
+  files: 
+    - index.js
+    - index.js.map
+    - schema.graphql
