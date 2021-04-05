@@ -16,7 +16,6 @@ export function OptionHeader() {
 
 export function OptionActions() {
   const option = useReactiveVar(activeOption);
-  const shoppingCartVar = useReactiveVar(shoppingCart);
 
   const { data } = useDetailsQuery({ skip: option === null, variables: { href: option?.href ?? "" } })
   const greeks = data?.optionDetails;
@@ -25,7 +24,6 @@ export function OptionActions() {
   const sell = option?.sell ?? 0;
   const mid = (buy + sell) / 2;
   const spread = (sell - buy) / 2 / mid;
-
 
   return <Table size="small">
     <TableHead>
@@ -62,9 +60,19 @@ export function OptionActions() {
         <TableCell>{greeks?.IV}</TableCell>
       </TableRow>
     </TableBody>
+  </Table>
+}
+
+export function OptionsStrategy() {
+  const shoppingCartVar = useReactiveVar(shoppingCart);
+  const sum = shoppingCartVar.reduce((sum, cur) => sum + cur.price, 0);
+  return <Table size="small">
     <TableHead>
       <TableRow>
+        <TableCell></TableCell>
+        <TableCell>Action</TableCell>
         <TableCell>Name</TableCell>
+        <TableCell>Price</TableCell>
       </TableRow>
     </TableHead>
     <TableBody>
@@ -72,14 +80,22 @@ export function OptionActions() {
         shoppingCartVar.map((si, i) => {
           return <TableRow key={i}>
             <TableCell>
-              <IconButton onClick={() => removeFromShoppingCart(si)} aria-label="delete">
+              <IconButton size="small" onClick={() => removeFromShoppingCart(si)} aria-label="delete">
                 <DeleteIcon />
               </IconButton>
             </TableCell>
+            <TableCell>{si.action}</TableCell>
             <TableCell>{si.option?.type} @ {si.option?.strike}</TableCell>
+            <TableCell>{numeral(si.price).format("#0.00")}</TableCell>
           </TableRow>
         })
       }
+        <TableRow>
+            <TableCell>Total</TableCell>
+            <TableCell></TableCell>
+            <TableCell></TableCell>
+            <TableCell>{numeral(sum).format("#0.00")}</TableCell>
+        </TableRow>
     </TableBody>
   </Table>
 }

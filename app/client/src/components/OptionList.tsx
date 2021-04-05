@@ -8,7 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { useCompositeOptionsQuery } from '../apollo/hooks';
-import { activeOption, ShoppingAction, addToShoppingCart } from '../apollo/vars';
+import { activeOption, ShoppingAction, addToShoppingCart, isInShoppingCart, shoppingCart } from '../apollo/vars';
 import { useReactiveVar } from '@apollo/client';
 import clsx from 'clsx';
 import { green, red, yellow } from '@material-ui/core/colors';
@@ -36,7 +36,12 @@ const useStyles = makeStyles({
     selected: {
         backgroundColor: yellow[500]
     },
-
+    markAsBuy: {
+        backgroundColor: green[500]
+    },
+    markAsSell: {
+        backgroundColor: red[500]
+    },
     buttonGroup: {
     },
     buyButton: {
@@ -117,6 +122,7 @@ export function OptionMatrix() {
 
     const { loading, error, data } = useCompositeOptionsQuery();
     const activeOptionVar = useReactiveVar(activeOption);
+    const shoppingCartVar = useReactiveVar(shoppingCart);
 
     if (!data)
         return <div></div>
@@ -163,9 +169,12 @@ export function OptionMatrix() {
 
                     const prevStrike = (i == 0 ? row?.strike : rows[i - 1]?.strike) ?? 0;
 
+                    const clCallInShoppingCart = "markAs" + isInShoppingCart(shoppingCartVar, call);
+                    const clPutInShoppingCart = "markAs" + isInShoppingCart(shoppingCartVar, put);
+
                     const rowClass = clsx((price >= strike && price <= prevStrike) && classes.mark);
-                    const cellClassCall = clsx(isActive(call) && classes.selected);
-                    const cellClassPut = clsx(isActive(put) && classes.selected);
+                    const cellClassCall = isActive(call) ? classes.selected : classes[clCallInShoppingCart];
+                    const cellClassPut = isActive(put) ? classes.selected : classes[clPutInShoppingCart];
 
                     const callHandler = () => selectItem(call);
                     const putHandler = () => selectItem(put);
