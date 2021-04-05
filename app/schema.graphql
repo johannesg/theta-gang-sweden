@@ -17,7 +17,7 @@ type Instrument {
 
 type OptionsList {
     underlying: InstrumentDetails
-    options: [OptionInfo]
+    options: [OptionMatrixItem]
 }
 
 type InstrumentDetails {
@@ -34,15 +34,17 @@ type InstrumentDetails {
     totalVolumeTraded: Int
 }
 
-type OptionInfo {
-    call: CallOrPut
+type OptionMatrixItem {
+    call: OptionInfo
     strike: Float
-    put: CallOrPut
+    put: OptionInfo
 }
 
-type CallOrPut {
+type OptionInfo {
     name: String!
     href: String!
+    callOrPut: CallOrPutType!
+    strike: Float!
     buyVolume: Int
     buy: Float
     sell: Float
@@ -50,6 +52,10 @@ type CallOrPut {
 }
 
 type OptionDetails {
+    expires: String!
+    type: OptionType!
+    callOrPut: CallOrPutType!
+
     buyIV: String
     delta: Float
     theta: Float
@@ -63,6 +69,11 @@ type OptionDetails {
 enum OptionType {
     WEEKLY
     STANDARD
+}
+
+enum CallOrPutType {
+    CALL
+    PUT
 }
 
 # type Mutation {

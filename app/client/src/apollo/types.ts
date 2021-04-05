@@ -15,15 +15,10 @@ export type Scalars = {
   Float: number;
 };
 
-export type CallOrPut = {
-  __typename?: 'CallOrPut';
-  name: Scalars['String'];
-  href: Scalars['String'];
-  buyVolume: Maybe<Scalars['Int']>;
-  buy: Maybe<Scalars['Float']>;
-  sell: Maybe<Scalars['Float']>;
-  sellVolume: Maybe<Scalars['Int']>;
-};
+export enum CallOrPutType {
+  Call = 'CALL',
+  Put = 'PUT'
+}
 
 export type Instrument = {
   __typename?: 'Instrument';
@@ -48,6 +43,9 @@ export type InstrumentDetails = {
 
 export type OptionDetails = {
   __typename?: 'OptionDetails';
+  expires: Scalars['String'];
+  type: OptionType;
+  callOrPut: CallOrPutType;
   buyIV: Maybe<Scalars['String']>;
   delta: Maybe<Scalars['Float']>;
   theta: Maybe<Scalars['Float']>;
@@ -60,9 +58,21 @@ export type OptionDetails = {
 
 export type OptionInfo = {
   __typename?: 'OptionInfo';
-  call: Maybe<CallOrPut>;
+  name: Scalars['String'];
+  href: Scalars['String'];
+  callOrPut: CallOrPutType;
+  strike: Scalars['Float'];
+  buyVolume: Maybe<Scalars['Int']>;
+  buy: Maybe<Scalars['Float']>;
+  sell: Maybe<Scalars['Float']>;
+  sellVolume: Maybe<Scalars['Int']>;
+};
+
+export type OptionMatrixItem = {
+  __typename?: 'OptionMatrixItem';
+  call: Maybe<OptionInfo>;
   strike: Maybe<Scalars['Float']>;
-  put: Maybe<CallOrPut>;
+  put: Maybe<OptionInfo>;
 };
 
 export enum OptionType {
@@ -73,7 +83,7 @@ export enum OptionType {
 export type OptionsList = {
   __typename?: 'OptionsList';
   underlying: Maybe<InstrumentDetails>;
-  options: Maybe<Array<Maybe<OptionInfo>>>;
+  options: Maybe<Array<Maybe<OptionMatrixItem>>>;
 };
 
 export type Query = {
@@ -86,8 +96,8 @@ export type Query = {
 
 export type QueryOptionsArgs = {
   id: Scalars['ID'];
-  type: Maybe<OptionType>;
-  expires: Maybe<Scalars['String']>;
+  type: OptionType;
+  expires: Scalars['String'];
 };
 
 
@@ -121,14 +131,14 @@ export type GetOptionsQuery = (
       { __typename?: 'InstrumentDetails' }
       & Pick<InstrumentDetails, 'name' | 'href' | 'change' | 'changePercent' | 'buyPrice' | 'sellPrice' | 'lastPrice' | 'highestPrice' | 'lowestPrice' | 'updated' | 'totalVolumeTraded'>
     )>, options: Maybe<Array<Maybe<(
-      { __typename?: 'OptionInfo' }
-      & Pick<OptionInfo, 'strike'>
+      { __typename?: 'OptionMatrixItem' }
+      & Pick<OptionMatrixItem, 'strike'>
       & { call: Maybe<(
-        { __typename?: 'CallOrPut' }
-        & Pick<CallOrPut, 'name' | 'href' | 'buyVolume' | 'buy' | 'sell' | 'sellVolume'>
+        { __typename?: 'OptionInfo' }
+        & Pick<OptionInfo, 'name' | 'href' | 'callOrPut' | 'strike' | 'buyVolume' | 'buy' | 'sell' | 'sellVolume'>
       )>, put: Maybe<(
-        { __typename?: 'CallOrPut' }
-        & Pick<CallOrPut, 'name' | 'href' | 'buyVolume' | 'buy' | 'sell' | 'sellVolume'>
+        { __typename?: 'OptionInfo' }
+        & Pick<OptionInfo, 'name' | 'href' | 'callOrPut' | 'strike' | 'buyVolume' | 'buy' | 'sell' | 'sellVolume'>
       )> }
     )>>> }
   )> }
@@ -143,7 +153,7 @@ export type GreeksQuery = (
   { __typename?: 'Query' }
   & { optionDetails: Maybe<(
     { __typename?: 'OptionDetails' }
-    & Pick<OptionDetails, 'buyIV' | 'delta' | 'gamma' | 'theta' | 'vega' | 'sellIV' | 'IV'>
+    & Pick<OptionDetails, 'type' | 'callOrPut' | 'expires' | 'buyIV' | 'delta' | 'gamma' | 'theta' | 'vega' | 'sellIV' | 'IV'>
   )> }
 );
 
@@ -203,6 +213,8 @@ export const GetOptionsDocument = gql`
       call {
         name
         href
+        callOrPut
+        strike
         buyVolume
         buy
         sell
@@ -212,6 +224,8 @@ export const GetOptionsDocument = gql`
       put {
         name
         href
+        callOrPut
+        strike
         buyVolume
         buy
         sell
@@ -254,6 +268,9 @@ export type GetOptionsQueryResult = Apollo.QueryResult<GetOptionsQuery, GetOptio
 export const GreeksDocument = gql`
     query Greeks($href: ID!) {
   optionDetails(id: $href) {
+    type
+    callOrPut
+    expires
     buyIV
     delta
     gamma

@@ -27,6 +27,8 @@ const QUERIES = gql`
                 call {
                     name
                     href
+                    callOrPut
+                    strike
                     buyVolume
                     buy
                     sell
@@ -36,6 +38,8 @@ const QUERIES = gql`
                 put {
                     name
                     href
+                    callOrPut
+                    strike
                     buyVolume
                     buy
                     sell
@@ -47,6 +51,9 @@ const QUERIES = gql`
 
     query Greeks($href: ID!) {
         optionDetails(id: $href) {
+            type
+            callOrPut
+            expires
             buyIV
             delta
             gamma

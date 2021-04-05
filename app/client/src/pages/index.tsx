@@ -7,7 +7,7 @@ import { Typography, Grid, makeStyles, Box, Drawer, AppBar, Toolbar, Divider, Ta
 
 import { OptionFilters } from '../components/Filters';
 import { UnderlyingTable, OptionsTable } from '../components/OptionList';
-import { OptionActions } from '../components/OptionActions';
+import { OptionActions, OptionsHeader } from '../components/OptionActions';
 
 const drawerWidth = 400;
 
@@ -97,7 +97,7 @@ function App() {
     >
       <Toolbar />
       <div className={classes.drawerHeader}>
-        <Typography variant="h6">Actions</Typography>
+        <OptionsHeader></OptionsHeader>
       </div>
       <Divider />
       <div className={classes.drawerContainer}>

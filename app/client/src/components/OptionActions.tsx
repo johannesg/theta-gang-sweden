@@ -1,13 +1,21 @@
 import React from "react";
-import { Table, TableBody, TableCell, TableHead, TableRow, Theme, useTheme } from "@material-ui/core";
+import { Table, TableBody, TableCell, TableHead, TableRow, Theme, Typography, useTheme } from "@material-ui/core";
 import { activeOption } from '../apollo/vars';
 import { useReactiveVar } from "@apollo/client";
 import { useGreeksQuery } from '../apollo/types';
 
+export function OptionsHeader() {
+  const option = useReactiveVar(activeOption);
+  const { data } = useGreeksQuery({ skip: option === null, variables: { href: option?.href ?? "" } })
+  const greeks = data?.optionDetails;
+
+  return <Typography variant="h6">{option?.callOrPut} @ {option?.strike} E {greeks?.expires}</Typography>
+}
+
 export function OptionActions() {
   const option = useReactiveVar(activeOption);
 
-  const { data } = useGreeksQuery({skip: option === null, variables: { href: option?.href ?? ""}})
+  const { data } = useGreeksQuery({ skip: option === null, variables: { href: option?.href ?? "" } })
   const greeks = data?.optionDetails;
 
   return <Table>
