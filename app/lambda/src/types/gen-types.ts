@@ -85,8 +85,8 @@ export type Query = {
 
 export type QueryOptionsArgs = {
   id: Scalars['ID'];
-  type?: Maybe<OptionType>;
-  expires?: Maybe<Scalars['String']>;
+  type: OptionType;
+  expires: Scalars['String'];
 };
 
 
@@ -262,7 +262,7 @@ export type OptionsListResolvers<ContextType = ContextWithDataSources, ParentTyp
 
 export type QueryResolvers<ContextType = ContextWithDataSources, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   instruments?: Resolver<Maybe<Array<Maybe<ResolversTypes['Instrument']>>>, ParentType, ContextType>;
-  options?: Resolver<Maybe<ResolversTypes['OptionsList']>, ParentType, ContextType, RequireFields<QueryOptionsArgs, 'id'>>;
+  options?: Resolver<Maybe<ResolversTypes['OptionsList']>, ParentType, ContextType, RequireFields<QueryOptionsArgs, 'id' | 'type' | 'expires'>>;
   optionDetails?: Resolver<Maybe<ResolversTypes['OptionDetails']>, ParentType, ContextType, RequireFields<QueryOptionDetailsArgs, 'id'>>;
 }>;
 

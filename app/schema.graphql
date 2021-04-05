@@ -6,7 +6,7 @@ schema {
 type Query {
     # me: User
     instruments: [Instrument]
-    options(id: ID!, type: OptionType, expires: String): OptionsList
+    options(id: ID!, type: OptionType!, expires: String!): OptionsList
     optionDetails(id: ID!): OptionDetails
 }
 

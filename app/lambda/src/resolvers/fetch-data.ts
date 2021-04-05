@@ -1,5 +1,7 @@
 
+import { ApolloError } from 'apollo-server-errors';
 import axios from 'axios';
+import { stat } from 'node:fs';
 import { OptionType } from '../types';
 
 import { getNextMonth } from '../utils/date';
@@ -21,14 +23,23 @@ export async function getOptionsList(id: string, optionType: OptionType, expiry:
         optionTypes: optionType.toUpperCase()
     }
 
-    const res = await axios.get(url, { params });
-    return res.data;
+    const { status, statusText, data } = await axios.get(url, { params });
+    if (status != 200) {
+        console.log(`Got wrong status from Avanza: ${status}:${statusText}`);
+        console.log(`Response: ${data}`);
+        throw new ApolloError("Invalid status code: " + status);
+    }
+    return data;
 }
 
 export async function getOptionInfo(path : string) {
     const url = 'https://www.avanza.se' + path;
 
-    const res = await axios.get(url);
-
-    return res.data;
+    const { status, statusText, data } = await axios.get(url);
+    if (status != 200) {
+        console.log(`Got wrong status from Avanza: ${status}:${statusText}`);
+        console.log(`Response: ${data}`);
+        throw new ApolloError("Invalid status code: " + status);
+    }
+    return data;
 }

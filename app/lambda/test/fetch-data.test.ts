@@ -1,9 +1,10 @@
 import { getOptionsList, getOptionInfo } from "../src/resolvers/fetch-data";
 import * as fs from 'fs/promises';
+import { OptionType } from "../src/types";
 
 describe.skip("fetch data tests", () => {
     test("can get options list", async () => {
-        const res = await getOptionsList('52636');
+        const res = await getOptionsList('52636', OptionType.Standard, "2021-05");
 
         await fs.writeFile("optionslist.html", res);
 
