@@ -6,8 +6,8 @@ import { createApolloClient } from '../apollo/client';
 import { Typography, Grid, makeStyles, Box, Drawer, AppBar, Toolbar, Divider, Table, TableHead, TableCell, TableBody, TableRow } from '@material-ui/core'
 
 import { OptionFilters } from '../components/Filters';
-import { UnderlyingTable, OptionsTable } from '../components/OptionList';
-import { OptionActions, OptionsHeader } from '../components/OptionActions';
+import { UnderlyingTable, OptionMatrix } from '../components/OptionList';
+import { OptionActions, OptionHeader } from '../components/OptionActions';
 
 const drawerWidth = 400;
 
@@ -83,7 +83,7 @@ function App() {
           <UnderlyingTable></UnderlyingTable>
         </Grid>
         <Grid item xs={12}>
-          <OptionsTable></OptionsTable>
+          <OptionMatrix></OptionMatrix>
         </Grid>
       </Grid>
     </main>
@@ -97,7 +97,7 @@ function App() {
     >
       <Toolbar />
       <div className={classes.drawerHeader}>
-        <OptionsHeader></OptionsHeader>
+        <OptionHeader></OptionHeader>
       </div>
       <Divider />
       <div className={classes.drawerContainer}>

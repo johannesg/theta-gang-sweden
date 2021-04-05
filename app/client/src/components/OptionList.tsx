@@ -8,11 +8,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { useCompositeOptionsQuery } from '../apollo/hooks';
-import { activeOption } from '../apollo/vars';
+import { activeOption, ShoppingAction, addToShoppingCart } from '../apollo/vars';
 import { useReactiveVar } from '@apollo/client';
 import clsx from 'clsx';
-import { yellow } from '@material-ui/core/colors';
+import { green, red, yellow } from '@material-ui/core/colors';
 import { OptionInfo } from '../apollo/types';
+import { Button, ButtonGroup } from '@material-ui/core';
 
 const useStyles = makeStyles({
     table: {
@@ -34,8 +35,22 @@ const useStyles = makeStyles({
     },
     selected: {
         backgroundColor: yellow[500]
-    }
+    },
 
+    buttonGroup: {
+    },
+    buyButton: {
+        padding: "2px 2px",
+        lineHeight: 1,
+        fontSize: "0.7rem",
+        backgroundColor: green[500],
+    },
+    sellButton: {
+        padding: "2px 2px",
+        lineHeight: 1,
+        fontSize: "0.7rem",
+        backgroundColor: red[500],
+    }
 });
 
 export function UnderlyingTable() {
@@ -82,7 +97,22 @@ export function UnderlyingTable() {
     </TableContainer>
 }
 
-export function OptionsTable() {
+function BuySellButtons({ option }: { option: OptionInfo }) {
+    const classes = useStyles();
+
+    const buy = () =>
+        addToShoppingCart(ShoppingAction.Buy, option);
+
+    const sell = () =>
+        addToShoppingCart(ShoppingAction.Sell, option);
+
+    return <ButtonGroup className={classes.buttonGroup} size="small" variant="contained">
+        <Button onClick={buy} className={classes.buyButton} color="primary">Buy</Button>
+        <Button onClick={sell} className={classes.sellButton} color="secondary">Sell</Button>
+    </ButtonGroup>
+}
+
+export function OptionMatrix() {
     const classes = useStyles();
 
     const { loading, error, data } = useCompositeOptionsQuery();
@@ -95,7 +125,7 @@ export function OptionsTable() {
 
     const price = data?.options?.underlying?.lastPrice ?? 0;
 
-    function isActive(item: OptionInfo) : boolean {
+    function isActive(item: OptionInfo): boolean {
         return activeOptionVar === item;
     }
 
@@ -141,7 +171,9 @@ export function OptionsTable() {
                     const putHandler = () => selectItem(put);
 
                     return <TableRow hover className={rowClass} key={call.name}>
-                        <TableCell className={cellClassCall} onClick={callHandler}>{call.name}</TableCell>
+                        <TableCell className={cellClassCall} onClick={callHandler}>
+                            <BuySellButtons option={call}></BuySellButtons>
+                        </TableCell>
                         <TableCell className={cellClassCall} align="right" onClick={callHandler}>{call.buyVolume}</TableCell>
                         <TableCell className={cellClassCall} align="right" onClick={callHandler}>{call.buy}</TableCell>
                         <TableCell className={cellClassCall} align="right" onClick={callHandler}>{call.sell}</TableCell>
@@ -151,7 +183,9 @@ export function OptionsTable() {
                         <TableCell className={cellClassPut} align="right" onClick={putHandler}>{put.buy}</TableCell>
                         <TableCell className={cellClassPut} align="right" onClick={putHandler}>{put.sell}</TableCell>
                         <TableCell className={cellClassPut} align="right" onClick={putHandler}>{put.sellVolume}</TableCell>
-                        <TableCell className={cellClassPut} onClick={putHandler}>{put.name}</TableCell>
+                        <TableCell className={cellClassPut} >
+                            <BuySellButtons option={put}></BuySellButtons>
+                        </TableCell>
                     </TableRow>
                 })}
             </TableBody>
