@@ -1,5 +1,5 @@
 import React from "react";
-import { OptionType, useGetInstrumentsQuery } from "../apollo/types";
+import { OptionType, useInstrumentsQuery } from "../apollo/types";
 import { currentInstrument, currentExpiry, currentOptionType} from '../apollo/vars';
 import { useReactiveVar } from "@apollo/client";
 import { createStyles, FormControl, InputLabel, makeStyles, MenuItem, Select, Theme } from "@material-ui/core";
@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export function SelectInstrument() {
     const classes = useStyles();
 
-    const { loading, error, data } = useGetInstrumentsQuery();
+    const { loading, error, data } = useInstrumentsQuery();
 
     const instrumentVar = useReactiveVar(currentInstrument);
 

@@ -1,14 +1,14 @@
 import gql from 'graphql-tag';
 
 const QUERIES = gql`
-    query getInstruments {
+    query Instruments {
         instruments {
             id
             name
         }
     }
 
-    query getOptions($id: ID!, $type: OptionType!, $expires : String!) {
+    query Options($id: ID!, $type: OptionType!, $expires : String!) {
         options(id: $id, type: $type, expires: $expires) {
             underlying {
                 name
@@ -27,7 +27,7 @@ const QUERIES = gql`
                 call {
                     name
                     href
-                    callOrPut
+                    type
                     strike
                     buyVolume
                     buy
@@ -38,7 +38,7 @@ const QUERIES = gql`
                 put {
                     name
                     href
-                    callOrPut
+                    type
                     strike
                     buyVolume
                     buy
@@ -49,10 +49,10 @@ const QUERIES = gql`
         }
     }
 
-    query Greeks($href: ID!) {
+    query Details($href: ID!) {
         optionDetails(id: $href) {
             type
-            callOrPut
+            optionType
             expires
             buyIV
             delta

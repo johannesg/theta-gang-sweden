@@ -44,8 +44,8 @@ export type InstrumentDetails = {
 export type OptionDetails = {
   __typename?: 'OptionDetails';
   expires: Scalars['String'];
-  type: OptionType;
-  callOrPut: CallOrPutType;
+  optionType: OptionType;
+  type: CallOrPutType;
   buyIV: Maybe<Scalars['String']>;
   delta: Maybe<Scalars['Float']>;
   theta: Maybe<Scalars['Float']>;
@@ -60,7 +60,7 @@ export type OptionInfo = {
   __typename?: 'OptionInfo';
   name: Scalars['String'];
   href: Scalars['String'];
-  callOrPut: CallOrPutType;
+  type: CallOrPutType;
   strike: Scalars['Float'];
   buyVolume: Maybe<Scalars['Int']>;
   buy: Maybe<Scalars['Float']>;
@@ -105,10 +105,10 @@ export type QueryOptionDetailsArgs = {
   id: Scalars['ID'];
 };
 
-export type GetInstrumentsQueryVariables = Exact<{ [key: string]: never; }>;
+export type InstrumentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetInstrumentsQuery = (
+export type InstrumentsQuery = (
   { __typename?: 'Query' }
   & { instruments: Maybe<Array<Maybe<(
     { __typename?: 'Instrument' }
@@ -116,14 +116,14 @@ export type GetInstrumentsQuery = (
   )>>> }
 );
 
-export type GetOptionsQueryVariables = Exact<{
+export type OptionsQueryVariables = Exact<{
   id: Scalars['ID'];
   type: OptionType;
   expires: Scalars['String'];
 }>;
 
 
-export type GetOptionsQuery = (
+export type OptionsQuery = (
   { __typename?: 'Query' }
   & { options: Maybe<(
     { __typename?: 'OptionsList' }
@@ -135,31 +135,31 @@ export type GetOptionsQuery = (
       & Pick<OptionMatrixItem, 'strike'>
       & { call: Maybe<(
         { __typename?: 'OptionInfo' }
-        & Pick<OptionInfo, 'name' | 'href' | 'callOrPut' | 'strike' | 'buyVolume' | 'buy' | 'sell' | 'sellVolume'>
+        & Pick<OptionInfo, 'name' | 'href' | 'type' | 'strike' | 'buyVolume' | 'buy' | 'sell' | 'sellVolume'>
       )>, put: Maybe<(
         { __typename?: 'OptionInfo' }
-        & Pick<OptionInfo, 'name' | 'href' | 'callOrPut' | 'strike' | 'buyVolume' | 'buy' | 'sell' | 'sellVolume'>
+        & Pick<OptionInfo, 'name' | 'href' | 'type' | 'strike' | 'buyVolume' | 'buy' | 'sell' | 'sellVolume'>
       )> }
     )>>> }
   )> }
 );
 
-export type GreeksQueryVariables = Exact<{
+export type DetailsQueryVariables = Exact<{
   href: Scalars['ID'];
 }>;
 
 
-export type GreeksQuery = (
+export type DetailsQuery = (
   { __typename?: 'Query' }
   & { optionDetails: Maybe<(
     { __typename?: 'OptionDetails' }
-    & Pick<OptionDetails, 'type' | 'callOrPut' | 'expires' | 'buyIV' | 'delta' | 'gamma' | 'theta' | 'vega' | 'sellIV' | 'IV'>
+    & Pick<OptionDetails, 'type' | 'optionType' | 'expires' | 'buyIV' | 'delta' | 'gamma' | 'theta' | 'vega' | 'sellIV' | 'IV'>
   )> }
 );
 
 
-export const GetInstrumentsDocument = gql`
-    query getInstruments {
+export const InstrumentsDocument = gql`
+    query Instruments {
   instruments {
     id
     name
@@ -168,33 +168,33 @@ export const GetInstrumentsDocument = gql`
     `;
 
 /**
- * __useGetInstrumentsQuery__
+ * __useInstrumentsQuery__
  *
- * To run a query within a React component, call `useGetInstrumentsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetInstrumentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useInstrumentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useInstrumentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetInstrumentsQuery({
+ * const { data, loading, error } = useInstrumentsQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetInstrumentsQuery(baseOptions?: Apollo.QueryHookOptions<GetInstrumentsQuery, GetInstrumentsQueryVariables>) {
+export function useInstrumentsQuery(baseOptions?: Apollo.QueryHookOptions<InstrumentsQuery, InstrumentsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetInstrumentsQuery, GetInstrumentsQueryVariables>(GetInstrumentsDocument, options);
+        return Apollo.useQuery<InstrumentsQuery, InstrumentsQueryVariables>(InstrumentsDocument, options);
       }
-export function useGetInstrumentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetInstrumentsQuery, GetInstrumentsQueryVariables>) {
+export function useInstrumentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<InstrumentsQuery, InstrumentsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetInstrumentsQuery, GetInstrumentsQueryVariables>(GetInstrumentsDocument, options);
+          return Apollo.useLazyQuery<InstrumentsQuery, InstrumentsQueryVariables>(InstrumentsDocument, options);
         }
-export type GetInstrumentsQueryHookResult = ReturnType<typeof useGetInstrumentsQuery>;
-export type GetInstrumentsLazyQueryHookResult = ReturnType<typeof useGetInstrumentsLazyQuery>;
-export type GetInstrumentsQueryResult = Apollo.QueryResult<GetInstrumentsQuery, GetInstrumentsQueryVariables>;
-export const GetOptionsDocument = gql`
-    query getOptions($id: ID!, $type: OptionType!, $expires: String!) {
+export type InstrumentsQueryHookResult = ReturnType<typeof useInstrumentsQuery>;
+export type InstrumentsLazyQueryHookResult = ReturnType<typeof useInstrumentsLazyQuery>;
+export type InstrumentsQueryResult = Apollo.QueryResult<InstrumentsQuery, InstrumentsQueryVariables>;
+export const OptionsDocument = gql`
+    query Options($id: ID!, $type: OptionType!, $expires: String!) {
   options(id: $id, type: $type, expires: $expires) {
     underlying {
       name
@@ -213,7 +213,7 @@ export const GetOptionsDocument = gql`
       call {
         name
         href
-        callOrPut
+        type
         strike
         buyVolume
         buy
@@ -224,7 +224,7 @@ export const GetOptionsDocument = gql`
       put {
         name
         href
-        callOrPut
+        type
         strike
         buyVolume
         buy
@@ -237,16 +237,16 @@ export const GetOptionsDocument = gql`
     `;
 
 /**
- * __useGetOptionsQuery__
+ * __useOptionsQuery__
  *
- * To run a query within a React component, call `useGetOptionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useOptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetOptionsQuery({
+ * const { data, loading, error } = useOptionsQuery({
  *   variables: {
  *      id: // value for 'id'
  *      type: // value for 'type'
@@ -254,22 +254,22 @@ export const GetOptionsDocument = gql`
  *   },
  * });
  */
-export function useGetOptionsQuery(baseOptions: Apollo.QueryHookOptions<GetOptionsQuery, GetOptionsQueryVariables>) {
+export function useOptionsQuery(baseOptions: Apollo.QueryHookOptions<OptionsQuery, OptionsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetOptionsQuery, GetOptionsQueryVariables>(GetOptionsDocument, options);
+        return Apollo.useQuery<OptionsQuery, OptionsQueryVariables>(OptionsDocument, options);
       }
-export function useGetOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetOptionsQuery, GetOptionsQueryVariables>) {
+export function useOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<OptionsQuery, OptionsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetOptionsQuery, GetOptionsQueryVariables>(GetOptionsDocument, options);
+          return Apollo.useLazyQuery<OptionsQuery, OptionsQueryVariables>(OptionsDocument, options);
         }
-export type GetOptionsQueryHookResult = ReturnType<typeof useGetOptionsQuery>;
-export type GetOptionsLazyQueryHookResult = ReturnType<typeof useGetOptionsLazyQuery>;
-export type GetOptionsQueryResult = Apollo.QueryResult<GetOptionsQuery, GetOptionsQueryVariables>;
-export const GreeksDocument = gql`
-    query Greeks($href: ID!) {
+export type OptionsQueryHookResult = ReturnType<typeof useOptionsQuery>;
+export type OptionsLazyQueryHookResult = ReturnType<typeof useOptionsLazyQuery>;
+export type OptionsQueryResult = Apollo.QueryResult<OptionsQuery, OptionsQueryVariables>;
+export const DetailsDocument = gql`
+    query Details($href: ID!) {
   optionDetails(id: $href) {
     type
-    callOrPut
+    optionType
     expires
     buyIV
     delta
@@ -283,29 +283,29 @@ export const GreeksDocument = gql`
     `;
 
 /**
- * __useGreeksQuery__
+ * __useDetailsQuery__
  *
- * To run a query within a React component, call `useGreeksQuery` and pass it any options that fit your needs.
- * When your component renders, `useGreeksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGreeksQuery({
+ * const { data, loading, error } = useDetailsQuery({
  *   variables: {
  *      href: // value for 'href'
  *   },
  * });
  */
-export function useGreeksQuery(baseOptions: Apollo.QueryHookOptions<GreeksQuery, GreeksQueryVariables>) {
+export function useDetailsQuery(baseOptions: Apollo.QueryHookOptions<DetailsQuery, DetailsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GreeksQuery, GreeksQueryVariables>(GreeksDocument, options);
+        return Apollo.useQuery<DetailsQuery, DetailsQueryVariables>(DetailsDocument, options);
       }
-export function useGreeksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GreeksQuery, GreeksQueryVariables>) {
+export function useDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DetailsQuery, DetailsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GreeksQuery, GreeksQueryVariables>(GreeksDocument, options);
+          return Apollo.useLazyQuery<DetailsQuery, DetailsQueryVariables>(DetailsDocument, options);
         }
-export type GreeksQueryHookResult = ReturnType<typeof useGreeksQuery>;
-export type GreeksLazyQueryHookResult = ReturnType<typeof useGreeksLazyQuery>;
-export type GreeksQueryResult = Apollo.QueryResult<GreeksQuery, GreeksQueryVariables>;
+export type DetailsQueryHookResult = ReturnType<typeof useDetailsQuery>;
+export type DetailsLazyQueryHookResult = ReturnType<typeof useDetailsLazyQuery>;
+export type DetailsQueryResult = Apollo.QueryResult<DetailsQuery, DetailsQueryVariables>;

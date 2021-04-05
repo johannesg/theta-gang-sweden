@@ -7,12 +7,12 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { useOptionsQuery } from '../apollo/hooks';
-import { CallOrPut } from '../apollo/types';
+import { useCompositeOptionsQuery } from '../apollo/hooks';
 import { activeOption } from '../apollo/vars';
 import { useReactiveVar } from '@apollo/client';
 import clsx from 'clsx';
 import { yellow } from '@material-ui/core/colors';
+import { OptionInfo } from '../apollo/types';
 
 const useStyles = makeStyles({
     table: {
@@ -41,7 +41,7 @@ const useStyles = makeStyles({
 export function UnderlyingTable() {
     const classes = useStyles();
 
-    const { loading, error, data } = useOptionsQuery();
+    const { loading, error, data } = useCompositeOptionsQuery();
 
     if (!data)
         return <div></div>
@@ -85,7 +85,7 @@ export function UnderlyingTable() {
 export function OptionsTable() {
     const classes = useStyles();
 
-    const { loading, error, data } = useOptionsQuery();
+    const { loading, error, data } = useCompositeOptionsQuery();
     const activeOptionVar = useReactiveVar(activeOption);
 
     if (!data)
@@ -95,15 +95,11 @@ export function OptionsTable() {
 
     const price = data?.options?.underlying?.lastPrice ?? 0;
 
-    function onClickPut(put: CallOrPut) {
-        selectCallOrPut(put);
-    };
-
-    function isActive(item: CallOrPut) : boolean {
+    function isActive(item: OptionInfo) : boolean {
         return activeOptionVar === item;
     }
 
-    function selectItem(item: CallOrPut) {
+    function selectItem(item: OptionInfo) {
         if (item === activeOptionVar)
             activeOption(null);
         else

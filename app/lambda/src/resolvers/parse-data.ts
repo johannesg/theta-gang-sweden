@@ -1,7 +1,5 @@
-import * as cheerio from 'cheerio';
-
 import numeral from '../utils/numeral';
-import { CallOrPutType, Instrument, InstrumentDetails, OptionDetails, OptionInfo, OptionMatrixItem, OptionType } from '../types';
+import { CallOrPutType, Instrument, InstrumentDetails, OptionDetails, OptionMatrixItem, OptionType } from '../types';
 
 export function parseStockList($: cheerio.Selector) : Instrument[] {
     return $("#underlyingInstrumentId")
@@ -86,7 +84,7 @@ function parseOptionItem(i: number, tr: cheerio.Cheerio) : OptionMatrixItem {
     return {
         call: {
             ...getName("tLeft"),
-            callOrPut:CallOrPutType.Call,
+            type:CallOrPutType.Call,
             strike,
             buyVolume: getAttr(2),
             buy: getAttr(3),
@@ -96,7 +94,7 @@ function parseOptionItem(i: number, tr: cheerio.Cheerio) : OptionMatrixItem {
         strike,
         put: {
             ...getName("tRight"),
-            callOrPut:CallOrPutType.Put,
+            type:CallOrPutType.Put,
             strike,
             buyVolume: getAttr(7),
             buy: getAttr(8),
@@ -141,9 +139,9 @@ export function parseOptionInfo(doc: cheerio.Selector) : OptionDetails {
     }
 
     return {
-        callOrPut: getCallOrPut(getPI(1)),
+        type: parseCallOrPut(getPI(1)),
+        optionType: parseOptionType(getPI(3)),
         expires: getPI(2),
-        type: <OptionType> getPI(3),
 
         buyIV: getGreek(0).text(),
         delta: getGreek(2).num(),
@@ -155,4 +153,3 @@ export function parseOptionInfo(doc: cheerio.Selector) : OptionDetails {
         IV: getGreek(9).text(),
     };
 }
-

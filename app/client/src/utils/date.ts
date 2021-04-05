@@ -1,4 +1,3 @@
-
 import { DateTime } from 'luxon';
 
 export function getNextMonth(): string {

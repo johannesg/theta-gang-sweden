@@ -43,7 +43,7 @@ type OptionMatrixItem {
 type OptionInfo {
     name: String!
     href: String!
-    callOrPut: CallOrPutType!
+    type: CallOrPutType!
     strike: Float!
     buyVolume: Int
     buy: Float
@@ -53,8 +53,8 @@ type OptionInfo {
 
 type OptionDetails {
     expires: String!
-    type: OptionType!
-    callOrPut: CallOrPutType!
+    optionType: OptionType!
+    type: CallOrPutType!
 
     buyIV: String
     delta: Float

@@ -43,8 +43,8 @@ export type InstrumentDetails = {
 export type OptionDetails = {
   __typename?: 'OptionDetails';
   expires: Scalars['String'];
-  type: OptionType;
-  callOrPut: CallOrPutType;
+  optionType: OptionType;
+  type: CallOrPutType;
   buyIV?: Maybe<Scalars['String']>;
   delta?: Maybe<Scalars['Float']>;
   theta?: Maybe<Scalars['Float']>;
@@ -59,7 +59,7 @@ export type OptionInfo = {
   __typename?: 'OptionInfo';
   name: Scalars['String'];
   href: Scalars['String'];
-  callOrPut: CallOrPutType;
+  type: CallOrPutType;
   strike: Scalars['Float'];
   buyVolume?: Maybe<Scalars['Int']>;
   buy?: Maybe<Scalars['Float']>;
@@ -238,8 +238,8 @@ export type InstrumentDetailsResolvers<ContextType = ContextWithDataSources, Par
 
 export type OptionDetailsResolvers<ContextType = ContextWithDataSources, ParentType extends ResolversParentTypes['OptionDetails'] = ResolversParentTypes['OptionDetails']> = ResolversObject<{
   expires?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['OptionType'], ParentType, ContextType>;
-  callOrPut?: Resolver<ResolversTypes['CallOrPutType'], ParentType, ContextType>;
+  optionType?: Resolver<ResolversTypes['OptionType'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['CallOrPutType'], ParentType, ContextType>;
   buyIV?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   delta?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   theta?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -254,7 +254,7 @@ export type OptionDetailsResolvers<ContextType = ContextWithDataSources, ParentT
 export type OptionInfoResolvers<ContextType = ContextWithDataSources, ParentType extends ResolversParentTypes['OptionInfo'] = ResolversParentTypes['OptionInfo']> = ResolversObject<{
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   href?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  callOrPut?: Resolver<ResolversTypes['CallOrPutType'], ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['CallOrPutType'], ParentType, ContextType>;
   strike?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   buyVolume?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   buy?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
