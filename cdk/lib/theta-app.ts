@@ -10,18 +10,18 @@ import * as targets from '@aws-cdk/aws-route53-targets/lib';
 import { Construct } from '@aws-cdk/core';
 import { AllowedMethods } from '@aws-cdk/aws-cloudfront';
 
-export interface CatsAppProps {
+export interface ThetaAppProps {
     domainName: string
     zone: route53.IHostedZone
     certificate: ICertificate
-    source: s3.Location
+    // source: s3.Location
 }
 
-export class CatsApp extends Construct {
-    constructor(parent: Construct, name: string, { zone, domainName, source, certificate }: CatsAppProps) {
+export class ThetaApp extends Construct {
+    constructor(parent: Construct, name: string, { zone, domainName, certificate }: ThetaAppProps) {
         super(parent, name);
 
-        new cdk.CfnOutput(this, 'Site', { value: 'https://' + domainName });
+        // new cdk.CfnOutput(this, 'Site', { value: 'https://' + domainName });
 
         // Content bucket
         const siteBucket = new s3.Bucket(this, 'SiteBucket', {
@@ -35,8 +35,8 @@ export class CatsApp extends Construct {
 
         // CloudFront distribution that provides HTTPS
         const distribution = new cloudfront.Distribution(this, 'SiteDistribution', {
-            certificate,
-            domainNames: [domainName],
+            // certificate,
+            // domainNames: [domainName],
             defaultRootObject: "index.html",
             minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2018,
             defaultBehavior: { 
@@ -47,19 +47,24 @@ export class CatsApp extends Construct {
         });
 
         new cdk.CfnOutput(this, 'DistributionId', { value: distribution.distributionId });
+        new cdk.CfnOutput(this, 'DistributionDomainName', { value: distribution.distributionDomainName });
+        new cdk.CfnOutput(this, 'DomainName', { value: distribution.domainName });
 
         // Route53 alias record for the CloudFront distribution
-        new route53.ARecord(this, 'SiteAliasRecord', {
-            recordName: domainName,
-            target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution)),
-            zone
-        });
+        // new route53.ARecord(this, 'SiteAliasRecord', {
+        //     recordName: domainName,
+        //     target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution)),
+        //     zone
+        // });
 
-        const sourceBucket = s3.Bucket.fromBucketName(this, 'AppCodeBucket', source.bucketName);
+        // const sourceBucket = s3.Bucket.fromBucketName(this, 'AppCodeBucket', source.bucketName);
+
+        const src = s3deploy.Source.asset("../app/client/public");
+        // const src = s3deploy.Source.bucket(sourceBucket, source.objectKey);
         
         // Deploy site contents to S3 bucket
         new s3deploy.BucketDeployment(this, 'DeployWithInvalidation', {
-            sources: [s3deploy.Source.bucket(sourceBucket, source.objectKey)],
+            sources: [src],
             destinationBucket: siteBucket,
             distribution,
             distributionPaths: ['/*'],

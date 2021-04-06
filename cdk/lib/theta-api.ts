@@ -26,8 +26,7 @@ export class ThetaApi extends cdk.Construct {
     constructor(scope: cdk.Construct, id: string, { domainName, zone, certificate, table }: ThetaApiProps) {
         super(scope, id);
 
-        new cdk.CfnOutput(this, 'Site', { value: 'https://' + domainName });
-
+        // new cdk.CfnOutput(this, 'Site', { value: 'https://' + domainName });
 
         // const sourceBucket = s3.Bucket.fromBucketName(this, 'LambdaSourceBucket', source.bucketName);
 
@@ -41,28 +40,28 @@ export class ThetaApi extends cdk.Construct {
                 NODE_OPTIONS: "--enable-source-maps",
                 DYNAMODB_TABLENAME: table.tableName
             },
-            timeout: Duration.seconds(10),
-            memorySize: 166
+            timeout: Duration.seconds(30),
+            memorySize: 180
         });
 
         table.grantReadWriteData(this.handler);
 
         // HttpApi
-        const domain = new gw2.DomainName(this, 'DomainName', {
-            domainName,
-            certificate
-          });
+        // const domain = new gw2.DomainName(this, 'DomainName', {
+        //     domainName,
+        //     certificate
+        //   });
 
-        const httpApi = new gw2.HttpApi(this, 'HttpProxyApi', {
+        const httpApi = new gw2.HttpApi(this, 'ThetaGangProxyApi', {
             corsPreflight: {
                 allowHeaders: ['Authorization','Content-Type'],
                 allowMethods: [gw2.CorsHttpMethod.GET, gw2.CorsHttpMethod.HEAD, gw2.CorsHttpMethod.OPTIONS, gw2.CorsHttpMethod.POST],
                 allowOrigins: ['*'],
                 maxAge: Duration.days(10),
             },
-            defaultDomainMapping: {
-                domainName: domain,
-              },
+            // defaultDomainMapping: {
+            //     domainName: domain,
+            //   },
         });
 
         new CfnOutput(this, "HttpApiEndpoint", { value: httpApi.apiEndpoint });
@@ -84,11 +83,11 @@ export class ThetaApi extends cdk.Construct {
         //     routeCfn.authorizationType = "JWT"; // THIS HAS TO MATCH THE AUTHORIZER TYPE ABOVE
         // });
 
-        new ARecord(this, 'DomainAliasRecord', {
-            recordName: domainName,
-            zone,
-            target: RecordTarget.fromAlias(new targets.ApiGatewayv2Domain(domain))
-        });
+        // new ARecord(this, 'DomainAliasRecord', {
+        //     recordName: domainName,
+        //     zone,
+        //     target: RecordTarget.fromAlias(new targets.ApiGatewayv2Domain(domain))
+        // });
     }
 
     private addAuthorizer(

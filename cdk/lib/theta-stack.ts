@@ -6,6 +6,7 @@ import { ThetaApi } from './theta-api';
 // import { CatsApp } from './cats-app';
 import { S3ObjectParameter } from './utils';
 import { Table } from '@aws-cdk/aws-dynamodb';
+import { ThetaApp } from './theta-app';
 
 export interface ThetaStackProps extends cdk.StackProps {
 }
@@ -42,11 +43,11 @@ export class ThetaStack extends cdk.Stack {
       table
     });
 
-    // const site = new CatsApp(this, "AppSite", {
-    //   domainName: "cats.aws.jogus.io",
-    //   zone,
-    //   certificate: certificateEdge,
-    //   source: this.appCode.location
-    // });
+    const site = new ThetaApp(this, "AppSite", {
+      domainName: "thetagang.aws.jogus.io",
+      zone,
+      certificate: certificateEdge,
+      // source: this.appCode.location
+    });
   }
 }
