@@ -71,7 +71,7 @@ export class PipelineStack extends Stack {
         const deployAction = new codepipeline_actions.CloudFormationCreateUpdateStackAction({
             actionName: 'Theta_CFN_Deploy',
             templatePath: cdkBuildArtifact.atPath('ThetaGangStack.template.json'),
-            stackName: 'ThetaStack',
+            stackName: 'ThetaGangStack',
             adminPermissions: true,
             parameterOverrides: {
                 ...props.stack.lambdaCode.assign(lambdaBuildArtifact.s3Location),
