@@ -68,17 +68,17 @@ export class PipelineStack extends Stack {
             outputs: [cdkBuildArtifact],
         });
 
-        // const deployAction = new codepipeline_actions.CloudFormationCreateUpdateStackAction({
-        //     actionName: 'Theta_CFN_Deploy',
-        //     templatePath: cdkBuildArtifact.atPath('ThetaStack.template.json'),
-        //     stackName: 'ThetaStack',
-        //     adminPermissions: true,
-        //     parameterOverrides: {
-        //         // ...props.stack.lambdaCode.assign(lambdaBuildArtifact.s3Location),
-        //         // ...props.stack.appCode.assign(appBuildArtifact.s3Location),
-        //     },
-        //     extraInputs: [lambdaBuildArtifact, appBuildArtifact],
-        // });
+        const deployAction = new codepipeline_actions.CloudFormationCreateUpdateStackAction({
+            actionName: 'Theta_CFN_Deploy',
+            templatePath: cdkBuildArtifact.atPath('ThetaStack.template.json'),
+            stackName: 'ThetaStack',
+            adminPermissions: true,
+            parameterOverrides: {
+                ...props.stack.lambdaCode.assign(lambdaBuildArtifact.s3Location),
+                ...props.stack.appCode.assign(appBuildArtifact.s3Location),
+            },
+            extraInputs: [lambdaBuildArtifact, appBuildArtifact],
+        });
 
         // Complete Pipeline Project
         const pipeline = new codepipeline.Pipeline(this, 'Pipeline', {
@@ -93,13 +93,13 @@ export class PipelineStack extends Stack {
                     stageName: 'Build',
                     actions: [lambdaBuildAction, appBuildAction, cdkBuildAction]
                 },
-                // {
-                //     stageName: 'Deploy',
-                //     actions: [deployAction]
-                // },
+                {
+                    stageName: 'Deploy',
+                    actions: [deployAction]
+                },
             ],
         });
 
-        // pipeline.artifactBucket.grantRead(deployAction.deploymentRole);
+        pipeline.artifactBucket.grantRead(deployAction.deploymentRole);
     }
 }

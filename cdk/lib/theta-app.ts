@@ -14,11 +14,11 @@ export interface ThetaAppProps {
     domainName: string
     zone: route53.IHostedZone
     certificate: ICertificate
-    // source: s3.Location
+    source: s3.Location
 }
 
 export class ThetaApp extends Construct {
-    constructor(parent: Construct, name: string, { zone, domainName, certificate }: ThetaAppProps) {
+    constructor(parent: Construct, name: string, { source, zone, domainName, certificate }: ThetaAppProps) {
         super(parent, name);
 
         // new cdk.CfnOutput(this, 'Site', { value: 'https://' + domainName });
@@ -57,10 +57,10 @@ export class ThetaApp extends Construct {
         //     zone
         // });
 
-        // const sourceBucket = s3.Bucket.fromBucketName(this, 'AppCodeBucket', source.bucketName);
+        const sourceBucket = s3.Bucket.fromBucketName(this, 'AppCodeBucket', source.bucketName);
 
-        const src = s3deploy.Source.asset("../app/client/public");
-        // const src = s3deploy.Source.bucket(sourceBucket, source.objectKey);
+        // const src = s3deploy.Source.asset("../app/client/public");
+        const src = s3deploy.Source.bucket(sourceBucket, source.objectKey);
         
         // Deploy site contents to S3 bucket
         new s3deploy.BucketDeployment(this, 'DeployWithInvalidation', {

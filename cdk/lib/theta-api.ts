@@ -1,7 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import * as gw2 from '@aws-cdk/aws-apigatewayv2';
 import * as gw2i from '@aws-cdk/aws-apigatewayv2-integrations';
-// import { CatsAuthentication } from './cats-auth';
 import { Function, Runtime, Code } from '@aws-cdk/aws-lambda';
 import { IHostedZone, ARecord, RecordTarget } from '@aws-cdk/aws-route53';
 import { ICertificate } from '@aws-cdk/aws-certificatemanager';
@@ -16,24 +15,24 @@ export interface ThetaApiProps {
     // auth: CatsAuthentication
     zone: IHostedZone
     certificate: ICertificate
-    // source: s3.Location
+    source: s3.Location
     table: ITable
 }
 
 export class ThetaApi extends cdk.Construct {
     public readonly handler : Function;
 
-    constructor(scope: cdk.Construct, id: string, { domainName, zone, certificate, table }: ThetaApiProps) {
+    constructor(scope: cdk.Construct, id: string, { source, domainName, zone, certificate, table }: ThetaApiProps) {
         super(scope, id);
 
         // new cdk.CfnOutput(this, 'Site', { value: 'https://' + domainName });
 
-        // const sourceBucket = s3.Bucket.fromBucketName(this, 'LambdaSourceBucket', source.bucketName);
+        const sourceBucket = s3.Bucket.fromBucketName(this, 'LambdaSourceBucket', source.bucketName);
 
         this.handler = new Function(this, 'ApolloHandler', {
             runtime: Runtime.NODEJS_14_X,
-            // code: Code.fromBucket(sourceBucket, source.objectKey),
-            code: Code.fromAsset("../app/lambda/build"),
+            code: Code.fromBucket(sourceBucket, source.objectKey),
+            // code: Code.fromAsset("../app/lambda/build"),
             handler: 'index.handler',
             description: `Function generated on: ${new Date().toISOString()}`,
             environment: {

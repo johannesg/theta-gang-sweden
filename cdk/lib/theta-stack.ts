@@ -12,14 +12,14 @@ export interface ThetaStackProps extends cdk.StackProps {
 }
 
 export class ThetaStack extends cdk.Stack {
-  // public readonly lambdaCode: S3ObjectParameter;
-  // public readonly appCode: S3ObjectParameter;
+  public readonly lambdaCode: S3ObjectParameter;
+  public readonly appCode: S3ObjectParameter;
 
   constructor(scope: cdk.Construct, id: string, props: ThetaStackProps) {
     super(scope, id, props);
 
-    // this.lambdaCode = new S3ObjectParameter(this, "LambdaCode");
-    // this.appCode = new S3ObjectParameter(this, "AppCode");
+    this.lambdaCode = new S3ObjectParameter(this, "LambdaCode");
+    this.appCode = new S3ObjectParameter(this, "AppCode");
 
     const certificateEdge =
       Certificate.fromCertificateArn(this, "CertificateEdge",
@@ -39,7 +39,7 @@ export class ThetaStack extends cdk.Stack {
       // auth,
       zone,
       certificate: certificateRegional,
-      // source: this.lambdaCode.location,
+      source: this.lambdaCode.location,
       table
     });
 
@@ -47,7 +47,7 @@ export class ThetaStack extends cdk.Stack {
       domainName: "thetagang.aws.jogus.io",
       zone,
       certificate: certificateEdge,
-      // source: this.appCode.location
+      source: this.appCode.location
     });
   }
 }
