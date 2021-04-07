@@ -6,7 +6,7 @@ phases:
       - npm ci
   build:
     commands:
-      - npm run esbuild
+      - npm run build
 artifacts:
   base-directory: app/lambda
   files: 

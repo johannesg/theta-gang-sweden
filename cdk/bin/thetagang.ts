@@ -22,10 +22,10 @@ const thetagang = new ThetaStack(app, prefix + 'Stack', {
       region: process.env.CDK_DEFAULT_REGION 
   }});
 
-// new CatsPipelineStack(app, 'CatsPipelineStack', {
-//     cats,
-//     env: {
-//         account: process.env.CDK_DEFAULT_ACCOUNT,
-//         region: process.env.CDK_DEFAULT_REGION
-//     }
-// });
+new PipelineStack(app, prefix + 'PipelineStack', {
+    stack: thetagang,
+    env: {
+        account: process.env.CDK_DEFAULT_ACCOUNT,
+        region: process.env.CDK_DEFAULT_REGION
+    }
+});

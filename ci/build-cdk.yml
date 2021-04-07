@@ -11,4 +11,4 @@ phases:
 artifacts:
   base-directory: cdk/dist
   files: 
-    - CatsStack.template.json
+    - ThetaStack.template.json
