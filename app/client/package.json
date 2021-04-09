@@ -1,8 +1,8 @@
 {
-  "name": "my-favourite-cats",
+  "name": "theta-gang-app",
   "version": "1.0.0",
   "private": true,
-  "description": "My favourite Cats",
+  "description": "Theta Gang Sweden App",
   "author": "Johannes Gustafsson",
   "keywords": [
     "gatsby"
@@ -42,7 +42,7 @@
     "gatsby-plugin-material-ui": "^3.0.0",
     "gatsby-plugin-react-helmet": "^4.2.0",
     "gatsby-source-filesystem": "^3.2.0",
-    "immer": "^8.0.1",
+    "immer": "^9.0.1",
     "luxon": "^1.26.0",
     "numeral": "^2.0.6",
     "react": "^17.0.2",

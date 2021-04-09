@@ -1,9 +1,6 @@
 {
-  "name": "cats",
+  "name": "theta-gang-cdk",
   "version": "0.1.0",
-  "bin": {
-    "cats": "bin/cats.js"
-  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
