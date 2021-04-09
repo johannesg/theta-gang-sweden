@@ -144,6 +144,14 @@ export function OptionMatrix() {
         console.log(`Selected: ${activeOption()?.name}`)
     }
 
+    function getShoppingCartStatusClass(info: OptionInfo) : string | undefined {
+        switch (isInShoppingCart(shoppingCartVar, info)) {
+            case ShoppingAction.Buy: return classes.markAsBuy;
+            case ShoppingAction.Sell: return classes.markAsSell;
+            default: return undefined;
+        }
+    }
+
     return <TableContainer component={Paper}>
         <Table className={classes.table} size="small" aria-label="a dense table">
             <TableHead>
@@ -169,12 +177,9 @@ export function OptionMatrix() {
 
                     const prevStrike = (i == 0 ? row?.strike : rows[i - 1]?.strike) ?? 0;
 
-                    const clCallInShoppingCart = "markAs" + isInShoppingCart(shoppingCartVar, call);
-                    const clPutInShoppingCart = "markAs" + isInShoppingCart(shoppingCartVar, put);
-
                     const rowClass = clsx((price >= strike && price <= prevStrike) && classes.mark);
-                    const cellClassCall = isActive(call) ? classes.selected : classes[clCallInShoppingCart];
-                    const cellClassPut = isActive(put) ? classes.selected : classes[clPutInShoppingCart];
+                    const cellClassCall = isActive(call) ? classes.selected : getShoppingCartStatusClass(call);
+                    const cellClassPut = isActive(put) ? classes.selected : getShoppingCartStatusClass(put);
 
                     const callHandler = () => selectItem(call);
                     const putHandler = () => selectItem(put);
