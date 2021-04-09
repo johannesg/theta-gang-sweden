@@ -23,7 +23,7 @@ export function OptionActions() {
   const buy = option?.buy ?? 0;
   const sell = option?.sell ?? 0;
   const mid = (buy + sell) / 2;
-  const spread = (sell - buy) / 2 / mid;
+  const spread = (sell - buy) / mid;
 
   return <Table size="small">
     <TableHead>
@@ -39,7 +39,7 @@ export function OptionActions() {
         <TableCell>{numeral(buy).format("#0.00")}</TableCell>
         <TableCell>{numeral(mid).format("#0.00")}</TableCell>
         <TableCell>{numeral(sell).format("#0.00")}</TableCell>
-        <TableCell>{numeral(spread).format("%")}</TableCell>
+        <TableCell>{numeral(spread).format("%0.00")}</TableCell>
       </TableRow>
     </TableBody>
     <TableHead>

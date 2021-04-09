@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    title: "My favourite Cats",
+    title: "Theta Gang Sweden",
   },
   // flags: { PRESERVE_WEBPACK_CACHE: true },
   plugins: [

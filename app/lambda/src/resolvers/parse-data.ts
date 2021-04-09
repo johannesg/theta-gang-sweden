@@ -1,7 +1,7 @@
 import numeral from '../utils/numeral';
 import { CallOrPutType, Instrument, InstrumentDetails, OptionDetails, OptionMatrixItem, OptionType } from '../types';
 
-export function parseStockList($: cheerio.Selector) : Instrument[] {
+export function parseStockList($: cheerio.Selector): Instrument[] {
     return $("#underlyingInstrumentId")
         .children()
         .map((i, e) => {
@@ -26,7 +26,7 @@ export async function parseOptionsPage($: cheerio.Selector) {
     };
 }
 
-function parseUnderlyingTable(table: cheerio.Cheerio) : InstrumentDetails {
+function parseUnderlyingTable(table: cheerio.Cheerio): InstrumentDetails {
     const getAttr = (name: string) => {
         var value = table.find(`td.${name}`).text();
 
@@ -57,14 +57,14 @@ function parseUnderlyingTable(table: cheerio.Cheerio) : InstrumentDetails {
     };
 }
 
-function parseOptionsTable($: cheerio.Selector, table: cheerio.Cheerio) : OptionMatrixItem[] {
+function parseOptionsTable($: cheerio.Selector, table: cheerio.Cheerio): OptionMatrixItem[] {
     return table.find("tbody > tr")
         .map((i, elem) => parseOptionItem(i, $(elem)))
         .get();
 }
 
-function parseOptionItem(i: number, tr: cheerio.Cheerio) : OptionMatrixItem {
-    const getName = (cl: string) : { name: string, href: string} => {
+function parseOptionItem(i: number, tr: cheerio.Cheerio): OptionMatrixItem {
+    const getName = (cl: string): { name: string, href: string } => {
         var nameNode = tr.find(`td.matrix.${cl}.instrumentName a`);
 
         return {
@@ -73,7 +73,7 @@ function parseOptionItem(i: number, tr: cheerio.Cheerio) : OptionMatrixItem {
         };
     };
 
-    const getAttr = (i: number) : number => {
+    const getAttr = (i: number): number => {
         const val = tr.find("td").eq(i).text();
         // return val;
         return numeral(val).value() ?? 0;
@@ -84,7 +84,7 @@ function parseOptionItem(i: number, tr: cheerio.Cheerio) : OptionMatrixItem {
     return {
         call: {
             ...getName("tLeft"),
-            type:CallOrPutType.Call,
+            type: CallOrPutType.Call,
             strike,
             buyVolume: getAttr(2),
             buy: getAttr(3),
@@ -94,7 +94,7 @@ function parseOptionItem(i: number, tr: cheerio.Cheerio) : OptionMatrixItem {
         strike,
         put: {
             ...getName("tRight"),
-            type:CallOrPutType.Put,
+            type: CallOrPutType.Put,
             strike,
             buyVolume: getAttr(7),
             buy: getAttr(8),
@@ -104,8 +104,8 @@ function parseOptionItem(i: number, tr: cheerio.Cheerio) : OptionMatrixItem {
     }
 }
 
-function parseCallOrPut(text: string) : CallOrPutType {
-    switch(text) {
+function parseCallOrPut(text: string): CallOrPutType {
+    switch (text) {
         case "Köp": return CallOrPutType.Call;
         case "Sälj": return CallOrPutType.Put;
     }
@@ -113,8 +113,8 @@ function parseCallOrPut(text: string) : CallOrPutType {
     throw `Invalid call or put: ${text}`;
 }
 
-function parseOptionType(text: string) : OptionType {
-    switch(text) {
+function parseOptionType(text: string): OptionType {
+    switch (text) {
         case "Weekly": return OptionType.Weekly;
         case "Option": return OptionType.Standard;
     }
@@ -122,15 +122,16 @@ function parseOptionType(text: string) : OptionType {
     throw `Invalid call or put: ${text}`;
 }
 
-export function parseOptionInfo(doc: cheerio.Selector) : OptionDetails {
+export function parseOptionInfo(doc: cheerio.Selector): OptionDetails {
+    const quoteBar = doc("div.component.quote div ul li");
     const dd = doc("div.derivative_greeks_data dd");
     const pi = doc("ul.primaryInfo.cleanList li div span.data");
 
-    const getPI = (i: number) => {
+    function getPI(i: number) {
         return pi.eq(i).text();
     }
 
-    const getGreek = (i: number) => {
+    function getGreek(i: number) {
         const val = dd.eq(i).text();
         return {
             num: () => numeral(val).value(),
@@ -139,17 +140,28 @@ export function parseOptionInfo(doc: cheerio.Selector) : OptionDetails {
     }
 
     return {
+        change: numeral(quoteBar.find("div span.change").text()).value(),
+        changePercent: numeral(quoteBar.find("div span.changePercent").text()).value(),
+        last: numeral(quoteBar.find("span.lastPrice").text()).value(),
+        spread: numeral(quoteBar.find("span.spread").text()).value(),
+        high: numeral(quoteBar.find("span.highestPrice").text()).value(),
+        low: numeral(quoteBar.find("span.lowestPrice").text()).value(),
+        volume: numeral(quoteBar.find("span.totalVolumeTraded").text()).value(),
+        updated: quoteBar.find("span.updated").text(),
+
         type: parseCallOrPut(getPI(1)),
         optionType: parseOptionType(getPI(3)),
         expires: getPI(2),
+        strike: numeral(getPI(4)).value(),
+        parity: numeral(getPI(5)).value(),
 
-        buyIV: getGreek(0).text(),
+        buyIV: getGreek(0).num(),
         delta: getGreek(2).num(),
         theta: getGreek(3).num(),
         vega: getGreek(4).num(),
-        sellIV: getGreek(5).text(),
+        sellIV: getGreek(5).num(),
         gamma: getGreek(7).num(),
         rho: getGreek(8).num(),
-        IV: getGreek(9).text(),
+        IV: getGreek(9).num(),
     };
 }

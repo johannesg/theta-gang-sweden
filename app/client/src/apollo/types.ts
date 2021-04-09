@@ -43,17 +43,27 @@ export type InstrumentDetails = {
 
 export type OptionDetails = {
   __typename?: 'OptionDetails';
+  changePercent: Maybe<Scalars['Float']>;
+  change: Maybe<Scalars['Float']>;
+  last: Maybe<Scalars['Float']>;
+  spread: Maybe<Scalars['Float']>;
+  high: Maybe<Scalars['Float']>;
+  low: Maybe<Scalars['Float']>;
+  volume: Maybe<Scalars['Int']>;
+  updated: Maybe<Scalars['String']>;
   expires: Scalars['String'];
   optionType: OptionType;
   type: CallOrPutType;
-  buyIV: Maybe<Scalars['String']>;
+  strike: Maybe<Scalars['Float']>;
+  parity: Maybe<Scalars['Int']>;
+  buyIV: Maybe<Scalars['Float']>;
   delta: Maybe<Scalars['Float']>;
   theta: Maybe<Scalars['Float']>;
   vega: Maybe<Scalars['Float']>;
-  sellIV: Maybe<Scalars['String']>;
+  sellIV: Maybe<Scalars['Float']>;
   gamma: Maybe<Scalars['Float']>;
   rho: Maybe<Scalars['Float']>;
-  IV: Maybe<Scalars['String']>;
+  IV: Maybe<Scalars['Float']>;
 };
 
 export type OptionInfo = {
@@ -153,7 +163,7 @@ export type DetailsQuery = (
   { __typename?: 'Query' }
   & { optionDetails: Maybe<(
     { __typename?: 'OptionDetails' }
-    & Pick<OptionDetails, 'type' | 'optionType' | 'expires' | 'buyIV' | 'delta' | 'gamma' | 'theta' | 'vega' | 'sellIV' | 'IV'>
+    & Pick<OptionDetails, 'last' | 'volume' | 'updated' | 'spread' | 'type' | 'optionType' | 'expires' | 'buyIV' | 'delta' | 'gamma' | 'theta' | 'vega' | 'sellIV' | 'IV'>
   )> }
 );
 
@@ -268,6 +278,10 @@ export type OptionsQueryResult = Apollo.QueryResult<OptionsQuery, OptionsQueryVa
 export const DetailsDocument = gql`
     query Details($href: ID!) {
   optionDetails(id: $href) {
+    last
+    volume
+    updated
+    spread
     type
     optionType
     expires

@@ -1,19 +1,16 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import { useCompositeOptionsQuery } from '../apollo/hooks';
-import { activeOption, ShoppingAction, addToShoppingCart, isInShoppingCart, shoppingCart } from '../apollo/vars';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core';
+import { Button, ButtonGroup } from '@material-ui/core';
+import { blue, green, red, yellow } from '@material-ui/core/colors';
 import { useReactiveVar } from '@apollo/client';
 import clsx from 'clsx';
-import { green, red, yellow } from '@material-ui/core/colors';
+
+import { useCompositeOptionsQuery } from '../apollo/hooks';
+import { activeOption, ShoppingAction, addToShoppingCart, isInShoppingCart, shoppingCart } from '../apollo/vars';
 import { OptionInfo } from '../apollo/types';
-import { Button, ButtonGroup } from '@material-ui/core';
+import { OptionGreeksCall, OptionGreeksPut } from './OptionGreeks';
+import numeral from 'numeral';
 
 const useStyles = makeStyles({
     table: {
@@ -34,6 +31,8 @@ const useStyles = makeStyles({
         // : red[500]
     },
     selected: {
+        // boxSizing: "border-box",
+        // border: "2px solid yellow",
         backgroundColor: yellow[500]
     },
     markAsBuy: {
@@ -55,6 +54,12 @@ const useStyles = makeStyles({
         lineHeight: 1,
         fontSize: "0.7rem",
         backgroundColor: red[500],
+    },
+    bid: {
+        color: blue[500],
+    },
+    ask: {
+        color: red[500],
     }
 });
 
@@ -156,17 +161,31 @@ export function OptionMatrix() {
         <Table className={classes.table} size="small" aria-label="a dense table">
             <TableHead>
                 <TableRow>
-                    <TableCell>Call</TableCell>
-                    <TableCell align="right">B. Vol</TableCell>
-                    <TableCell align="right">Buy</TableCell>
-                    <TableCell align="right">Sell</TableCell>
-                    <TableCell align="right">S. Vol</TableCell>
+                    {/* <TableCell>Call</TableCell> */}
+                    <TableCell align="right">Updated</TableCell>
+                    <TableCell align="right">IV</TableCell>
+                    <TableCell align="right">Vega</TableCell>
+                    <TableCell align="right">Theta</TableCell>
+                    <TableCell align="right">Gamma</TableCell>
+                    <TableCell align="right">Delta</TableCell>
+                    <TableCell align="right">Vol</TableCell>
+                    <TableCell align="right">Spread</TableCell>
+                    <TableCell align="right">Last</TableCell>
+                    <TableCell align="right">Bid</TableCell>
+                    <TableCell align="right">Ask</TableCell>
                     <TableCell align="center">Strike</TableCell>
-                    <TableCell align="right">B. Vol</TableCell>
-                    <TableCell align="right">Buy</TableCell>
-                    <TableCell align="right">Sell</TableCell>
-                    <TableCell align="right">S. Vol</TableCell>
-                    <TableCell>Put</TableCell>
+                    <TableCell align="right">Bid</TableCell>
+                    <TableCell align="right">Ask</TableCell>
+                    <TableCell align="right">Last</TableCell>
+                    <TableCell align="right">Spread</TableCell>
+                    <TableCell align="right">Vol</TableCell>
+                    <TableCell align="right">Delta</TableCell>
+                    <TableCell align="right">Gamma</TableCell>
+                    <TableCell align="right">Theta</TableCell>
+                    <TableCell align="right">Vega</TableCell>
+                    <TableCell align="right">IV</TableCell>
+                    <TableCell align="right">Updated</TableCell>
+                    {/* <TableCell>Put</TableCell> */}
                 </TableRow>
             </TableHead>
             <TableBody>
@@ -181,25 +200,25 @@ export function OptionMatrix() {
                     const cellClassCall = isActive(call) ? classes.selected : getShoppingCartStatusClass(call);
                     const cellClassPut = isActive(put) ? classes.selected : getShoppingCartStatusClass(put);
 
-                    const callHandler = () => selectItem(call);
-                    const putHandler = () => selectItem(put);
+                    // const callHandler = () => selectItem(call);
+                    // const putHandler = () => selectItem(put);
+                    const callHandler = () => {};
+                    const putHandler = () => {};
 
                     return <TableRow hover className={rowClass} key={call.name}>
-                        <TableCell className={cellClassCall} onClick={callHandler}>
+                        {/* <TableCell className={cellClassCall} onClick={callHandler}>
                             <BuySellButtons option={call}></BuySellButtons>
-                        </TableCell>
-                        <TableCell className={cellClassCall} align="right" onClick={callHandler}>{call.buyVolume}</TableCell>
-                        <TableCell className={cellClassCall} align="right" onClick={callHandler}>{call.buy}</TableCell>
-                        <TableCell className={cellClassCall} align="right" onClick={callHandler}>{call.sell}</TableCell>
-                        <TableCell className={cellClassCall} align="right" onClick={callHandler}>{call.sellVolume}</TableCell>
+                        </TableCell> */}
+                        <OptionGreeksCall option={call}></OptionGreeksCall>
+                        <TableCell className={clsx(cellClassCall, classes.bid)} align="right" onClick={callHandler}>{numeral(call.buy).format("#0.00")}</TableCell>
+                        <TableCell className={clsx(cellClassCall, classes.ask)} align="right" onClick={callHandler}>{numeral(call.sell).format("#0.00")}</TableCell>
                         <TableCell className={classes.strike} align="center">{strike}</TableCell>
-                        <TableCell className={cellClassPut} align="right" onClick={putHandler} >{put.buyVolume}</TableCell>
-                        <TableCell className={cellClassPut} align="right" onClick={putHandler}>{put.buy}</TableCell>
-                        <TableCell className={cellClassPut} align="right" onClick={putHandler}>{put.sell}</TableCell>
-                        <TableCell className={cellClassPut} align="right" onClick={putHandler}>{put.sellVolume}</TableCell>
-                        <TableCell className={cellClassPut} >
+                        <TableCell className={clsx(cellClassPut, classes.bid)} align="right" onClick={putHandler}>{numeral(put.buy).format("#0.00")}</TableCell>
+                        <TableCell className={clsx(cellClassPut, classes.ask)} align="right" onClick={putHandler}>{numeral(put.sell).format("#0.00")}</TableCell>
+                        <OptionGreeksPut option={put}></OptionGreeksPut>
+                        {/* <TableCell className={cellClassPut} >
                             <BuySellButtons option={put}></BuySellButtons>
-                        </TableCell>
+                        </TableCell> */}
                     </TableRow>
                 })}
             </TableBody>

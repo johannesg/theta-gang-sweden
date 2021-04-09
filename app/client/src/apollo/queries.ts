@@ -29,10 +29,8 @@ const QUERIES = gql`
                     href
                     type
                     strike
-                    buyVolume
                     buy
                     sell
-                    sellVolume
                 }
                 strike
                 put {
@@ -40,10 +38,8 @@ const QUERIES = gql`
                     href
                     type
                     strike
-                    buyVolume
                     buy
                     sell
-                    sellVolume
                 }
             }
         }
@@ -51,6 +47,11 @@ const QUERIES = gql`
 
     query Details($href: ID!) {
         optionDetails(id: $href) {
+            last
+            volume
+            updated
+            spread
+            
             type
             optionType
             expires

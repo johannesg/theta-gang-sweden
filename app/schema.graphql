@@ -52,18 +52,29 @@ type OptionInfo {
 }
 
 type OptionDetails {
+    changePercent: Float,
+    change: Float,
+    last: Float,
+    spread: Float,
+    high: Float,
+    low: Float,
+    volume: Int
+    updated: String,
+    
     expires: String!
     optionType: OptionType!
     type: CallOrPutType!
+    strike: Float,
+    parity: Int,
 
-    buyIV: String
+    buyIV: Float
     delta: Float
     theta: Float
     vega: Float
-    sellIV: String
+    sellIV: Float
     gamma: Float
     rho: Float
-    IV: String
+    IV: Float
 }
 
 enum OptionType {

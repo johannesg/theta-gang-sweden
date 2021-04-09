@@ -87,7 +87,7 @@ function App() {
         </Grid>
       </Grid>
     </main>
-    <Drawer
+    {/* <Drawer
       className={classes.drawer}
       variant="permanent"
       anchor="right"
@@ -110,7 +110,7 @@ function App() {
       <div className={classes.drawerContainer}>
         <OptionsStrategy></OptionsStrategy>
       </div>
-    </Drawer>
+    </Drawer> */}
 
   </div>
 }
