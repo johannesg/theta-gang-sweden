@@ -1,13 +1,13 @@
 import * as React from 'react'
 
-import { ApolloProvider } from "@apollo/client"
+import { ApolloConsumer, ApolloProvider } from "@apollo/client"
 import { createApolloClient } from '../apollo/client';
 
-import { Typography, Grid, makeStyles, Box, Drawer, AppBar, Toolbar, Divider, Table, TableHead, TableCell, TableBody, TableRow } from '@material-ui/core'
+import { Typography, Grid, makeStyles, Box, Drawer, AppBar, Toolbar, Divider, Table, TableHead, TableCell, TableBody, TableRow, Button } from '@material-ui/core'
 
 import { OptionFilters } from '../components/Filters';
-import { UnderlyingTable, OptionMatrix } from '../components/OptionList';
-import { OptionActions, OptionHeader, OptionsStrategy } from '../components/Sidebar';
+import { OptionsContainer } from '../components/OptionList';
+// import { OptionActions, OptionHeader, OptionsStrategy } from '../components/Sidebar';
 
 const drawerWidth = 400;
 
@@ -78,13 +78,15 @@ function App() {
           <Box className={classes.actions}>
             <OptionFilters />
           </Box>
+          <Box>
+            <ApolloConsumer>
+              {client =>
+                <Button onClick={() => client.resetStore()} color="primary" variant="contained">Refresh</Button>
+              }
+            </ApolloConsumer>
+          </Box>
         </Grid>
-        <Grid item xs={12}>
-          <UnderlyingTable></UnderlyingTable>
-        </Grid>
-        <Grid item xs={12}>
-          <OptionMatrix></OptionMatrix>
-        </Grid>
+          <OptionsContainer></OptionsContainer>
       </Grid>
     </main>
     {/* <Drawer

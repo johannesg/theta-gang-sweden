@@ -1,14 +1,14 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, LinearProgress, Grid } from '@material-ui/core';
 import { Button, ButtonGroup } from '@material-ui/core';
 import { blue, green, red, yellow } from '@material-ui/core/colors';
-import { useReactiveVar } from '@apollo/client';
+import { NetworkStatus, useReactiveVar } from '@apollo/client';
 import clsx from 'clsx';
 
 import { useCompositeOptionsQuery } from '../apollo/hooks';
 import { activeOption, ShoppingAction, addToShoppingCart, isInShoppingCart, shoppingCart } from '../apollo/vars';
-import { OptionInfo } from '../apollo/types';
+import { InstrumentDetails, OptionInfo, OptionsList } from '../apollo/types';
 import { OptionGreeksCall, OptionGreeksPut } from './OptionGreeks';
 import numeral from 'numeral';
 
@@ -63,48 +63,49 @@ const useStyles = makeStyles({
     }
 });
 
-export function UnderlyingTable() {
+export function UnderlyingTable({ underlying }: { underlying: InstrumentDetails | undefined }) {
     const classes = useStyles();
 
-    const { loading, error, data } = useCompositeOptionsQuery();
-
-    if (!data)
+    if (!underlying)
         return <div></div>
 
-    const row = data?.options?.underlying;
+    const row = underlying;
 
-    return <TableContainer component={Paper}>
-        <Table className={classes.table} size="small" aria-label="a dense table">
-            <TableHead>
-                <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell align="right">Change</TableCell>
-                    <TableCell align="right">Percent</TableCell>
-                    <TableCell align="right">Last</TableCell>
-                    <TableCell align="right">Buy</TableCell>
-                    <TableCell align="right">Sell</TableCell>
-                    <TableCell align="right">High</TableCell>
-                    <TableCell align="right">Low</TableCell>
-                    <TableCell align="right">Updated</TableCell>
-                    <TableCell align="right">Volume</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                <TableRow>
-                    <TableCell>{row?.name}</TableCell>
-                    <TableCell align="right">{row?.change}</TableCell>
-                    <TableCell align="right">{row?.changePercent} %</TableCell>
-                    <TableCell align="right">{row?.lastPrice ?? "-"}</TableCell>
-                    <TableCell align="right">{row?.buyPrice ?? "-"}</TableCell>
-                    <TableCell align="right">{row?.sellPrice ?? "-"}</TableCell>
-                    <TableCell align="right">{row?.highestPrice ?? "-"}</TableCell>
-                    <TableCell align="right">{row?.lowestPrice ?? "-"}</TableCell>
-                    <TableCell align="right">{row?.updated}</TableCell>
-                    <TableCell align="right">{row?.totalVolumeTraded}</TableCell>
-                </TableRow>
-            </TableBody>
-        </Table>
-    </TableContainer>
+    return <div>
+
+        <TableContainer component={Paper}>
+            <Table className={classes.table} size="small" aria-label="a dense table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell>Name</TableCell>
+                        <TableCell align="right">Change</TableCell>
+                        <TableCell align="right">Percent</TableCell>
+                        <TableCell align="right">Last</TableCell>
+                        <TableCell align="right">Buy</TableCell>
+                        <TableCell align="right">Sell</TableCell>
+                        <TableCell align="right">High</TableCell>
+                        <TableCell align="right">Low</TableCell>
+                        <TableCell align="right">Updated</TableCell>
+                        <TableCell align="right">Volume</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    <TableRow>
+                        <TableCell>{row?.name}</TableCell>
+                        <TableCell align="right">{row?.change}</TableCell>
+                        <TableCell align="right">{row?.changePercent} %</TableCell>
+                        <TableCell align="right">{row?.lastPrice ?? "-"}</TableCell>
+                        <TableCell align="right">{row?.buyPrice ?? "-"}</TableCell>
+                        <TableCell align="right">{row?.sellPrice ?? "-"}</TableCell>
+                        <TableCell align="right">{row?.highestPrice ?? "-"}</TableCell>
+                        <TableCell align="right">{row?.lowestPrice ?? "-"}</TableCell>
+                        <TableCell align="right">{row?.updated}</TableCell>
+                        <TableCell align="right">{row?.totalVolumeTraded}</TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
+        </TableContainer>
+    </div>
 }
 
 function BuySellButtons({ option }: { option: OptionInfo }) {
@@ -122,19 +123,18 @@ function BuySellButtons({ option }: { option: OptionInfo }) {
     </ButtonGroup>
 }
 
-export function OptionMatrix() {
+export function OptionMatrix({ options }: { options: OptionsList | undefined }) {
+    if (!options)
+        return <div></div>
+
     const classes = useStyles();
 
-    const { loading, error, data } = useCompositeOptionsQuery();
     const activeOptionVar = useReactiveVar(activeOption);
     const shoppingCartVar = useReactiveVar(shoppingCart);
 
-    if (!data)
-        return <div></div>
+    const rows = options.options ?? [];
 
-    const rows = data?.options?.options ?? [];
-
-    const price = data?.options?.underlying?.lastPrice ?? 0;
+    const price = options.underlying?.lastPrice ?? 0;
 
     function isActive(item: OptionInfo): boolean {
         return activeOptionVar === item;
@@ -149,7 +149,7 @@ export function OptionMatrix() {
         console.log(`Selected: ${activeOption()?.name}`)
     }
 
-    function getShoppingCartStatusClass(info: OptionInfo) : string | undefined {
+    function getShoppingCartStatusClass(info: OptionInfo): string | undefined {
         switch (isInShoppingCart(shoppingCartVar, info)) {
             case ShoppingAction.Buy: return classes.markAsBuy;
             case ShoppingAction.Sell: return classes.markAsSell;
@@ -202,8 +202,8 @@ export function OptionMatrix() {
 
                     // const callHandler = () => selectItem(call);
                     // const putHandler = () => selectItem(put);
-                    const callHandler = () => {};
-                    const putHandler = () => {};
+                    const callHandler = () => { };
+                    const putHandler = () => { };
 
                     return <TableRow hover className={rowClass} key={call.name}>
                         {/* <TableCell className={cellClassCall} onClick={callHandler}>
@@ -224,4 +224,22 @@ export function OptionMatrix() {
             </TableBody>
         </Table>
     </TableContainer>
+}
+
+export function OptionsContainer() {
+    const { loading, error, data, networkStatus } = useCompositeOptionsQuery();
+    const progress = loading || networkStatus === NetworkStatus.refetch;
+
+    const underlying = data?.options?.underlying as InstrumentDetails;
+    const options = data?.options as OptionsList;
+
+    return <React.Fragment>
+        <Grid item xs={12}>
+            {progress ? <LinearProgress></LinearProgress> : <div></div>}
+            <UnderlyingTable underlying={underlying} ></UnderlyingTable>
+        </Grid>
+        <Grid item xs={12}>
+            <OptionMatrix options={options}></OptionMatrix>
+        </Grid>
+    </React.Fragment>
 }

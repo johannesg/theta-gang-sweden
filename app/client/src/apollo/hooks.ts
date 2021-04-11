@@ -1,4 +1,4 @@
-import { OptionsQueryResult, useOptionsQuery } from './types';
+import { DetailsQueryResult, OptionsQueryResult, useDetailsQuery, useOptionsQuery } from './types';
 import { currentExpiry, currentInstrument, currentOptionType } from './vars';
 import { useReactiveVar } from '@apollo/client';
 
@@ -9,5 +9,21 @@ export function useCompositeOptionsQuery(): OptionsQueryResult {
 
     const skip = !instrument;
 
-    return useOptionsQuery({ variables: { id: instrument, type: optionType, expires: expires }, skip });
+    return useOptionsQuery({
+        // pollInterval: 30000, 
+        variables: { id: instrument, type: optionType, expires: expires },
+        skip,
+        notifyOnNetworkStatusChange: true,
+    });
 }
+
+export function useOptionDetailsQuery(href: string | undefined): DetailsQueryResult {
+    const skip = !href ? true : false;
+
+    return useDetailsQuery({
+        // pollInterval: 30000, 
+        skip,
+        variables: { href: href ?? "" }
+    });
+}
+
