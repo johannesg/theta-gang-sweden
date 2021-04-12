@@ -134,7 +134,7 @@ export function parseOptionInfo(doc: cheerio.Selector): OptionDetails {
     function getGreek(i: number) {
         const val = dd.eq(i).text();
         return {
-            num: () => numeral(val).value(),
+            num: () => numeral(val).value() ?? 0,
             text: () => val
         };
     }
@@ -155,13 +155,13 @@ export function parseOptionInfo(doc: cheerio.Selector): OptionDetails {
         strike: numeral(getPI(4)).value(),
         parity: numeral(getPI(5)).value(),
 
-        buyIV: getGreek(0).num(),
+        buyIV: getGreek(0).num() / 100,
         delta: getGreek(2).num(),
         theta: getGreek(3).num(),
         vega: getGreek(4).num(),
-        sellIV: getGreek(5).num(),
+        sellIV: getGreek(5).num() / 100,
         gamma: getGreek(7).num(),
         rho: getGreek(8).num(),
-        IV: getGreek(9).num(),
+        IV: getGreek(9).num() / 100,
     };
 }
