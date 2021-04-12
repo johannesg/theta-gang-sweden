@@ -34,6 +34,9 @@ function parseUnderlyingTable(table: cheerio.Cheerio): InstrumentDetails {
             num: () => {
                 return { [name]: numeral(value).value() };
             },
+            percent: () => {
+                return { [name]: (numeral(value).value() ?? 0) / 100 };
+            },
             time: () => {
                 return { [name]: value };
             }
@@ -46,7 +49,7 @@ function parseUnderlyingTable(table: cheerio.Cheerio): InstrumentDetails {
         href: nameNode.attr("href") ?? "",
 
         ...getAttr("change").num(),
-        ...getAttr("changePercent").num(),
+        ...getAttr("changePercent").percent(),
         ...getAttr("buyPrice").num(),
         ...getAttr("sellPrice").num(),
         ...getAttr("highestPrice").num(),

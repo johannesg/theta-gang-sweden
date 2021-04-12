@@ -1,5 +1,5 @@
 import { TableCell } from '@material-ui/core';
-import numeral from 'numeral';
+import numeral from '../utils/numeral';
 import React from 'react';
 import { useOptionDetailsQuery } from '../apollo/hooks';
 import { OptionInfo } from '../apollo/types';

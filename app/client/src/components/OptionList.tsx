@@ -10,7 +10,7 @@ import { useCompositeOptionsQuery } from '../apollo/hooks';
 import { activeOption, ShoppingAction, addToShoppingCart, isInShoppingCart, shoppingCart } from '../apollo/vars';
 import { InstrumentDetails, OptionInfo, OptionsList } from '../apollo/types';
 import { OptionGreeksCall, OptionGreeksPut } from './OptionGreeks';
-import numeral from 'numeral';
+import numeral from '../utils/numeral';
 
 const useStyles = makeStyles({
     table: {
@@ -92,15 +92,15 @@ export function UnderlyingTable({ underlying }: { underlying: InstrumentDetails 
                 <TableBody>
                     <TableRow>
                         <TableCell>{row?.name}</TableCell>
-                        <TableCell align="right">{row?.change}</TableCell>
-                        <TableCell align="right">{row?.changePercent} %</TableCell>
-                        <TableCell align="right">{row?.lastPrice ?? "-"}</TableCell>
-                        <TableCell align="right">{row?.buyPrice ?? "-"}</TableCell>
-                        <TableCell align="right">{row?.sellPrice ?? "-"}</TableCell>
-                        <TableCell align="right">{row?.highestPrice ?? "-"}</TableCell>
-                        <TableCell align="right">{row?.lowestPrice ?? "-"}</TableCell>
+                        <TableCell align="right">{numeral(row?.change).format("#0.00")}</TableCell>
+                        <TableCell align="right">{numeral(row?.changePercent).format("%0.00")} %</TableCell>
+                        <TableCell align="right">{numeral(row?.lastPrice).format("#0.00") ?? "-"}</TableCell>
+                        <TableCell align="right">{numeral(row?.buyPrice).format("#0.00") ?? "-"}</TableCell>
+                        <TableCell align="right">{numeral(row?.sellPrice).format("#0.00") ?? "-"}</TableCell>
+                        <TableCell align="right">{numeral(row?.highestPrice).format("#0.00") ?? "-"}</TableCell>
+                        <TableCell align="right">{numeral(row?.lowestPrice).format("#0.00") ?? "-"}</TableCell>
                         <TableCell align="right">{row?.updated}</TableCell>
-                        <TableCell align="right">{row?.totalVolumeTraded}</TableCell>
+                        <TableCell align="right">{numeral(row?.totalVolumeTraded).format()}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>
