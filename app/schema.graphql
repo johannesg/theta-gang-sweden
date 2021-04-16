@@ -35,32 +35,28 @@ type InstrumentDetails {
 }
 
 type OptionMatrixItem {
-    call: OptionInfo
-    callDetails: OptionDetails
+    call: OptionDetails
     strike: Float
-    put: OptionInfo
-    putDetails: OptionDetails
-}
-
-type OptionInfo {
-    name: String!
-    href: String!
-    type: CallOrPutType!
-    strike: Float!
-    buyVolume: Int
-    buy: Float
-    sell: Float
-    sellVolume: Int
+    put: OptionDetails
 }
 
 type OptionDetails {
+    name: String
+    href: String
+
+    type: CallOrPutType
+    strike: Float
+
     changePercent: Float,
     change: Float,
-    last: Float,
+
+    bid: Float,
+    ask: Float,
     spread: Float,
+    last: Float,
     high: Float,
     low: Float,
-    volume: Int
+    volume: Int,
     updated: String,
     
     expires: String

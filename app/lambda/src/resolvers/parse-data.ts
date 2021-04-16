@@ -21,7 +21,19 @@ export function parseOptionsPage($: cheerio.Selector) {
 
     return {
         underlying: parseUnderlyingTable(underlyingTable),
-        options: parseOptionsTable($, optionsTable)
+        options: parseOptionsMatrix($, optionsTable)
+    };
+}
+
+export function parseOptionsOverview($: cheerio.Selector) {
+    const listFilterResult = $("#listFilterResult");
+
+    const underlyingTable = listFilterResult.find("table.optionLists").first();
+    const optionsTable = listFilterResult.find("table.optionList").first();
+
+    return {
+        underlying: parseUnderlyingTable(underlyingTable),
+        options: parseOptionsList($, optionsTable)
     };
 }
 
@@ -59,15 +71,21 @@ function parseUnderlyingTable(table: cheerio.Cheerio): InstrumentDetails {
     };
 }
 
-function parseOptionsTable($: cheerio.Selector, table: cheerio.Cheerio): OptionMatrixItem[] {
+function parseOptionsMatrix($: cheerio.Selector, table: cheerio.Cheerio): OptionMatrixItem[] {
+    return table.find("tbody > tr")
+        .map((i, elem) => parseOptionMatrixItem(i, $(elem)))
+        .get();
+}
+
+function parseOptionsList($: cheerio.Selector, table: cheerio.Cheerio): OptionDetails[] {
     return table.find("tbody > tr")
         .map((i, elem) => parseOptionItem(i, $(elem)))
         .get();
 }
 
-function parseOptionItem(i: number, tr: cheerio.Cheerio): OptionMatrixItem {
+function parseOptionMatrixItem(i: number, tr: cheerio.Cheerio): OptionMatrixItem {
     const getName = (cl: string): { name: string, href: string } => {
-        var nameNode = tr.find(`td.matrix.${cl}.instrumentName a`);
+        var nameNode = tr.find(`td.overview.${cl}.instrumentName a`);
 
         return {
             name: nameNode.attr("title") ?? "",
@@ -88,23 +106,50 @@ function parseOptionItem(i: number, tr: cheerio.Cheerio): OptionMatrixItem {
             ...getName("tLeft"),
             type: CallOrPutType.Call,
             strike,
-            buyVolume: getAttr(2),
-            buy: getAttr(3),
-            sell: getAttr(4),
-            sellVolume: getAttr(5),
+            bid: getAttr(3),
+            ask: getAttr(4),
         },
         strike,
         put: {
             ...getName("tRight"),
             type: CallOrPutType.Put,
             strike,
-            buyVolume: getAttr(7),
-            buy: getAttr(8),
-            sell: getAttr(9),
-            sellVolume: getAttr(10),
+            bid: getAttr(8),
+            ask: getAttr(9),
         }
     }
 }
+
+function parseOptionItem(i: number, tr: cheerio.Cheerio): OptionDetails {
+    var nameNode = tr.find(`td.overview.tLeft.instrumentName a`);
+
+    const name = nameNode.attr("title") ?? "";
+    const href = nameNode.attr("href") ?? "";
+
+    const str = (i: number): string => {
+        const val = tr.find("td.overview").eq(i).text();
+        return val;
+    };
+
+    const num = (i: number): number => {
+        const val = tr.find("td.overview").eq(i).text();
+        // return val;
+        return numeral(val).value() ?? 0;
+    };
+
+    const strike = str(6);
+
+    return {
+        name,
+        href,
+        optionType: parseOptionType(str(2)),
+        type: parseCallOrPut(str(3)),
+        strike: num(4),
+        spread: num(5) / 100,
+        expires: str(6)
+    }
+}
+
 
 function parseCallOrPut(text: string): CallOrPutType {
     switch (text) {

@@ -4,7 +4,7 @@ import { OptionType } from "../src/types";
 
 describe.skip("fetch data tests", () => {
     test("can get options list", async () => {
-        const res = await getOptionsList('52636', OptionType.Standard, "2021-05");
+        const res = await getOptionsList('52636', OptionType.Standard, "2021-05", "matrix");
 
         await fs.writeFile("optionslist.html", res);
 

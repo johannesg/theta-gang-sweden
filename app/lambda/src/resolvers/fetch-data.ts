@@ -7,10 +7,10 @@ import { OptionType } from '../types';
 import { getNextMonth } from '../utils/date';
 
 export async function getInstruments() {
-    return getOptionsList("5668", OptionType.Standard, getNextMonth()); // 5668 = XACT OMX30
+    return getOptionsList("5668", OptionType.Standard, getNextMonth(), "overview"); // 5668 = XACT OMX30
 }
 
-export async function getOptionsList(id: string, optionType: OptionType, expiry: string) {
+export async function getOptionsList(id: string, optionType: OptionType, expiry: string, activeTab: string) {
     const url = 'https://www.avanza.se/optioner-lista.html'
 
     const params = {
@@ -19,7 +19,7 @@ export async function getOptionsList(id: string, optionType: OptionType, expiry:
         selectedEndDates: expiry,
         sortField: "NAME",
         sortOrder: "ASCENDING",
-        activeTab: "matrix",
+        activeTab,
         optionTypes: optionType.toUpperCase()
     }
 

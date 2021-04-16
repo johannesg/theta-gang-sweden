@@ -42,18 +42,22 @@ export type InstrumentDetails = {
 
 export type OptionDetails = {
   __typename?: 'OptionDetails';
+  name?: Maybe<Scalars['String']>;
+  href?: Maybe<Scalars['String']>;
+  type?: Maybe<CallOrPutType>;
+  strike?: Maybe<Scalars['Float']>;
   changePercent?: Maybe<Scalars['Float']>;
   change?: Maybe<Scalars['Float']>;
-  last?: Maybe<Scalars['Float']>;
+  bid?: Maybe<Scalars['Float']>;
+  ask?: Maybe<Scalars['Float']>;
   spread?: Maybe<Scalars['Float']>;
+  last?: Maybe<Scalars['Float']>;
   high?: Maybe<Scalars['Float']>;
   low?: Maybe<Scalars['Float']>;
   volume?: Maybe<Scalars['Int']>;
   updated?: Maybe<Scalars['String']>;
   expires?: Maybe<Scalars['String']>;
   optionType?: Maybe<OptionType>;
-  type?: Maybe<CallOrPutType>;
-  strike?: Maybe<Scalars['Float']>;
   parity?: Maybe<Scalars['Int']>;
   buyIV?: Maybe<Scalars['Float']>;
   delta?: Maybe<Scalars['Float']>;
@@ -65,25 +69,11 @@ export type OptionDetails = {
   IV?: Maybe<Scalars['Float']>;
 };
 
-export type OptionInfo = {
-  __typename?: 'OptionInfo';
-  name: Scalars['String'];
-  href: Scalars['String'];
-  type: CallOrPutType;
-  strike: Scalars['Float'];
-  buyVolume?: Maybe<Scalars['Int']>;
-  buy?: Maybe<Scalars['Float']>;
-  sell?: Maybe<Scalars['Float']>;
-  sellVolume?: Maybe<Scalars['Int']>;
-};
-
 export type OptionMatrixItem = {
   __typename?: 'OptionMatrixItem';
-  call?: Maybe<OptionInfo>;
-  callDetails?: Maybe<OptionDetails>;
+  call?: Maybe<OptionDetails>;
   strike?: Maybe<Scalars['Float']>;
-  put?: Maybe<OptionInfo>;
-  putDetails?: Maybe<OptionDetails>;
+  put?: Maybe<OptionDetails>;
 };
 
 export enum OptionType {
@@ -204,7 +194,6 @@ export type ResolversTypes = ResolversObject<{
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   OptionDetails: ResolverTypeWrapper<OptionDetails>;
-  OptionInfo: ResolverTypeWrapper<OptionInfo>;
   OptionMatrixItem: ResolverTypeWrapper<OptionMatrixItem>;
   OptionType: OptionType;
   OptionsList: ResolverTypeWrapper<OptionsList>;
@@ -221,7 +210,6 @@ export type ResolversParentTypes = ResolversObject<{
   Float: Scalars['Float'];
   Int: Scalars['Int'];
   OptionDetails: OptionDetails;
-  OptionInfo: OptionInfo;
   OptionMatrixItem: OptionMatrixItem;
   OptionsList: OptionsList;
   Query: {};
@@ -250,18 +238,22 @@ export type InstrumentDetailsResolvers<ContextType = ContextWithDataSources, Par
 }>;
 
 export type OptionDetailsResolvers<ContextType = ContextWithDataSources, ParentType extends ResolversParentTypes['OptionDetails'] = ResolversParentTypes['OptionDetails']> = ResolversObject<{
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  href?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['CallOrPutType']>, ParentType, ContextType>;
+  strike?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   changePercent?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   change?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  last?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  bid?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  ask?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   spread?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  last?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   high?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   low?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   volume?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   updated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   expires?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   optionType?: Resolver<Maybe<ResolversTypes['OptionType']>, ParentType, ContextType>;
-  type?: Resolver<Maybe<ResolversTypes['CallOrPutType']>, ParentType, ContextType>;
-  strike?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   parity?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   buyIV?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   delta?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -274,24 +266,10 @@ export type OptionDetailsResolvers<ContextType = ContextWithDataSources, ParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type OptionInfoResolvers<ContextType = ContextWithDataSources, ParentType extends ResolversParentTypes['OptionInfo'] = ResolversParentTypes['OptionInfo']> = ResolversObject<{
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  href?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['CallOrPutType'], ParentType, ContextType>;
-  strike?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  buyVolume?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  buy?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  sell?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  sellVolume?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type OptionMatrixItemResolvers<ContextType = ContextWithDataSources, ParentType extends ResolversParentTypes['OptionMatrixItem'] = ResolversParentTypes['OptionMatrixItem']> = ResolversObject<{
-  call?: Resolver<Maybe<ResolversTypes['OptionInfo']>, ParentType, ContextType>;
-  callDetails?: Resolver<Maybe<ResolversTypes['OptionDetails']>, ParentType, ContextType>;
+  call?: Resolver<Maybe<ResolversTypes['OptionDetails']>, ParentType, ContextType>;
   strike?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  put?: Resolver<Maybe<ResolversTypes['OptionInfo']>, ParentType, ContextType>;
-  putDetails?: Resolver<Maybe<ResolversTypes['OptionDetails']>, ParentType, ContextType>;
+  put?: Resolver<Maybe<ResolversTypes['OptionDetails']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -311,7 +289,6 @@ export type Resolvers<ContextType = ContextWithDataSources> = ResolversObject<{
   Instrument?: InstrumentResolvers<ContextType>;
   InstrumentDetails?: InstrumentDetailsResolvers<ContextType>;
   OptionDetails?: OptionDetailsResolvers<ContextType>;
-  OptionInfo?: OptionInfoResolvers<ContextType>;
   OptionMatrixItem?: OptionMatrixItemResolvers<ContextType>;
   OptionsList?: OptionsListResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

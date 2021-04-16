@@ -1,5 +1,5 @@
 import * as fs from 'fs/promises';
-import { parseOptionInfo, parseOptionsPage, parseStockList } from '../src/resolvers/parse-data';
+import { parseOptionInfo, parseOptionsOverview, parseOptionsPage, parseStockList } from '../src/resolvers/parse-data';
 import * as util from 'util';
 
 import * as cheerio from 'cheerio';
@@ -23,7 +23,18 @@ describe("parse tests", () => {
         const doc = cheerio.load(data);
 
         const res = await parseOptionsPage(doc);
+        // console.log(util.inspect(res.underlying, {showHidden: false, depth: null}))
+        expect(res).not.toBeNull();
+    });
+
+    test("can parse options list 2", async () => {
+        const data = await fs.readFile("test/optionslist2.html");
+
+        const doc = cheerio.load(data);
+
+        const res = await parseOptionsOverview(doc);
         console.log(util.inspect(res.underlying, {showHidden: false, depth: null}))
+        console.log(util.inspect(res.options, {showHidden: false, depth: null}))
         expect(res).not.toBeNull();
     });
 
@@ -33,7 +44,7 @@ describe("parse tests", () => {
         const doc = cheerio.load(data);
         const res = await parseOptionInfo(doc);
 
-        console.log(util.inspect(res, {showHidden: false, depth: null}))
+        // console.log(util.inspect(res, {showHidden: false, depth: null}))
         expect(res).not.toBeNull();
     });
 });

@@ -21,22 +21,22 @@ export const resolvers: Resolvers = {
             return parseStockList(doc);
         },
         options: async (_, { id, type, expires, includeDetails }) => {
-            const html = await getOptionsList(id, type, expires);
+            const html = await getOptionsList(id, type, expires, "matrix");
             const doc = cheerio.load(html);
             const optionsList = parseOptionsPage(doc);
 
             if (includeDetails) {
-                const allPromises = optionsList.options.flatMap(x => {
-                    const p1 = getOptionDetails(x.call?.href)
-                        .then(d => x.callDetails = d);
+                // const allPromises = optionsList.options.flatMap(x => {
+                //     const p1 = getOptionDetails(x.call?.href)
+                //         .then(d => x.callDetails = d);
 
-                    const p2 = getOptionDetails(x.put?.href)
-                        .then(d => x.putDetails = d);
+                //     const p2 = getOptionDetails(x.put?.href)
+                //         .then(d => x.putDetails = d);
 
-                    return [ p1, p2 ];
-                });
+                //     return [ p1, p2 ];
+                // });
 
-                await Promise.all(allPromises);
+                // await Promise.all(allPromises);
             }
 
             return optionsList;
