@@ -42,6 +42,7 @@ const QUERIES = gql`
         href
         change
         changePercent
+        lastPrice
         buyPrice
         sellPrice
         highestPrice

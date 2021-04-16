@@ -179,7 +179,7 @@ export type DetailsQuery = (
 
 export type InstrumentDetailsFragment = (
   { __typename?: 'InstrumentDetails' }
-  & Pick<InstrumentDetails, 'name' | 'href' | 'change' | 'changePercent' | 'buyPrice' | 'sellPrice' | 'highestPrice' | 'lowestPrice' | 'updated' | 'totalVolumeTraded'>
+  & Pick<InstrumentDetails, 'name' | 'href' | 'change' | 'changePercent' | 'lastPrice' | 'buyPrice' | 'sellPrice' | 'highestPrice' | 'lowestPrice' | 'updated' | 'totalVolumeTraded'>
 );
 
 export type OptionInfoFragment = (
@@ -198,6 +198,7 @@ export const InstrumentDetailsFragmentDoc = gql`
   href
   change
   changePercent
+  lastPrice
   buyPrice
   sellPrice
   highestPrice
