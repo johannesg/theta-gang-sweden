@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "@types/numeral": "^2.0.1",
-    "apollo-datasource-rest": "^0.11.0",
     "apollo-server-lambda": "^2.19.2",
     "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.5",
