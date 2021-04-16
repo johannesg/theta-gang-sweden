@@ -40,7 +40,7 @@ export class ThetaApi extends cdk.Construct {
                 DYNAMODB_TABLENAME: table.tableName
             },
             timeout: Duration.seconds(30),
-            memorySize: 180
+            memorySize: 250
         });
 
         table.grantReadWriteData(this.handler);

@@ -50,9 +50,9 @@ export type OptionDetails = {
   low?: Maybe<Scalars['Float']>;
   volume?: Maybe<Scalars['Int']>;
   updated?: Maybe<Scalars['String']>;
-  expires: Scalars['String'];
-  optionType: OptionType;
-  type: CallOrPutType;
+  expires?: Maybe<Scalars['String']>;
+  optionType?: Maybe<OptionType>;
+  type?: Maybe<CallOrPutType>;
   strike?: Maybe<Scalars['Float']>;
   parity?: Maybe<Scalars['Int']>;
   buyIV?: Maybe<Scalars['Float']>;
@@ -80,8 +80,10 @@ export type OptionInfo = {
 export type OptionMatrixItem = {
   __typename?: 'OptionMatrixItem';
   call?: Maybe<OptionInfo>;
+  callDetails?: Maybe<OptionDetails>;
   strike?: Maybe<Scalars['Float']>;
   put?: Maybe<OptionInfo>;
+  putDetails?: Maybe<OptionDetails>;
 };
 
 export enum OptionType {
@@ -107,6 +109,7 @@ export type QueryOptionsArgs = {
   id: Scalars['ID'];
   type: OptionType;
   expires: Scalars['String'];
+  includeDetails?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -255,9 +258,9 @@ export type OptionDetailsResolvers<ContextType = ContextWithDataSources, ParentT
   low?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   volume?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   updated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  expires?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  optionType?: Resolver<ResolversTypes['OptionType'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['CallOrPutType'], ParentType, ContextType>;
+  expires?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  optionType?: Resolver<Maybe<ResolversTypes['OptionType']>, ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['CallOrPutType']>, ParentType, ContextType>;
   strike?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   parity?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   buyIV?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -285,8 +288,10 @@ export type OptionInfoResolvers<ContextType = ContextWithDataSources, ParentType
 
 export type OptionMatrixItemResolvers<ContextType = ContextWithDataSources, ParentType extends ResolversParentTypes['OptionMatrixItem'] = ResolversParentTypes['OptionMatrixItem']> = ResolversObject<{
   call?: Resolver<Maybe<ResolversTypes['OptionInfo']>, ParentType, ContextType>;
+  callDetails?: Resolver<Maybe<ResolversTypes['OptionDetails']>, ParentType, ContextType>;
   strike?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   put?: Resolver<Maybe<ResolversTypes['OptionInfo']>, ParentType, ContextType>;
+  putDetails?: Resolver<Maybe<ResolversTypes['OptionDetails']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

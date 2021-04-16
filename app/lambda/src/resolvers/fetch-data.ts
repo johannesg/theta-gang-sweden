@@ -29,6 +29,7 @@ export async function getOptionsList(id: string, optionType: OptionType, expiry:
         console.log(`Response: ${data}`);
         throw new ApolloError("Invalid status code: " + status);
     }
+
     return data;
 }
 

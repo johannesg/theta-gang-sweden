@@ -13,12 +13,11 @@ export function parseStockList($: cheerio.Selector): Instrument[] {
         }).get();
 }
 
-export async function parseOptionsPage($: cheerio.Selector) {
+export function parseOptionsPage($: cheerio.Selector) {
     const listFilterResult = $("#listFilterResult");
 
     const underlyingTable = listFilterResult.find("table.optionLists").first();
     const optionsTable = listFilterResult.find("table.optionMatrix").first();
-
 
     return {
         underlying: parseUnderlyingTable(underlyingTable),

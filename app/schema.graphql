@@ -6,7 +6,7 @@ schema {
 type Query {
     # me: User
     instruments: [Instrument]
-    options(id: ID!, type: OptionType!, expires: String!): OptionsList
+    options(id: ID!, type: OptionType!, expires: String!, includeDetails: Boolean): OptionsList
     optionDetails(id: ID!): OptionDetails
 }
 
@@ -36,8 +36,10 @@ type InstrumentDetails {
 
 type OptionMatrixItem {
     call: OptionInfo
+    callDetails: OptionDetails
     strike: Float
     put: OptionInfo
+    putDetails: OptionDetails
 }
 
 type OptionInfo {
@@ -61,9 +63,9 @@ type OptionDetails {
     volume: Int
     updated: String,
     
-    expires: String!
-    optionType: OptionType!
-    type: CallOrPutType!
+    expires: String
+    optionType: OptionType
+    type: CallOrPutType
     strike: Float,
     parity: Int,
 
