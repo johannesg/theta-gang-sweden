@@ -87,15 +87,27 @@ export type OptionsList = {
   options?: Maybe<Array<Maybe<OptionMatrixItem>>>;
 };
 
+export type OptionsMatrix = {
+  __typename?: 'OptionsMatrix';
+  underlying?: Maybe<InstrumentDetails>;
+  matrix: Array<OptionsWithExpiry>;
+};
+
+export type OptionsWithExpiry = {
+  __typename?: 'OptionsWithExpiry';
+  expires: Scalars['String'];
+  options: Array<OptionMatrixItem>;
+};
+
 export type Query = {
   __typename?: 'Query';
   instruments?: Maybe<Array<Maybe<Instrument>>>;
-  options?: Maybe<OptionsList>;
+  matrix?: Maybe<OptionsMatrix>;
   optionDetails?: Maybe<OptionDetails>;
 };
 
 
-export type QueryOptionsArgs = {
+export type QueryMatrixArgs = {
   id: Scalars['ID'];
   type: OptionType;
   expires: Scalars['String'];
@@ -197,6 +209,8 @@ export type ResolversTypes = ResolversObject<{
   OptionMatrixItem: ResolverTypeWrapper<OptionMatrixItem>;
   OptionType: OptionType;
   OptionsList: ResolverTypeWrapper<OptionsList>;
+  OptionsMatrix: ResolverTypeWrapper<OptionsMatrix>;
+  OptionsWithExpiry: ResolverTypeWrapper<OptionsWithExpiry>;
   Query: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 }>;
@@ -212,6 +226,8 @@ export type ResolversParentTypes = ResolversObject<{
   OptionDetails: OptionDetails;
   OptionMatrixItem: OptionMatrixItem;
   OptionsList: OptionsList;
+  OptionsMatrix: OptionsMatrix;
+  OptionsWithExpiry: OptionsWithExpiry;
   Query: {};
   Boolean: Scalars['Boolean'];
 }>;
@@ -279,9 +295,21 @@ export type OptionsListResolvers<ContextType = ContextWithDataSources, ParentTyp
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type OptionsMatrixResolvers<ContextType = ContextWithDataSources, ParentType extends ResolversParentTypes['OptionsMatrix'] = ResolversParentTypes['OptionsMatrix']> = ResolversObject<{
+  underlying?: Resolver<Maybe<ResolversTypes['InstrumentDetails']>, ParentType, ContextType>;
+  matrix?: Resolver<Array<ResolversTypes['OptionsWithExpiry']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type OptionsWithExpiryResolvers<ContextType = ContextWithDataSources, ParentType extends ResolversParentTypes['OptionsWithExpiry'] = ResolversParentTypes['OptionsWithExpiry']> = ResolversObject<{
+  expires?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  options?: Resolver<Array<ResolversTypes['OptionMatrixItem']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type QueryResolvers<ContextType = ContextWithDataSources, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   instruments?: Resolver<Maybe<Array<Maybe<ResolversTypes['Instrument']>>>, ParentType, ContextType>;
-  options?: Resolver<Maybe<ResolversTypes['OptionsList']>, ParentType, ContextType, RequireFields<QueryOptionsArgs, 'id' | 'type' | 'expires'>>;
+  matrix?: Resolver<Maybe<ResolversTypes['OptionsMatrix']>, ParentType, ContextType, RequireFields<QueryMatrixArgs, 'id' | 'type' | 'expires'>>;
   optionDetails?: Resolver<Maybe<ResolversTypes['OptionDetails']>, ParentType, ContextType, RequireFields<QueryOptionDetailsArgs, 'id'>>;
 }>;
 
@@ -291,6 +319,8 @@ export type Resolvers<ContextType = ContextWithDataSources> = ResolversObject<{
   OptionDetails?: OptionDetailsResolvers<ContextType>;
   OptionMatrixItem?: OptionMatrixItemResolvers<ContextType>;
   OptionsList?: OptionsListResolvers<ContextType>;
+  OptionsMatrix?: OptionsMatrixResolvers<ContextType>;
+  OptionsWithExpiry?: OptionsWithExpiryResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 }>;
 

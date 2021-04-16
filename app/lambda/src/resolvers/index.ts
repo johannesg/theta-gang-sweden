@@ -1,8 +1,9 @@
 import { OptionDetails, Resolvers } from "../types/gen-types";
 import { getInstruments, getOptionInfo, getOptionsList } from "./fetch-data";
-import { parseOptionInfo, parseOptionsPage, parseStockList } from "./parse-data";
+import { parseOptionInfo, parseOptionsOverview, parseOptionsPage, parseStockList } from "./parse-data";
 import * as cheerio from 'cheerio';
 import { getNextMonth } from "../utils/date";
+import { transformOverview } from "./transform-data";
 
 async function getOptionDetails(id: string | undefined): Promise<OptionDetails> {
     if (!id)
@@ -20,26 +21,26 @@ export const resolvers: Resolvers = {
             const doc = cheerio.load(html);
             return parseStockList(doc);
         },
-        options: async (_, { id, type, expires, includeDetails }) => {
-            const html = await getOptionsList(id, type, expires, "matrix");
+        matrix: async (_, { id, type, expires, includeDetails }) => {
+            const html = await getOptionsList(id, type, expires, "overview");
             const doc = cheerio.load(html);
-            const optionsList = parseOptionsPage(doc);
+            const optionsList = parseOptionsOverview(doc);
+            const matrix = transformOverview(optionsList);
 
-            if (includeDetails) {
-                // const allPromises = optionsList.options.flatMap(x => {
-                //     const p1 = getOptionDetails(x.call?.href)
-                //         .then(d => x.callDetails = d);
+            const allPromises = matrix.matrix.flatMap(m => {
+                return m.options.flatMap(x => {
+                    const p1 = getOptionDetails(x.call?.href!)
+                        .then(d => x.call = { ...x.call, ...d });
 
-                //     const p2 = getOptionDetails(x.put?.href)
-                //         .then(d => x.putDetails = d);
+                    const p2 = getOptionDetails(x.put?.href!)
+                        .then(d => x.put = { ...x.put, ...d });
 
-                //     return [ p1, p2 ];
-                // });
+                    return [p1, p2];
+                });
+            });
+            await Promise.all(allPromises);
 
-                // await Promise.all(allPromises);
-            }
-
-            return optionsList;
+            return matrix;
         },
         optionDetails: async (_, { id }) => {
             return await getOptionDetails(id);

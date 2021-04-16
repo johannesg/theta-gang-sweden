@@ -3,6 +3,7 @@ import { parseOptionInfo, parseOptionsOverview, parseOptionsPage, parseStockList
 import * as util from 'util';
 
 import * as cheerio from 'cheerio';
+import { transformOverview } from '../src/resolvers/transform-data';
 
 describe("parse tests", () => {
     test("can parse stock list", async() => {
@@ -33,8 +34,20 @@ describe("parse tests", () => {
         const doc = cheerio.load(data);
 
         const res = await parseOptionsOverview(doc);
-        console.log(util.inspect(res.underlying, {showHidden: false, depth: null}))
-        console.log(util.inspect(res.options, {showHidden: false, depth: null}))
+        // console.log(util.inspect(res.underlying, {showHidden: false, depth: null}))
+        // console.log(util.inspect(res.options, {showHidden: false, depth: null}))
+        expect(res).not.toBeNull();
+    });
+
+    test("can parse options list 2 and transform", async () => {
+        const data = await fs.readFile("test/optionslist2.html");
+
+        const doc = cheerio.load(data);
+
+        const overview = parseOptionsOverview(doc);
+        const res = transformOverview(overview);
+        // console.log(util.inspect(res.underlying, {showHidden: false, depth: null}))
+        // console.log(util.inspect(res.matrix, {showHidden: false, depth: null}))
         expect(res).not.toBeNull();
     });
 
@@ -44,7 +57,7 @@ describe("parse tests", () => {
         const doc = cheerio.load(data);
         const res = await parseOptionInfo(doc);
 
-        // console.log(util.inspect(res, {showHidden: false, depth: null}))
+        console.log(util.inspect(res, {showHidden: false, depth: null}))
         expect(res).not.toBeNull();
     });
 });

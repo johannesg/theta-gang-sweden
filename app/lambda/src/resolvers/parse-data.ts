@@ -1,6 +1,11 @@
 import numeral from '../utils/numeral';
 import { CallOrPutType, Instrument, InstrumentDetails, OptionDetails, OptionMatrixItem, OptionType } from '../types';
 
+export type ParsedOptionsOverview = {
+    underlying: InstrumentDetails
+    options: OptionDetails[]
+}
+
 export function parseStockList($: cheerio.Selector): Instrument[] {
     return $("#underlyingInstrumentId")
         .children()
@@ -25,7 +30,7 @@ export function parseOptionsPage($: cheerio.Selector) {
     };
 }
 
-export function parseOptionsOverview($: cheerio.Selector) {
+export function parseOptionsOverview($: cheerio.Selector) : ParsedOptionsOverview {
     const listFilterResult = $("#listFilterResult");
 
     const underlyingTable = listFilterResult.find("table.optionLists").first();
@@ -189,6 +194,8 @@ export function parseOptionInfo(doc: cheerio.Selector): OptionDetails {
     return {
         change: numeral(quoteBar.find("div span.change").text()).value(),
         changePercent: numeral(quoteBar.find("div span.changePercent").text()).value(),
+        bid: numeral(quoteBar.find("span.buyPrice").text()).value(),
+        ask: numeral(quoteBar.find("span.sellPrice").text()).value(),
         last: numeral(quoteBar.find("span.lastPrice").text()).value(),
         spread: numeral(quoteBar.find("span.spread").text()).value(),
         high: numeral(quoteBar.find("span.highestPrice").text()).value(),

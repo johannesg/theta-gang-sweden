@@ -6,7 +6,7 @@ schema {
 type Query {
     # me: User
     instruments: [Instrument]
-    options(id: ID!, type: OptionType!, expires: String!, includeDetails: Boolean): OptionsList
+    matrix(id: ID!, type: OptionType!, expires: String!, includeDetails: Boolean): OptionsMatrix
     optionDetails(id: ID!): OptionDetails
 }
 
@@ -18,6 +18,16 @@ type Instrument {
 type OptionsList {
     underlying: InstrumentDetails
     options: [OptionMatrixItem]
+}
+
+type OptionsMatrix {
+    underlying: InstrumentDetails
+    matrix: [OptionsWithExpiry!]!
+}
+
+type OptionsWithExpiry {
+    expires: String!
+    options: [OptionMatrixItem!]!
 }
 
 type InstrumentDetails {
