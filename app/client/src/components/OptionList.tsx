@@ -209,13 +209,13 @@ export function OptionMatrix({ options }: { options: OptionsList | undefined }) 
                         {/* <TableCell className={cellClassCall} onClick={callHandler}>
                             <BuySellButtons option={call}></BuySellButtons>
                         </TableCell> */}
-                        <OptionGreeksCall option={call}></OptionGreeksCall>
+                        <OptionGreeksCall option={call} greeks={row?.callDetails}></OptionGreeksCall>
                         <TableCell className={clsx(cellClassCall, classes.bid)} align="right" onClick={callHandler}>{numeral(call.buy).format("#0.00")}</TableCell>
                         <TableCell className={clsx(cellClassCall, classes.ask)} align="right" onClick={callHandler}>{numeral(call.sell).format("#0.00")}</TableCell>
                         <TableCell className={classes.strike} align="center">{strike}</TableCell>
                         <TableCell className={clsx(cellClassPut, classes.bid)} align="right" onClick={putHandler}>{numeral(put.buy).format("#0.00")}</TableCell>
                         <TableCell className={clsx(cellClassPut, classes.ask)} align="right" onClick={putHandler}>{numeral(put.sell).format("#0.00")}</TableCell>
-                        <OptionGreeksPut option={put}></OptionGreeksPut>
+                        <OptionGreeksPut option={put} greeks={row?.putDetails}></OptionGreeksPut>
                         {/* <TableCell className={cellClassPut} >
                             <BuySellButtons option={put}></BuySellButtons>
                         </TableCell> */}

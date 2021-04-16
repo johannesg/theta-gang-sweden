@@ -11,19 +11,19 @@ export function useCompositeOptionsQuery(): OptionsQueryResult {
 
     return useOptionsQuery({
         // pollInterval: 30000, 
-        variables: { id: instrument, type: optionType, expires: expires },
+        variables: { id: instrument, type: optionType, expires: expires, includeDetails: true },
         skip,
         notifyOnNetworkStatusChange: true,
     });
 }
 
-export function useOptionDetailsQuery(href: string | undefined): DetailsQueryResult {
-    const skip = !href ? true : false;
+// export function useOptionDetailsQuery(href: string | undefined): DetailsQueryResult {
+//     const skip = !href ? true : false;
 
-    return useDetailsQuery({
-        // pollInterval: 30000, 
-        skip,
-        variables: { href: href ?? "" }
-    });
-}
+//     return useDetailsQuery({
+//         // pollInterval: 30000, 
+//         skip,
+//         variables: { href: href ?? "" }
+//     });
+// }
 

@@ -8,38 +8,24 @@ const QUERIES = gql`
         }
     }
 
-    query Options($id: ID!, $type: OptionType!, $expires : String!) {
-        options(id: $id, type: $type, expires: $expires) {
+    query Options($id: ID!, $type: OptionType!, $expires : String!, $includeDetails: Boolean) {
+        options(id: $id, type: $type, expires: $expires, includeDetails: $includeDetails) {
             underlying {
-                name
-                href
-                change
-                changePercent
-                buyPrice
-                sellPrice
-                lastPrice
-                highestPrice
-                lowestPrice
-                updated
-                totalVolumeTraded
+                ...InstrumentDetails
             }
             options {
                 call {
-                    name
-                    href
-                    type
-                    strike
-                    buy
-                    sell
+                    ...OptionInfo
+                }
+                callDetails {
+                    ...OptionDetails
                 }
                 strike
                 put {
-                    name
-                    href
-                    type
-                    strike
-                    buy
-                    sell
+                    ...OptionInfo
+                }
+                putDetails {
+                    ...OptionDetails
                 }
             }
         }
@@ -47,22 +33,45 @@ const QUERIES = gql`
 
     query Details($href: ID!) {
         optionDetails(id: $href) {
-            last
-            volume
-            updated
-            spread
-            
-            type
-            optionType
-            expires
-            buyIV
-            delta
-            gamma
-            theta
-            vega
-            sellIV
-            IV
+            ...OptionDetails
         }
+    }
+
+    fragment InstrumentDetails on InstrumentDetails {
+        name
+        href
+        change
+        changePercent
+        buyPrice
+        sellPrice
+        highestPrice
+        lowestPrice
+        updated
+        totalVolumeTraded
+    }
+
+    fragment OptionInfo on OptionInfo {
+        name
+        href
+        buyVolume
+        buy
+        sell
+        sellVolume
+    }
+
+    fragment OptionDetails on OptionDetails {
+        expires
+        type
+        optionType
+        strike
+        parity
+        buyIV
+        delta
+        gamma
+        theta
+        vega
+        sellIV
+        IV
     }
 `;
 

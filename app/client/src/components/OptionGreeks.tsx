@@ -1,12 +1,12 @@
 import { TableCell } from '@material-ui/core';
 import numeral from '../utils/numeral';
 import React from 'react';
-import { useOptionDetailsQuery } from '../apollo/hooks';
-import { OptionInfo } from '../apollo/types';
+// import { useOptionDetailsQuery } from '../apollo/hooks';
+import { Maybe, OptionDetails, OptionInfo } from '../apollo/types';
 
-export function OptionGreeksCall({ option }: { option: OptionInfo }) {
-  const { data } = useOptionDetailsQuery(option?.href);
-  const greeks = data?.optionDetails;
+export function OptionGreeksCall({ option, greeks }: { option: OptionInfo, greeks : Maybe<OptionDetails> | undefined }) {
+  // const { data } = useOptionDetailsQuery(option?.href);
+  // const greeks = data?.optionDetails;
 
   return <React.Fragment>
     <TableCell align="right">{greeks?.updated}</TableCell>
@@ -21,9 +21,9 @@ export function OptionGreeksCall({ option }: { option: OptionInfo }) {
   </React.Fragment>
 }
 
-export function OptionGreeksPut({ option }: { option: OptionInfo }) {
-  const { data } = useOptionDetailsQuery(option?.href);
-  const greeks = data?.optionDetails;
+export function OptionGreeksPut({ option, greeks }: { option: OptionInfo, greeks : Maybe<OptionDetails> | undefined }) {
+  // const { data } = useOptionDetailsQuery(option?.href);
+  // const greeks = data?.optionDetails;
 
   return <React.Fragment>
     <TableCell align="right">{numeral(greeks?.last).format("#0.00")}</TableCell>

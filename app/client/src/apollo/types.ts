@@ -51,9 +51,9 @@ export type OptionDetails = {
   low: Maybe<Scalars['Float']>;
   volume: Maybe<Scalars['Int']>;
   updated: Maybe<Scalars['String']>;
-  expires: Scalars['String'];
-  optionType: OptionType;
-  type: CallOrPutType;
+  expires: Maybe<Scalars['String']>;
+  optionType: Maybe<OptionType>;
+  type: Maybe<CallOrPutType>;
   strike: Maybe<Scalars['Float']>;
   parity: Maybe<Scalars['Int']>;
   buyIV: Maybe<Scalars['Float']>;
@@ -81,8 +81,10 @@ export type OptionInfo = {
 export type OptionMatrixItem = {
   __typename?: 'OptionMatrixItem';
   call: Maybe<OptionInfo>;
+  callDetails: Maybe<OptionDetails>;
   strike: Maybe<Scalars['Float']>;
   put: Maybe<OptionInfo>;
+  putDetails: Maybe<OptionDetails>;
 };
 
 export enum OptionType {
@@ -108,6 +110,7 @@ export type QueryOptionsArgs = {
   id: Scalars['ID'];
   type: OptionType;
   expires: Scalars['String'];
+  includeDetails: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -130,6 +133,7 @@ export type OptionsQueryVariables = Exact<{
   id: Scalars['ID'];
   type: OptionType;
   expires: Scalars['String'];
+  includeDetails: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -139,16 +143,22 @@ export type OptionsQuery = (
     { __typename?: 'OptionsList' }
     & { underlying: Maybe<(
       { __typename?: 'InstrumentDetails' }
-      & Pick<InstrumentDetails, 'name' | 'href' | 'change' | 'changePercent' | 'buyPrice' | 'sellPrice' | 'lastPrice' | 'highestPrice' | 'lowestPrice' | 'updated' | 'totalVolumeTraded'>
+      & InstrumentDetailsFragment
     )>, options: Maybe<Array<Maybe<(
       { __typename?: 'OptionMatrixItem' }
       & Pick<OptionMatrixItem, 'strike'>
       & { call: Maybe<(
         { __typename?: 'OptionInfo' }
-        & Pick<OptionInfo, 'name' | 'href' | 'type' | 'strike' | 'buyVolume' | 'buy' | 'sell' | 'sellVolume'>
+        & OptionInfoFragment
+      )>, callDetails: Maybe<(
+        { __typename?: 'OptionDetails' }
+        & OptionDetailsFragment
       )>, put: Maybe<(
         { __typename?: 'OptionInfo' }
-        & Pick<OptionInfo, 'name' | 'href' | 'type' | 'strike' | 'buyVolume' | 'buy' | 'sell' | 'sellVolume'>
+        & OptionInfoFragment
+      )>, putDetails: Maybe<(
+        { __typename?: 'OptionDetails' }
+        & OptionDetailsFragment
       )> }
     )>>> }
   )> }
@@ -163,11 +173,65 @@ export type DetailsQuery = (
   { __typename?: 'Query' }
   & { optionDetails: Maybe<(
     { __typename?: 'OptionDetails' }
-    & Pick<OptionDetails, 'last' | 'volume' | 'updated' | 'spread' | 'type' | 'optionType' | 'expires' | 'buyIV' | 'delta' | 'gamma' | 'theta' | 'vega' | 'sellIV' | 'IV'>
+    & OptionDetailsFragment
   )> }
 );
 
+export type InstrumentDetailsFragment = (
+  { __typename?: 'InstrumentDetails' }
+  & Pick<InstrumentDetails, 'name' | 'href' | 'change' | 'changePercent' | 'buyPrice' | 'sellPrice' | 'highestPrice' | 'lowestPrice' | 'updated' | 'totalVolumeTraded'>
+);
 
+export type OptionInfoFragment = (
+  { __typename?: 'OptionInfo' }
+  & Pick<OptionInfo, 'name' | 'href' | 'buyVolume' | 'buy' | 'sell' | 'sellVolume'>
+);
+
+export type OptionDetailsFragment = (
+  { __typename?: 'OptionDetails' }
+  & Pick<OptionDetails, 'expires' | 'type' | 'optionType' | 'strike' | 'parity' | 'buyIV' | 'delta' | 'gamma' | 'theta' | 'vega' | 'sellIV' | 'IV'>
+);
+
+export const InstrumentDetailsFragmentDoc = gql`
+    fragment InstrumentDetails on InstrumentDetails {
+  name
+  href
+  change
+  changePercent
+  buyPrice
+  sellPrice
+  highestPrice
+  lowestPrice
+  updated
+  totalVolumeTraded
+}
+    `;
+export const OptionInfoFragmentDoc = gql`
+    fragment OptionInfo on OptionInfo {
+  name
+  href
+  buyVolume
+  buy
+  sell
+  sellVolume
+}
+    `;
+export const OptionDetailsFragmentDoc = gql`
+    fragment OptionDetails on OptionDetails {
+  expires
+  type
+  optionType
+  strike
+  parity
+  buyIV
+  delta
+  gamma
+  theta
+  vega
+  sellIV
+  IV
+}
+    `;
 export const InstrumentsDocument = gql`
     query Instruments {
   instruments {
@@ -204,47 +268,36 @@ export type InstrumentsQueryHookResult = ReturnType<typeof useInstrumentsQuery>;
 export type InstrumentsLazyQueryHookResult = ReturnType<typeof useInstrumentsLazyQuery>;
 export type InstrumentsQueryResult = Apollo.QueryResult<InstrumentsQuery, InstrumentsQueryVariables>;
 export const OptionsDocument = gql`
-    query Options($id: ID!, $type: OptionType!, $expires: String!) {
-  options(id: $id, type: $type, expires: $expires) {
+    query Options($id: ID!, $type: OptionType!, $expires: String!, $includeDetails: Boolean) {
+  options(
+    id: $id
+    type: $type
+    expires: $expires
+    includeDetails: $includeDetails
+  ) {
     underlying {
-      name
-      href
-      change
-      changePercent
-      buyPrice
-      sellPrice
-      lastPrice
-      highestPrice
-      lowestPrice
-      updated
-      totalVolumeTraded
+      ...InstrumentDetails
     }
     options {
       call {
-        name
-        href
-        type
-        strike
-        buyVolume
-        buy
-        sell
-        sellVolume
+        ...OptionInfo
+      }
+      callDetails {
+        ...OptionDetails
       }
       strike
       put {
-        name
-        href
-        type
-        strike
-        buyVolume
-        buy
-        sell
-        sellVolume
+        ...OptionInfo
+      }
+      putDetails {
+        ...OptionDetails
       }
     }
   }
 }
-    `;
+    ${InstrumentDetailsFragmentDoc}
+${OptionInfoFragmentDoc}
+${OptionDetailsFragmentDoc}`;
 
 /**
  * __useOptionsQuery__
@@ -261,6 +314,7 @@ export const OptionsDocument = gql`
  *      id: // value for 'id'
  *      type: // value for 'type'
  *      expires: // value for 'expires'
+ *      includeDetails: // value for 'includeDetails'
  *   },
  * });
  */
@@ -278,23 +332,10 @@ export type OptionsQueryResult = Apollo.QueryResult<OptionsQuery, OptionsQueryVa
 export const DetailsDocument = gql`
     query Details($href: ID!) {
   optionDetails(id: $href) {
-    last
-    volume
-    updated
-    spread
-    type
-    optionType
-    expires
-    buyIV
-    delta
-    gamma
-    theta
-    vega
-    sellIV
-    IV
+    ...OptionDetails
   }
 }
-    `;
+    ${OptionDetailsFragmentDoc}`;
 
 /**
  * __useDetailsQuery__
