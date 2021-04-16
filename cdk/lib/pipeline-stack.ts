@@ -47,6 +47,7 @@ export class PipelineStack extends Stack {
             // Replace these with your actual GitHub project info
             owner: 'johannesg',
             repo: 'theta-gang-sweden',
+            branch: 'master'
           });
 
         const lambdaBuildAction = new codepipeline_actions.CodeBuildAction({
