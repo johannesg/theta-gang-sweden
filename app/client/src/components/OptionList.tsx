@@ -18,13 +18,11 @@ const useStyles = makeStyles({
         minWidth: 650,
 
         '& th,td': {
-            fontSize: "0.8rem",
-            padding: "4px 16px 4px 16px"
+            fontSize: "0.7rem",
+            padding: "2px 10px 2px 10px"
         },
     },
     strike: {
-        fontSize: "0.8rem",
-        padding: "4px 16px 4px 16px",
         backgroundColor: "#e6f8d2"
     },
     mark: {
@@ -236,7 +234,9 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
                         const rows = m.options;
                         return <React.Fragment>
                             <TableRow>
-                                <TableCell colSpan={23} align="center">Expires: { m.expires }  DTE: {getDaysFromNow(m.expires)}</TableCell>
+                                <TableCell colSpan={9} align="center"><strong>CALLS</strong></TableCell>
+                                <TableCell colSpan={5} align="center"><strong>EXP: { m.expires }  DTE: {getDaysFromNow(m.expires)}</strong></TableCell>
+                                <TableCell colSpan={9} align="center"><strong>PUTS</strong></TableCell>
                             </TableRow>
                             {
                                 rows.map((row: OptionMatrixItem, i) => {
