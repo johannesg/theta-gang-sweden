@@ -9,23 +9,20 @@ const QUERIES = gql`
     }
 
     query Options($id: ID!, $type: OptionType!, $expires : String!, $includeDetails: Boolean) {
-        options(id: $id, type: $type, expires: $expires, includeDetails: $includeDetails) {
+        matrix(id: $id, type: $type, expires: $expires, includeDetails: $includeDetails) {
             underlying {
                 ...InstrumentDetails
             }
-            options {
-                call {
-                    ...OptionInfo
-                }
-                callDetails {
+            matrix {
+                expires
+                options {
+                    call {
                     ...OptionDetails
-                }
-                strike
-                put {
-                    ...OptionInfo
-                }
-                putDetails {
+                    }
+                    strike
+                    put {
                     ...OptionDetails
+                    }
                 }
             }
         }
@@ -51,27 +48,33 @@ const QUERIES = gql`
         totalVolumeTraded
     }
 
-    fragment OptionInfo on OptionInfo {
+    fragment OptionDetails on OptionDetails {
         name
         href
-        buyVolume
-        buy
-        sell
-        sellVolume
-    }
-
-    fragment OptionDetails on OptionDetails {
-        expires
         type
+        strike
+        changePercent
+        change
+        updated
+        bid
+        ask
+        spread
+        last
+        high
+        low
+        volume
+        expires
         optionType
+        type
         strike
         parity
         buyIV
         delta
-        gamma
         theta
         vega
         sellIV
+        gamma
+        rho
         IV
     }
 `;

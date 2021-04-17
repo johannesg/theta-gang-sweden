@@ -8,7 +8,7 @@ import clsx from 'clsx';
 
 import { useCompositeOptionsQuery } from '../apollo/hooks';
 import { activeOption, ShoppingAction, addToShoppingCart, isInShoppingCart, shoppingCart } from '../apollo/vars';
-import { InstrumentDetails, OptionInfo, OptionsList } from '../apollo/types';
+import { InstrumentDetails, OptionDetails, OptionMatrixItem, OptionsWithExpiry } from '../apollo/types';
 import { OptionGreeksCall, OptionGreeksPut } from './OptionGreeks';
 import numeral from '../utils/numeral';
 
@@ -108,7 +108,7 @@ export function UnderlyingTable({ underlying }: { underlying: InstrumentDetails 
     </div>
 }
 
-function BuySellButtons({ option }: { option: OptionInfo }) {
+function BuySellButtons({ option }: { option: OptionDetails }) {
     const classes = useStyles();
 
     const buy = () =>
@@ -123,7 +123,7 @@ function BuySellButtons({ option }: { option: OptionInfo }) {
     </ButtonGroup>
 }
 
-export function OptionMatrix({ options }: { options: OptionsList | undefined }) {
+export function OptionMatrix({ options, underlying }: { options: OptionMatrixItem[], underlying: InstrumentDetails }) {
     if (!options)
         return <div></div>
 
@@ -132,15 +132,16 @@ export function OptionMatrix({ options }: { options: OptionsList | undefined }) 
     const activeOptionVar = useReactiveVar(activeOption);
     const shoppingCartVar = useReactiveVar(shoppingCart);
 
-    const rows = options.options ?? [];
+    const rows = options;
 
-    const price = options.underlying?.lastPrice ?? 0;
+    const price = underlying?.lastPrice ?? 0;
+    console.log(`Price: ${price}`);
 
-    function isActive(item: OptionInfo): boolean {
+    function isActive(item: OptionDetails): boolean {
         return activeOptionVar === item;
     }
 
-    function selectItem(item: OptionInfo) {
+    function selectItem(item: OptionDetails) {
         if (item === activeOptionVar)
             activeOption(null);
         else
@@ -149,7 +150,7 @@ export function OptionMatrix({ options }: { options: OptionsList | undefined }) 
         console.log(`Selected: ${activeOption()?.name}`)
     }
 
-    function getShoppingCartStatusClass(info: OptionInfo): string | undefined {
+    function getShoppingCartStatusClass(info: OptionDetails): string | undefined {
         switch (isInShoppingCart(shoppingCartVar, info)) {
             case ShoppingAction.Buy: return classes.markAsBuy;
             case ShoppingAction.Sell: return classes.markAsSell;
@@ -189,14 +190,15 @@ export function OptionMatrix({ options }: { options: OptionsList | undefined }) 
                 </TableRow>
             </TableHead>
             <TableBody>
-                {rows.map((row, i) => {
+                {rows.map((row : OptionMatrixItem, i) => {
                     const call = row!.call!;
                     const put = row!.put!;
                     const strike = row!.strike!;
 
                     const prevStrike = (i == 0 ? row?.strike : rows[i - 1]?.strike) ?? 0;
 
-                    const rowClass = clsx((price >= strike && price <= prevStrike) && classes.mark);
+                    const rowClass = clsx((price <= strike && price >= prevStrike) && classes.mark);
+
                     const cellClassCall = isActive(call) ? classes.selected : getShoppingCartStatusClass(call);
                     const cellClassPut = isActive(put) ? classes.selected : getShoppingCartStatusClass(put);
 
@@ -209,13 +211,13 @@ export function OptionMatrix({ options }: { options: OptionsList | undefined }) 
                         {/* <TableCell className={cellClassCall} onClick={callHandler}>
                             <BuySellButtons option={call}></BuySellButtons>
                         </TableCell> */}
-                        <OptionGreeksCall option={call} greeks={row?.callDetails}></OptionGreeksCall>
-                        <TableCell className={clsx(cellClassCall, classes.bid)} align="right" onClick={callHandler}>{numeral(call.buy).format("#0.00")}</TableCell>
-                        <TableCell className={clsx(cellClassCall, classes.ask)} align="right" onClick={callHandler}>{numeral(call.sell).format("#0.00")}</TableCell>
+                        <OptionGreeksCall option={call}></OptionGreeksCall>
+                        <TableCell className={clsx(cellClassCall, classes.bid)} align="right" onClick={callHandler}>{numeral(call.bid).format("#0.00")}</TableCell>
+                        <TableCell className={clsx(cellClassCall, classes.ask)} align="right" onClick={callHandler}>{numeral(call.ask).format("#0.00")}</TableCell>
                         <TableCell className={classes.strike} align="center">{strike}</TableCell>
-                        <TableCell className={clsx(cellClassPut, classes.bid)} align="right" onClick={putHandler}>{numeral(put.buy).format("#0.00")}</TableCell>
-                        <TableCell className={clsx(cellClassPut, classes.ask)} align="right" onClick={putHandler}>{numeral(put.sell).format("#0.00")}</TableCell>
-                        <OptionGreeksPut option={put} greeks={row?.putDetails}></OptionGreeksPut>
+                        <TableCell className={clsx(cellClassPut, classes.bid)} align="right" onClick={putHandler}>{numeral(put.bid).format("#0.00")}</TableCell>
+                        <TableCell className={clsx(cellClassPut, classes.ask)} align="right" onClick={putHandler}>{numeral(put.ask).format("#0.00")}</TableCell>
+                        <OptionGreeksPut option={put}></OptionGreeksPut>
                         {/* <TableCell className={cellClassPut} >
                             <BuySellButtons option={put}></BuySellButtons>
                         </TableCell> */}
@@ -230,8 +232,9 @@ export function OptionsContainer() {
     const { loading, error, data, networkStatus } = useCompositeOptionsQuery();
     const progress = loading || networkStatus === NetworkStatus.refetch;
 
-    const underlying = data?.options?.underlying as InstrumentDetails;
-    const options = data?.options as OptionsList;
+    const underlying = data?.matrix?.underlying as InstrumentDetails;
+    const matrix = data?.matrix?.matrix as OptionsWithExpiry[] ?? [];
+    const options = matrix.flatMap(x => x.options);
 
     return <React.Fragment>
         <Grid item xs={12}>
@@ -239,7 +242,7 @@ export function OptionsContainer() {
             <UnderlyingTable underlying={underlying} ></UnderlyingTable>
         </Grid>
         <Grid item xs={12}>
-            <OptionMatrix options={options}></OptionMatrix>
+            <OptionMatrix options={options} underlying={underlying}></OptionMatrix>
         </Grid>
     </React.Fragment>
 }

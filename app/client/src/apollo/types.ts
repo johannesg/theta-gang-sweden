@@ -43,18 +43,22 @@ export type InstrumentDetails = {
 
 export type OptionDetails = {
   __typename?: 'OptionDetails';
+  name: Maybe<Scalars['String']>;
+  href: Maybe<Scalars['String']>;
+  type: Maybe<CallOrPutType>;
+  strike: Maybe<Scalars['Float']>;
   changePercent: Maybe<Scalars['Float']>;
   change: Maybe<Scalars['Float']>;
-  last: Maybe<Scalars['Float']>;
+  bid: Maybe<Scalars['Float']>;
+  ask: Maybe<Scalars['Float']>;
   spread: Maybe<Scalars['Float']>;
+  last: Maybe<Scalars['Float']>;
   high: Maybe<Scalars['Float']>;
   low: Maybe<Scalars['Float']>;
   volume: Maybe<Scalars['Int']>;
   updated: Maybe<Scalars['String']>;
   expires: Maybe<Scalars['String']>;
   optionType: Maybe<OptionType>;
-  type: Maybe<CallOrPutType>;
-  strike: Maybe<Scalars['Float']>;
   parity: Maybe<Scalars['Int']>;
   buyIV: Maybe<Scalars['Float']>;
   delta: Maybe<Scalars['Float']>;
@@ -66,25 +70,11 @@ export type OptionDetails = {
   IV: Maybe<Scalars['Float']>;
 };
 
-export type OptionInfo = {
-  __typename?: 'OptionInfo';
-  name: Scalars['String'];
-  href: Scalars['String'];
-  type: CallOrPutType;
-  strike: Scalars['Float'];
-  buyVolume: Maybe<Scalars['Int']>;
-  buy: Maybe<Scalars['Float']>;
-  sell: Maybe<Scalars['Float']>;
-  sellVolume: Maybe<Scalars['Int']>;
-};
-
 export type OptionMatrixItem = {
   __typename?: 'OptionMatrixItem';
-  call: Maybe<OptionInfo>;
-  callDetails: Maybe<OptionDetails>;
+  call: Maybe<OptionDetails>;
   strike: Maybe<Scalars['Float']>;
-  put: Maybe<OptionInfo>;
-  putDetails: Maybe<OptionDetails>;
+  put: Maybe<OptionDetails>;
 };
 
 export enum OptionType {
@@ -98,15 +88,27 @@ export type OptionsList = {
   options: Maybe<Array<Maybe<OptionMatrixItem>>>;
 };
 
+export type OptionsMatrix = {
+  __typename?: 'OptionsMatrix';
+  underlying: Maybe<InstrumentDetails>;
+  matrix: Array<OptionsWithExpiry>;
+};
+
+export type OptionsWithExpiry = {
+  __typename?: 'OptionsWithExpiry';
+  expires: Scalars['String'];
+  options: Array<OptionMatrixItem>;
+};
+
 export type Query = {
   __typename?: 'Query';
   instruments: Maybe<Array<Maybe<Instrument>>>;
-  options: Maybe<OptionsList>;
+  matrix: Maybe<OptionsMatrix>;
   optionDetails: Maybe<OptionDetails>;
 };
 
 
-export type QueryOptionsArgs = {
+export type QueryMatrixArgs = {
   id: Scalars['ID'];
   type: OptionType;
   expires: Scalars['String'];
@@ -139,28 +141,26 @@ export type OptionsQueryVariables = Exact<{
 
 export type OptionsQuery = (
   { __typename?: 'Query' }
-  & { options: Maybe<(
-    { __typename?: 'OptionsList' }
+  & { matrix: Maybe<(
+    { __typename?: 'OptionsMatrix' }
     & { underlying: Maybe<(
       { __typename?: 'InstrumentDetails' }
       & InstrumentDetailsFragment
-    )>, options: Maybe<Array<Maybe<(
-      { __typename?: 'OptionMatrixItem' }
-      & Pick<OptionMatrixItem, 'strike'>
-      & { call: Maybe<(
-        { __typename?: 'OptionInfo' }
-        & OptionInfoFragment
-      )>, callDetails: Maybe<(
-        { __typename?: 'OptionDetails' }
-        & OptionDetailsFragment
-      )>, put: Maybe<(
-        { __typename?: 'OptionInfo' }
-        & OptionInfoFragment
-      )>, putDetails: Maybe<(
-        { __typename?: 'OptionDetails' }
-        & OptionDetailsFragment
+    )>, matrix: Array<(
+      { __typename?: 'OptionsWithExpiry' }
+      & Pick<OptionsWithExpiry, 'expires'>
+      & { options: Array<(
+        { __typename?: 'OptionMatrixItem' }
+        & Pick<OptionMatrixItem, 'strike'>
+        & { call: Maybe<(
+          { __typename?: 'OptionDetails' }
+          & OptionDetailsFragment
+        )>, put: Maybe<(
+          { __typename?: 'OptionDetails' }
+          & OptionDetailsFragment
+        )> }
       )> }
-    )>>> }
+    )> }
   )> }
 );
 
@@ -182,14 +182,9 @@ export type InstrumentDetailsFragment = (
   & Pick<InstrumentDetails, 'name' | 'href' | 'change' | 'changePercent' | 'lastPrice' | 'buyPrice' | 'sellPrice' | 'highestPrice' | 'lowestPrice' | 'updated' | 'totalVolumeTraded'>
 );
 
-export type OptionInfoFragment = (
-  { __typename?: 'OptionInfo' }
-  & Pick<OptionInfo, 'name' | 'href' | 'buyVolume' | 'buy' | 'sell' | 'sellVolume'>
-);
-
 export type OptionDetailsFragment = (
   { __typename?: 'OptionDetails' }
-  & Pick<OptionDetails, 'expires' | 'type' | 'optionType' | 'strike' | 'parity' | 'buyIV' | 'delta' | 'gamma' | 'theta' | 'vega' | 'sellIV' | 'IV'>
+  & Pick<OptionDetails, 'name' | 'href' | 'type' | 'strike' | 'changePercent' | 'change' | 'updated' | 'bid' | 'ask' | 'spread' | 'last' | 'high' | 'low' | 'volume' | 'expires' | 'optionType' | 'parity' | 'buyIV' | 'delta' | 'theta' | 'vega' | 'sellIV' | 'gamma' | 'rho' | 'IV'>
 );
 
 export const InstrumentDetailsFragmentDoc = gql`
@@ -207,29 +202,34 @@ export const InstrumentDetailsFragmentDoc = gql`
   totalVolumeTraded
 }
     `;
-export const OptionInfoFragmentDoc = gql`
-    fragment OptionInfo on OptionInfo {
-  name
-  href
-  buyVolume
-  buy
-  sell
-  sellVolume
-}
-    `;
 export const OptionDetailsFragmentDoc = gql`
     fragment OptionDetails on OptionDetails {
-  expires
+  name
+  href
   type
+  strike
+  changePercent
+  change
+  updated
+  bid
+  ask
+  spread
+  last
+  high
+  low
+  volume
+  expires
   optionType
+  type
   strike
   parity
   buyIV
   delta
-  gamma
   theta
   vega
   sellIV
+  gamma
+  rho
   IV
 }
     `;
@@ -270,34 +270,25 @@ export type InstrumentsLazyQueryHookResult = ReturnType<typeof useInstrumentsLaz
 export type InstrumentsQueryResult = Apollo.QueryResult<InstrumentsQuery, InstrumentsQueryVariables>;
 export const OptionsDocument = gql`
     query Options($id: ID!, $type: OptionType!, $expires: String!, $includeDetails: Boolean) {
-  options(
-    id: $id
-    type: $type
-    expires: $expires
-    includeDetails: $includeDetails
-  ) {
+  matrix(id: $id, type: $type, expires: $expires, includeDetails: $includeDetails) {
     underlying {
       ...InstrumentDetails
     }
-    options {
-      call {
-        ...OptionInfo
-      }
-      callDetails {
-        ...OptionDetails
-      }
-      strike
-      put {
-        ...OptionInfo
-      }
-      putDetails {
-        ...OptionDetails
+    matrix {
+      expires
+      options {
+        call {
+          ...OptionDetails
+        }
+        strike
+        put {
+          ...OptionDetails
+        }
       }
     }
   }
 }
     ${InstrumentDetailsFragmentDoc}
-${OptionInfoFragmentDoc}
 ${OptionDetailsFragmentDoc}`;
 
 /**
