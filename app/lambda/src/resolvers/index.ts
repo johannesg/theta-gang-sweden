@@ -27,18 +27,20 @@ export const resolvers: Resolvers = {
             const optionsList = parseOptionsOverview(doc);
             const matrix = transformOverview(optionsList);
 
-            const allPromises = matrix.matrix.flatMap(m => {
-                return m.options.flatMap(x => {
-                    const p1 = getOptionDetails(x.call?.href!)
-                        .then(d => x.call = { ...x.call, ...d });
+            if (includeDetails) {
+                const allPromises = matrix.matrix.flatMap(m => {
+                    return m.options.flatMap(x => {
+                        const p1 = getOptionDetails(x.call?.href!)
+                            .then(d => x.call = { ...x.call, ...d });
 
-                    const p2 = getOptionDetails(x.put?.href!)
-                        .then(d => x.put = { ...x.put, ...d });
+                        const p2 = getOptionDetails(x.put?.href!)
+                            .then(d => x.put = { ...x.put, ...d });
 
-                    return [p1, p2];
+                        return [p1, p2];
+                    });
                 });
-            });
-            await Promise.all(allPromises);
+                await Promise.all(allPromises);
+            }
 
             return matrix;
         },
