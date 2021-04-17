@@ -11,6 +11,7 @@ import { activeOption, ShoppingAction, addToShoppingCart, isInShoppingCart, shop
 import { InstrumentDetails, OptionDetails, OptionMatrixItem, OptionsWithExpiry } from '../apollo/types';
 import { OptionGreeksCall, OptionGreeksPut } from './OptionGreeks';
 import numeral from '../utils/numeral';
+import { getDaysFromNow } from "../utils/date";
 
 const useStyles = makeStyles({
     table: {
@@ -123,31 +124,13 @@ function BuySellButtons({ option }: { option: OptionDetails }) {
     </ButtonGroup>
 }
 
-export function OptionMatrix({ options, underlying }: { options: OptionMatrixItem[], underlying: InstrumentDetails }) {
-    if (!options)
-        return <div></div>
-
+function MatrixTableRow({ row, prevRow, price }: { row: OptionMatrixItem, prevRow: OptionMatrixItem | undefined, price: number }) {
     const classes = useStyles();
-
     const activeOptionVar = useReactiveVar(activeOption);
     const shoppingCartVar = useReactiveVar(shoppingCart);
 
-    const rows = options;
-
-    const price = underlying?.lastPrice ?? 0;
-    console.log(`Price: ${price}`);
-
     function isActive(item: OptionDetails): boolean {
         return activeOptionVar === item;
-    }
-
-    function selectItem(item: OptionDetails) {
-        if (item === activeOptionVar)
-            activeOption(null);
-        else
-            activeOption(item);
-
-        console.log(`Selected: ${activeOption()?.name}`)
     }
 
     function getShoppingCartStatusClass(info: OptionDetails): string | undefined {
@@ -156,6 +139,63 @@ export function OptionMatrix({ options, underlying }: { options: OptionMatrixIte
             case ShoppingAction.Sell: return classes.markAsSell;
             default: return undefined;
         }
+    }
+
+    const call = row!.call!;
+    const put = row!.put!;
+    const strike = row!.strike!;
+
+    const prevStrike = prevRow?.strike ?? 0;
+
+    const rowClass = clsx((price <= strike && price >= prevStrike) && classes.mark);
+
+    const cellClassCall = isActive(call) ? classes.selected : getShoppingCartStatusClass(call);
+    const cellClassPut = isActive(put) ? classes.selected : getShoppingCartStatusClass(put);
+
+    // const callHandler = () => selectItem(call);
+    // const putHandler = () => selectItem(put);
+    const callHandler = () => { };
+    const putHandler = () => { };
+
+    return <TableRow hover className={rowClass} key={call.name}>
+        {/* <TableCell className={cellClassCall} onClick={callHandler}>
+                            <BuySellButtons option={call}></BuySellButtons>
+                        </TableCell> */}
+        <OptionGreeksCall option={call}></OptionGreeksCall>
+        <TableCell className={clsx(cellClassCall, classes.bid)} align="right" onClick={callHandler}>{numeral(call.bid).format("#0.00")}</TableCell>
+        <TableCell className={clsx(cellClassCall, classes.ask)} align="right" onClick={callHandler}>{numeral(call.ask).format("#0.00")}</TableCell>
+        <TableCell className={classes.strike} align="center">{strike}</TableCell>
+        <TableCell className={clsx(cellClassPut, classes.bid)} align="right" onClick={putHandler}>{numeral(put.bid).format("#0.00")}</TableCell>
+        <TableCell className={clsx(cellClassPut, classes.ask)} align="right" onClick={putHandler}>{numeral(put.ask).format("#0.00")}</TableCell>
+        <OptionGreeksPut option={put}></OptionGreeksPut>
+        {/* <TableCell className={cellClassPut} >
+                            <BuySellButtons option={put}></BuySellButtons>
+                        </TableCell> */}
+    </TableRow>
+
+}
+
+
+export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry[], underlying: InstrumentDetails }) {
+    if (!matrix)
+        return <div></div>
+
+    const classes = useStyles();
+
+    const activeOptionVar = useReactiveVar(activeOption);
+    const shoppingCartVar = useReactiveVar(shoppingCart);
+
+
+    const price = underlying?.lastPrice ?? 0;
+    console.log(`Price: ${price}`);
+
+    function selectItem(item: OptionDetails) {
+        if (item === activeOptionVar)
+            activeOption(null);
+        else
+            activeOption(item);
+
+        console.log(`Selected: ${activeOption()?.name}`)
     }
 
     return <TableContainer component={Paper}>
@@ -190,39 +230,23 @@ export function OptionMatrix({ options, underlying }: { options: OptionMatrixIte
                 </TableRow>
             </TableHead>
             <TableBody>
-                {rows.map((row : OptionMatrixItem, i) => {
-                    const call = row!.call!;
-                    const put = row!.put!;
-                    const strike = row!.strike!;
+                {
+                    matrix.map(m => {
 
-                    const prevStrike = (i == 0 ? row?.strike : rows[i - 1]?.strike) ?? 0;
-
-                    const rowClass = clsx((price <= strike && price >= prevStrike) && classes.mark);
-
-                    const cellClassCall = isActive(call) ? classes.selected : getShoppingCartStatusClass(call);
-                    const cellClassPut = isActive(put) ? classes.selected : getShoppingCartStatusClass(put);
-
-                    // const callHandler = () => selectItem(call);
-                    // const putHandler = () => selectItem(put);
-                    const callHandler = () => { };
-                    const putHandler = () => { };
-
-                    return <TableRow hover className={rowClass} key={call.name}>
-                        {/* <TableCell className={cellClassCall} onClick={callHandler}>
-                            <BuySellButtons option={call}></BuySellButtons>
-                        </TableCell> */}
-                        <OptionGreeksCall option={call}></OptionGreeksCall>
-                        <TableCell className={clsx(cellClassCall, classes.bid)} align="right" onClick={callHandler}>{numeral(call.bid).format("#0.00")}</TableCell>
-                        <TableCell className={clsx(cellClassCall, classes.ask)} align="right" onClick={callHandler}>{numeral(call.ask).format("#0.00")}</TableCell>
-                        <TableCell className={classes.strike} align="center">{strike}</TableCell>
-                        <TableCell className={clsx(cellClassPut, classes.bid)} align="right" onClick={putHandler}>{numeral(put.bid).format("#0.00")}</TableCell>
-                        <TableCell className={clsx(cellClassPut, classes.ask)} align="right" onClick={putHandler}>{numeral(put.ask).format("#0.00")}</TableCell>
-                        <OptionGreeksPut option={put}></OptionGreeksPut>
-                        {/* <TableCell className={cellClassPut} >
-                            <BuySellButtons option={put}></BuySellButtons>
-                        </TableCell> */}
-                    </TableRow>
-                })}
+                        const rows = m.options;
+                        return <React.Fragment>
+                            <TableRow>
+                                <TableCell colSpan={23} align="center">Expires: { m.expires }  DTE: {getDaysFromNow(m.expires)}</TableCell>
+                            </TableRow>
+                            {
+                                rows.map((row: OptionMatrixItem, i) => {
+                                    const prevRow = i == 0 ? undefined : rows[i - 1];
+                                    return <MatrixTableRow row={row} prevRow={prevRow} price={price} />
+                                })
+                            }
+                        </React.Fragment>
+                    })
+                }
             </TableBody>
         </Table>
     </TableContainer>
@@ -234,7 +258,6 @@ export function OptionsContainer() {
 
     const underlying = data?.matrix?.underlying as InstrumentDetails;
     const matrix = data?.matrix?.matrix as OptionsWithExpiry[] ?? [];
-    const options = matrix.flatMap(x => x.options);
 
     return <React.Fragment>
         <Grid item xs={12}>
@@ -242,7 +265,7 @@ export function OptionsContainer() {
             <UnderlyingTable underlying={underlying} ></UnderlyingTable>
         </Grid>
         <Grid item xs={12}>
-            <OptionMatrix options={options} underlying={underlying}></OptionMatrix>
+            <OptionMatrix matrix={matrix} underlying={underlying}></OptionMatrix>
         </Grid>
     </React.Fragment>
 }

@@ -18,3 +18,7 @@ export function getNextMonths(num : number) : string[] {
     return Array.from(Array(10)).map((_, i) => i)
         .map(i => now.plus({month: i}).toFormat('yyyy-MM'));
 }
+
+export function getDaysFromNow(expires: string) : number {
+    return Math.floor(DateTime.fromISO(expires).diffNow("days").days);
+}
