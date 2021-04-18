@@ -175,7 +175,7 @@ function MatrixTableRow({ row, prevRow, price }: { row: OptionMatrixItem, prevRo
 
 
 export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry[], underlying: InstrumentDetails }) {
-    if (!matrix)
+    if (!matrix || !matrix.length)
         return <div></div>
 
     const classes = useStyles();
