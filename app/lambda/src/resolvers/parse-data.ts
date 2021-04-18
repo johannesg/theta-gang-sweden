@@ -131,12 +131,12 @@ function parseOptionItem(i: number, tr: cheerio.Cheerio): OptionDetails {
     const name = nameNode.attr("title") ?? "";
     const href = nameNode.attr("href") ?? "";
 
-    const str = (i: number): string => {
+    function str (i: number): string {
         const val = tr.find("td.overview").eq(i).text();
         return val;
     };
 
-    const num = (i: number): number => {
+    function num (i: number): number {
         const val = tr.find("td.overview").eq(i).text();
         // return val;
         return numeral(val).value() ?? 0;

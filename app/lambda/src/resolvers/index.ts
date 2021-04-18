@@ -4,6 +4,7 @@ import { parseOptionInfo, parseOptionsOverview, parseOptionsPage, parseStockList
 import * as cheerio from 'cheerio';
 import { getNextMonth } from "../utils/date";
 import { transformOverview } from "./transform-data";
+import { DateTime } from "luxon";
 
 async function getOptionDetails(id: string | undefined): Promise<OptionDetails> {
     if (!id)
@@ -22,10 +23,20 @@ export const resolvers: Resolvers = {
             return parseStockList(doc);
         },
         matrix: async (_, { id, type, expires, includeDetails }) => {
+            const start = DateTime.now();
             const html = await getOptionsList(id, type, expires, "overview");
             const doc = cheerio.load(html);
+
+            let ms = -start.diffNow("milliseconds").milliseconds;
+            console.log(`Fetch options list: ${ms}`)
+
             const optionsList = parseOptionsOverview(doc);
+            ms = -start.diffNow("milliseconds").milliseconds;
+            console.log(`Parsed options list: ${ms}`)
             const matrix = transformOverview(optionsList);
+
+            ms = -start.diffNow("milliseconds").milliseconds;
+            console.log(`Transformed options list: ${ms}`)
 
             if (includeDetails) {
                 const allPromises = matrix.matrix.flatMap(m => {
@@ -41,6 +52,9 @@ export const resolvers: Resolvers = {
                 });
                 await Promise.all(allPromises);
             }
+
+            ms = -start.diffNow("milliseconds").milliseconds;
+            console.log(`Fetched options details: ${ms}`)
 
             return matrix;
         },
