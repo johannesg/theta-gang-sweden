@@ -1,7 +1,6 @@
 
 import { ApolloError } from 'apollo-server-errors';
-import axios from 'axios';
-import { stat } from 'node:fs';
+import axios from '../utils/axios';
 import { OptionType } from '../types';
 
 import { getNextMonth } from '../utils/date';
@@ -11,7 +10,7 @@ export async function getInstruments() {
 }
 
 export async function getOptionsList(id: string, optionType: OptionType, expiry: string, activeTab: string) {
-    const url = 'https://www.avanza.se/optioner-lista.html'
+    const url = '/optioner-lista.html'
 
     const params = {
         name: "",
@@ -34,7 +33,7 @@ export async function getOptionsList(id: string, optionType: OptionType, expiry:
 }
 
 export async function getOptionInfo(path : string) {
-    const url = 'https://www.avanza.se' + path;
+    const url = path;
 
     const { status, statusText, data } = await axios.get(url);
     if (status != 200) {
