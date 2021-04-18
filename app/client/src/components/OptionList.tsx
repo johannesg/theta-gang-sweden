@@ -200,13 +200,12 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
         <Table className={classes.table} size="small" aria-label="a dense table">
             <TableHead>
                 <TableRow>
-                    {/* <TableCell>Call</TableCell> */}
                     <TableCell align="right">Updated</TableCell>
-                    <TableCell align="right">IV</TableCell>
                     <TableCell align="right">Vega</TableCell>
                     <TableCell align="right">Theta</TableCell>
                     <TableCell align="right">Gamma</TableCell>
                     <TableCell align="right">Delta</TableCell>
+                    <TableCell align="right">IV</TableCell>
                     <TableCell align="right">Vol</TableCell>
                     <TableCell align="right">Spread</TableCell>
                     <TableCell align="right">Last</TableCell>
@@ -218,13 +217,12 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
                     <TableCell align="right">Last</TableCell>
                     <TableCell align="right">Spread</TableCell>
                     <TableCell align="right">Vol</TableCell>
+                    <TableCell align="right">IV</TableCell>
                     <TableCell align="right">Delta</TableCell>
                     <TableCell align="right">Gamma</TableCell>
                     <TableCell align="right">Theta</TableCell>
                     <TableCell align="right">Vega</TableCell>
-                    <TableCell align="right">IV</TableCell>
                     <TableCell align="right">Updated</TableCell>
-                    {/* <TableCell>Put</TableCell> */}
                 </TableRow>
             </TableHead>
             <TableBody>

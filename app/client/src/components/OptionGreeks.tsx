@@ -10,11 +10,11 @@ export function OptionGreeksCall({ option }: { option: OptionDetails }) {
 
   return <React.Fragment>
     <TableCell align="right">{option?.updated}</TableCell>
-    <TableCell align="right">{numeral(option?.IV).format("%0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.vega).format("#0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.theta).format("#0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.gamma).format("#0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.delta).format("#0.00")}</TableCell>
+    <TableCell align="right">{numeral(option?.IV).format("%0.00")}</TableCell>
     <TableCell align="right">{option?.volume}</TableCell>
     <TableCell align="right">{numeral(option?.spread).format("%0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.last).format("#0.00")}</TableCell>
@@ -29,11 +29,11 @@ export function OptionGreeksPut({ option }: { option: OptionDetails }) {
     <TableCell align="right">{numeral(option?.last).format("#0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.spread).format("%0.00")}</TableCell>
     <TableCell align="right">{option?.volume}</TableCell>
+    <TableCell align="right">{numeral(option?.IV).format("%0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.delta).format("#0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.gamma).format("#0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.theta).format("#0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.vega).format("#0.00")}</TableCell>
-    <TableCell align="right">{numeral(option?.IV).format("%0.00")}</TableCell>
     <TableCell align="right">{option?.updated}</TableCell>
   </React.Fragment>
 }
