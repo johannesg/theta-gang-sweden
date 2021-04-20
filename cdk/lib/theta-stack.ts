@@ -1,6 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import { HostedZone } from '@aws-cdk/aws-route53';
-import { ICertificate } from '@aws-cdk/aws-certificatemanager';
+import { Certificate } from '@aws-cdk/aws-certificatemanager';
 // import { CatsAuthentication } from './cats-auth';
 import { ThetaApi } from './theta-api';
 // import { CatsApp } from './cats-app';
@@ -9,8 +9,6 @@ import { Table } from '@aws-cdk/aws-dynamodb';
 import { ThetaApp } from './theta-app';
 
 export interface ThetaStackProps extends cdk.StackProps {
-  certificate: ICertificate
-  certificateEdge: ICertificate
 }
 
 export class ThetaStack extends cdk.Stack {
@@ -24,8 +22,10 @@ export class ThetaStack extends cdk.Stack {
     this.appCode = new S3ObjectParameter(this, "AppCode");
 
     const zone = HostedZone.fromLookup(this, 'Zone', { domainName: "thetagang.se" });
+    const certificate = Certificate.fromCertificateArn(this, "SiteCertificate", "nothing to see here");
+    const certificateEdge = Certificate.fromCertificateArn(this, "SiteCertificateEdge", "nothing to see here");
 
-    const table = Table.fromTableName(this, "Table", "ThetaGangTableStack-ThetaGangB9B62551-1W8Q572DJOLK9");
+    const table = Table.fromTableName(this, "Table", "nothing to see here");
 
     // const auth = new CatsAuthentication(this, "Auth");
 
@@ -33,7 +33,7 @@ export class ThetaStack extends cdk.Stack {
       domainName: "api.thetagang.se",
       // auth,
       zone,
-      certificate: props.certificate,
+      certificate: certificate,
       source: this.lambdaCode.location,
       table
     });
@@ -41,7 +41,7 @@ export class ThetaStack extends cdk.Stack {
     const site = new ThetaApp(this, "AppSite", {
       domainName: "thetagang.se",
       zone,
-      certificate: props.certificateEdge,
+      certificate: certificateEdge,
       source: this.appCode.location
     });
   }
