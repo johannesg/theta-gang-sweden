@@ -9,6 +9,9 @@ import { Table } from '@aws-cdk/aws-dynamodb';
 import { ThetaApp } from './theta-app';
 
 export interface ThetaStackProps extends cdk.StackProps {
+  certificateArn: string
+  certificateEdgeArn: string
+  tableArn: string
 }
 
 export class ThetaStack extends cdk.Stack {
@@ -22,10 +25,10 @@ export class ThetaStack extends cdk.Stack {
     this.appCode = new S3ObjectParameter(this, "AppCode");
 
     const zone = HostedZone.fromLookup(this, 'Zone', { domainName: "thetagang.se" });
-    const certificate = Certificate.fromCertificateArn(this, "SiteCertificate", "nothing to see here");
-    const certificateEdge = Certificate.fromCertificateArn(this, "SiteCertificateEdge", "nothing to see here");
+    const certificate = Certificate.fromCertificateArn(this, "SiteCertificate", props.certificateArn);
+    const certificateEdge = Certificate.fromCertificateArn(this, "SiteCertificateEdge", props.certificateEdgeArn);
 
-    const table = Table.fromTableName(this, "Table", "nothing to see here");
+    const table = Table.fromTableArn(this, "Table", props.tableArn);
 
     // const auth = new CatsAuthentication(this, "Auth");
 

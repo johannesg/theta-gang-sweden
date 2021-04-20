@@ -10,6 +10,9 @@ export type ThetaTableProps = {
 }
 
 export class ThetaTableStack extends Stack {
+    tableName: CfnOutput
+    tableArn: CfnOutput
+
     constructor(scope: Construct, id: string, props: StackProps | undefined) {
         super(scope, id, props);
 
@@ -25,7 +28,7 @@ export class ThetaTableStack extends Stack {
             sortKey: { name: 'GSI1_SK', type: AttributeType.STRING }
         })
 
-        new CfnOutput(this, "TableName", { value: table.tableName });
-        new CfnOutput(this, "TableArn", { value: table.tableArn });
+        this.tableName = new CfnOutput(this, "TableName", { value: table.tableName, exportName: "theta-gang-table-name" });
+        this.tableArn = new CfnOutput(this, "TableArn", { value: table.tableArn, exportName: "theta-gang-table-arn" });
     }
 }

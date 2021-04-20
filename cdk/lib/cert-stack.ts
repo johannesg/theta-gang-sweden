@@ -1,11 +1,11 @@
 import { Stack, Construct, StackProps, CfnOutput } from '@aws-cdk/core';
 import { HostedZone } from '@aws-cdk/aws-route53';
-import { DnsValidatedCertificate, ICertificate } from '@aws-cdk/aws-certificatemanager';
+import { DnsValidatedCertificate } from '@aws-cdk/aws-certificatemanager';
 
 export class CertStack extends Stack {
-    public readonly certificate: ICertificate;
-    public readonly certificateEdge: ICertificate;
-
+    certificateArn: CfnOutput
+    certificateEdgeArn: CfnOutput
+    
     constructor(scope: Construct, id: string, props: StackProps | undefined) {
         super(scope, id, props);
 
@@ -17,20 +17,20 @@ export class CertStack extends Stack {
 
         const hostedZone = HostedZone.fromLookup(this, 'Zone', { domainName: zoneName });
 
-        this.certificate = new DnsValidatedCertificate(this, 'SiteCertificateRegional', {
+        const certificate = new DnsValidatedCertificate(this, 'SiteCertificateRegional', {
             hostedZone,
             domainName,
             subjectAlternativeNames,
         });
 
-        this.certificateEdge = new DnsValidatedCertificate(this, 'SiteCertificate', {
+        const certificateEdge = new DnsValidatedCertificate(this, 'SiteCertificate', {
             hostedZone,
             domainName,
             subjectAlternativeNames,
             region: 'us-east-1', // Cloudfront only checks this region for certificates.
         });
 
-        new CfnOutput(this, 'Certificate', { value: this.certificate.certificateArn });
-        new CfnOutput(this, 'CertificateEdge', { value: this.certificateEdge.certificateArn });
+        this.certificateArn = new CfnOutput(this, 'Certificate', { value: certificate.certificateArn, exportName: "theta-gang-certificate-arn" });
+        this.certificateEdgeArn = new CfnOutput(this, 'CertificateEdge', { value: certificateEdge.certificateArn, exportName: "theta-gang-certificate-edge-arn" });
     }
 }
