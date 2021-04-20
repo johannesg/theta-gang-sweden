@@ -55,7 +55,7 @@ export class ThetaApi extends cdk.Construct {
             corsPreflight: {
                 allowHeaders: ['Authorization', 'Content-Type'],
                 allowMethods: [gw2.CorsHttpMethod.GET, gw2.CorsHttpMethod.HEAD, gw2.CorsHttpMethod.OPTIONS, gw2.CorsHttpMethod.POST],
-                allowOrigins: ['thetagang.se'],
+                allowOrigins: ['https://thetagang.se'],
                 maxAge: Duration.days(10),
             },
             defaultDomainMapping: {
