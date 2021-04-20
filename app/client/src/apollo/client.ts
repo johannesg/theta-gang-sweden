@@ -10,7 +10,8 @@ export function createApolloClient(token: string) {
 
         link: new HttpLink({
             // uri: "http://localhost:3000",
-            uri: "https://i0l6ot66ai.execute-api.eu-north-1.amazonaws.com/graphql",
+            // uri: "https://i0l6ot66ai.execute-api.eu-north-1.amazonaws.com/graphql",
+            uri: "https://api.thetagang.se/graphql",
             fetch
         }),
 
@@ -19,4 +20,3 @@ export function createApolloClient(token: string) {
         }
     });
 }
-    

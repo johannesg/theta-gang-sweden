@@ -1,6 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import { HostedZone } from '@aws-cdk/aws-route53';
-import { Certificate } from '@aws-cdk/aws-certificatemanager';
+import { ICertificate } from '@aws-cdk/aws-certificatemanager';
 // import { CatsAuthentication } from './cats-auth';
 import { ThetaApi } from './theta-api';
 // import { CatsApp } from './cats-app';
@@ -9,6 +9,8 @@ import { Table } from '@aws-cdk/aws-dynamodb';
 import { ThetaApp } from './theta-app';
 
 export interface ThetaStackProps extends cdk.StackProps {
+  certificate: ICertificate
+  certificateEdge: ICertificate
 }
 
 export class ThetaStack extends cdk.Stack {
@@ -21,32 +23,25 @@ export class ThetaStack extends cdk.Stack {
     this.lambdaCode = new S3ObjectParameter(this, "LambdaCode");
     this.appCode = new S3ObjectParameter(this, "AppCode");
 
-    const certificateEdge =
-      Certificate.fromCertificateArn(this, "CertificateEdge",
-        "arn:aws:acm:us-east-1:700595718361:certificate/cdabb363-1608-46ff-8ca3-eb5d4f3c04a1");
-    const certificateRegional =
-      Certificate.fromCertificateArn(this, "CertificateRegional",
-        "arn:aws:acm:eu-north-1:700595718361:certificate/3fac9580-bd98-429e-87c5-b46247cdf740");
-
-    const zone = HostedZone.fromLookup(this, 'Zone', { domainName: "aws.jogus.io" });
+    const zone = HostedZone.fromLookup(this, 'Zone', { domainName: "thetagang.se" });
 
     const table = Table.fromTableName(this, "Table", "ThetaGangTableStack-ThetaGangB9B62551-1W8Q572DJOLK9");
 
     // const auth = new CatsAuthentication(this, "Auth");
 
     const api = new ThetaApi(this, "Api", {
-      domainName: "thetaapi.aws.jogus.io",
+      domainName: "api.thetagang.se",
       // auth,
       zone,
-      certificate: certificateRegional,
+      certificate: props.certificate,
       source: this.lambdaCode.location,
       table
     });
 
     const site = new ThetaApp(this, "AppSite", {
-      domainName: "thetagang.aws.jogus.io",
+      domainName: "thetagang.se",
       zone,
-      certificate: certificateEdge,
+      certificate: props.certificateEdge,
       source: this.appCode.location
     });
   }
