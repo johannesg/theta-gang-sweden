@@ -24,22 +24,22 @@ describe("calculate greeks", () => {
         expect(calc_delta_put(underlying, underlying + 5, dte, vol, interest)).toBe(-0.9194642200003285);
     });
     test("gamma", () => {
-        expect(calc_gamma(underlying, underlying - 5, dte, vol, interest)).toBe(0.03195231728952847);
-        expect(calc_gamma(underlying, underlying, dte, vol, interest)).toBe(0.12042370119920676);
-        expect(calc_gamma(underlying, underlying + 5, dte, vol, interest)).toBe(0.045135654795373105);
+        expect(calc_gamma(underlying, underlying - 5, dte, vol, interest)).toBe(0.03195230379504172);
+        expect(calc_gamma(underlying, underlying, dte, vol, interest)).toBe(0.12042365034042156);
+        expect(calc_gamma(underlying, underlying + 5, dte, vol, interest)).toBe(0.04513563573314076);
     });
     test("theta", () => {
-        expect(calc_theta_call(underlying, underlying - 5, dte, vol, interest)).toBe(-0.004724955703733377);
-        expect(calc_theta_put(underlying, underlying - 5, dte, vol, interest)).toBe(-0.004355214268847118);
-        expect(calc_theta_call(underlying, underlying, dte, vol, interest)).toBe(-0.0166971981657262);
-        expect(calc_theta_put(underlying, underlying, dte, vol, interest)).toBe(-0.016286374349185912);
-        expect(calc_theta_call(underlying, underlying + 5, dte, vol, interest)).toBe(-0.006215094625270948);
-        expect(calc_theta_put(underlying, underlying + 5, dte, vol, interest)).toBe(-0.005763188427076632);
+        expect(calc_theta_call(underlying, underlying - 5, dte, vol, interest)).toBe(-0.004724953855173549);
+        expect(calc_theta_put(underlying, underlying - 5, dte, vol, interest)).toBe(-0.0043988434139707175);
+        expect(calc_theta_call(underlying, underlying, dte, vol, interest)).toBe(-0.016697191198769328);
+        expect(calc_theta_put(underlying, underlying, dte, vol, interest)).toBe(-0.016706413532954954);
+        expect(calc_theta_call(underlying, underlying + 5, dte, vol, interest)).toBe(-0.006215092014006244);
+        expect(calc_theta_put(underlying, underlying + 5, dte, vol, interest)).toBe(-0.006602741782308831);
     });
     test("vega", () => {
-        expect(calc_vega(underlying, underlying - 5, dte, vol, interest)).toBe(0.017508119062755328);
-        expect(calc_vega(underlying, underlying, dte, vol, interest)).toBe(0.06598558969819548);
-        expect(calc_vega(underlying, underlying + 5, dte, vol, interest)).toBe(0.024731865641300334);
+        expect(calc_vega(underlying, underlying - 5, dte, vol, interest)).toBe(0.01750811166851601);
+        expect(calc_vega(underlying, underlying, dte, vol, interest)).toBe(0.06598556183036798);
+        expect(calc_vega(underlying, underlying + 5, dte, vol, interest)).toBe(0.024731855196241517);
     });
     test("rho", () => {
         expect(calc_rho_call(underlying, underlying - 5, dte, vol, interest)).toBe(0.046390125072606016);
@@ -52,23 +52,44 @@ describe("calculate greeks", () => {
 });
 
 describe("calculate IV", () => {
-    const underlying = 100;
-    const strike = 105;
-
-    const interest = 0.01;
-    const dte = 30;
-
-    const price = 2.30;
 
     test("IV Call", () => {
+        const underlying = 100;
+        const interest = 0.01;
+        const dte = 30;
+        const price = 2.30;
         expect(calc_iv_call(underlying, 105, dte, interest, price)).toBe(0.3688563249143389);
         expect(calc_iv_call(underlying, 100, dte, interest, price)).toBe(0.19759119494593871);
-        // expect(calc_iv_call(underlying, 95, dte, interest, price)).toBe(0.3688563249143389);
+        // expect(calc_iv_call(underlying, underlying - 5, dte, interest, price)).toBe(0.3688563249143389);
     });
 
     test("IV Put", () => {
-        expect(calc_iv_put(underlying, 95, dte, interest, price)).toBe(0.3931007096285325);
-        expect(calc_iv_put(underlying, 100, dte, interest, price)).toBe(0.20478119460977465);
-        // expect(calc_iv_put(underlying, 105, dte, interest, price)).toBe(0.3931007096285325);
+        const underlying = 100;
+        const interest = 0.01;
+        const dte = 30;
+        const price = 2.30;
+        expect(calc_iv_put(underlying, underlying - 5, dte, interest, price)).toBe(0.3931007096285325);
+        expect(calc_iv_put(underlying, underlying, dte, interest, price)).toBe(0.20478119460977465);
+        // expect(calc_iv_put(underlying, underlying + 5, dte, interest, price)).toBe(0.3931007096285325);
+    });
+
+
+    const strikes: [cbid: number, cask: number, strike: number, pbid: number, pask: number, civ: number, piv: number][] = [
+        [14.75, 15.75, 190, 1.20, 1.60, 0.25525683864819165, 0.2696559917004907],
+        [10.75, 11.75, 195, 2.00, 2.50, 0.24965897976004325, 0.2523352851014894],
+        [7.20, 8.00, 200, 3.30, 4.00, 0.2347685690355809, 0.2392617767685735],
+        [4.40, 4.95, 205, 5.40, 6.10, 0.22337272395086133, 0.22865990687351023],
+        [2.45, 2.95, 210, 8.30, 9.20, 0.22069156751757504, 0.2252211526981929],
+        [1.15, 1.65, 215, 11.75, 13.00, 0.21721197055570407, 0.21834860022765754]
+    ];
+
+    test.each(strikes)(`H&M. %d,%d --- %d --- %d,%d`, (cbid, cask, strike, pbid, pask, civ, piv) => {
+        const cprice = (cbid + cask) / 2;
+        const pprice = (pbid + pask) / 2;
+        const underlying = 204.10;
+        const interest = -0.0033
+        const dte = 29;
+        expect(calc_iv_call(underlying, strike, dte, interest, cprice)).toBe(civ);
+        expect(calc_iv_put(underlying, strike, dte, interest, pprice)).toBe(piv);
     });
 });
