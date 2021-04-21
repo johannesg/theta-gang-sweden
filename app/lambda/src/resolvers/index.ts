@@ -5,7 +5,7 @@ import * as cheerio from 'cheerio';
 import { getDaysFromNow, getNextMonth } from "../utils/date";
 import { transformOverview } from "./transform-data";
 import { DateTime } from "luxon";
-import { calc_delta_call, calc_delta_put, calc_gamma, calc_iv_call, calc_iv_put, calc_rho_call, calc_rho_put, calc_theta_call, calc_theta_put, calc_vega, calc_vega2 } from "../utils/calc-greeks";
+import { calcGreeksCall, calcGreeksPut, calc_delta_call, calc_delta_put, calc_gamma, calc_iv_call, calc_iv_put, calc_rho_call, calc_rho_put, calc_theta_call, calc_theta_put, calc_vega, calc_vega2 } from "../utils/calc-greeks";
 
 async function getOptionDetails(id: string | undefined): Promise<OptionDetails> {
     if (!id)
@@ -26,33 +26,17 @@ function calcGreeks(underlying: InstrumentDetails, option: OptionDetails) {
     const strike = option.strike!;
     const dte = getDaysFromNow(option.expires!);
     const interest = option.interest!
-    let IV = 0;
 
+    const res = type == CallOrPutType.Call
+        ? calcGreeksCall({ daysToExpiration: dte, price, riskFreeInterestRate: interest, strike, underlyingPrice })
+        : calcGreeksPut({ daysToExpiration: dte, price, riskFreeInterestRate: interest, strike, underlyingPrice });
 
-    switch (type) {
-        case CallOrPutType.Call:
-            IV = calc_iv_call(underlyingPrice, strike, dte, interest, price);
-            if (!IV)
-                break;
-            option.IV2 = IV;
-            option.delta2 = calc_delta_call(underlyingPrice, strike, dte, IV, interest);
-            option.theta2 = calc_theta_call(underlyingPrice, strike, dte, IV, interest);
-            option.rho2 = calc_rho_call(underlyingPrice, strike, dte, IV, interest);
-            option.gamma2 = calc_gamma(underlyingPrice, strike, dte, IV, interest);
-            option.vega2 = calc_vega(underlyingPrice, strike, dte, IV, interest);
-            break;
-        case CallOrPutType.Put:
-            IV = calc_iv_put(underlyingPrice, strike, dte, interest, price);
-            if (!IV)
-                break;
-            option.IV2 = IV;
-            option.delta2 = calc_delta_put(underlyingPrice, strike, dte, IV, interest);
-            option.theta2 = calc_theta_put(underlyingPrice, strike, dte, IV, interest);
-            option.rho2 = calc_rho_put(underlyingPrice, strike, dte, IV, interest);
-            option.gamma2 = calc_gamma(underlyingPrice, strike, dte, IV, interest);
-            option.vega2 = calc_vega(underlyingPrice, strike, dte, IV, interest);
-            break;
-    }
+    option.IV2 = res.iv;
+    option.delta2 = res.delta;
+    option.theta2 = res.theta;
+    option.rho2 = res.rho;
+    option.gamma2 = res.gamma;
+    option.vega2 = res.vega;
 }
 
 export const resolvers: Resolvers = {

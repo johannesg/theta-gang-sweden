@@ -1,8 +1,7 @@
-import { calc_delta_call, calc_delta_put, calc_gamma, calc_iv_call, calc_iv_put, calc_price_call, calc_price_put, calc_rho_call, calc_rho_put, calc_theta_call, calc_theta_put, calc_vega } from '../src/utils/calc-greeks';
+import { calcGreeksCall, calcGreeksPut, calc_delta_call, calc_delta_put, calc_gamma, calc_iv_call, calc_iv_put, calc_price_call, calc_price_put, calc_rho_call, calc_rho_put, calc_theta_call, calc_theta_put, calc_vega } from '../src/utils/calc-greeks';
 
 describe("calculate greeks", () => {
     const underlying = 50;
-    const strike = 45;
     const dte = 40;
     const vol = 0.20;
     const interest = 0.003;
@@ -91,5 +90,22 @@ describe("calculate IV", () => {
         const dte = 29;
         expect(calc_iv_call(underlying, strike, dte, interest, cprice)).toBe(civ);
         expect(calc_iv_put(underlying, strike, dte, interest, pprice)).toBe(piv);
+    });
+
+    test.each(strikes)(`H&M all. %d,%d --- %d --- %d,%d`, (cbid, cask, strike, pbid, pask, civ, piv) => {
+        const cprice = (cbid + cask) / 2;
+        const pprice = (pbid + pask) / 2;
+        const underlying = 204.10;
+        const interest = -0.0033
+        const dte = 29;
+
+        // TODO: verify all greeks
+        let res = calcGreeksCall({ underlyingPrice: underlying, price: cprice, daysToExpiration: dte, riskFreeInterestRate: interest, strike });
+        expect(res).toMatchObject({ iv: civ });
+        // console.log(res);
+
+        res = calcGreeksPut({ underlyingPrice: underlying, price: pprice, daysToExpiration: dte, riskFreeInterestRate: interest, strike });
+        expect(res).toMatchObject({ iv: piv });
+        // console.log(res);
     });
 });
