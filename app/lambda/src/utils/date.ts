@@ -6,3 +6,7 @@ export function getNextMonth(): string {
 
     return dt.toFormat('yyyy-MM');
 }
+
+export function getDaysFromNow(expires: string) : number {
+    return Math.floor(DateTime.fromISO(expires).diffNow("days").days);
+}

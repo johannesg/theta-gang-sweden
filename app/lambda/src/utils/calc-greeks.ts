@@ -86,8 +86,9 @@ export function calc_gamma(underlying: number, strike: number, dte: number, vol:
     return Nd_one(underlying, strike, t, vol, interest) / (underlying * (vol * sqrt(t)))
 }
 
-function vega(sigma: number, S: number, K: number, r: number, t: number): number {
-    const [d1, d2] = d(sigma, S, K, r, t);
+export function calc_vega2(underlying: number, strike: number, dte: number, vol: number, interest: number): number {
+    const [S, K, t, r] = [underlying, strike, dte / 365, interest];
+    const [d1, d2] = d(vol, S, K, r, t);
     const v = S * norm_pdf(d1) * sqrt(t);
     return v;
 }

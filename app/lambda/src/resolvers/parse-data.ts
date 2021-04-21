@@ -1,5 +1,7 @@
 import numeral from '../utils/numeral';
 import { CallOrPutType, Instrument, InstrumentDetails, OptionDetails, OptionMatrixItem, OptionType } from '../types';
+import { calc_delta_call, calc_gamma, calc_iv_call, calc_theta_call, calc_vega } from '../utils/calc-greeks';
+import { getDaysFromNow } from '../utils/date';
 
 export type ParsedOptionsOverview = {
     underlying: InstrumentDetails
@@ -30,7 +32,7 @@ export function parseOptionsPage($: cheerio.Selector) {
     };
 }
 
-export function parseOptionsOverview($: cheerio.Selector) : ParsedOptionsOverview {
+export function parseOptionsOverview($: cheerio.Selector): ParsedOptionsOverview {
     const listFilterResult = $("#listFilterResult");
 
     const underlyingTable = listFilterResult.find("table.optionLists").first();
@@ -131,12 +133,12 @@ function parseOptionItem(i: number, tr: cheerio.Cheerio): OptionDetails {
     const name = nameNode.attr("title") ?? "";
     const href = nameNode.attr("href") ?? "";
 
-    function str (i: number): string {
+    function str(i: number): string {
         const val = tr.find("td.overview").eq(i).text();
         return val;
     };
 
-    function num (i: number): number {
+    function num(i: number): number {
         const val = tr.find("td.overview").eq(i).text();
         // return val;
         return numeral(val).value() ?? 0;
@@ -191,6 +193,7 @@ export function parseOptionInfo(doc: cheerio.Selector): OptionDetails {
         };
     }
 
+
     return {
         change: numeral(quoteBar.find("div span.change").text()).value(),
         changePercent: numeral(quoteBar.find("div span.changePercent").text()).value(),
@@ -217,5 +220,6 @@ export function parseOptionInfo(doc: cheerio.Selector): OptionDetails {
         gamma: getGreek(7).num(),
         rho: getGreek(8).num(),
         IV: getGreek(9).num() / 100,
+        interest: getGreek(10).num() / 100
     };
 }
