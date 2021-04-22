@@ -1,6 +1,6 @@
 import * as cdk from '@aws-cdk/core';
-import * as gw2 from '@aws-cdk/aws-apigatewayv2';
-import * as gw2i from '@aws-cdk/aws-apigatewayv2-integrations';
+import * as gw from '@aws-cdk/aws-apigatewayv2';
+import * as gwi from '@aws-cdk/aws-apigatewayv2-integrations';
 import { Function, Runtime, Code } from '@aws-cdk/aws-lambda';
 import { IHostedZone, ARecord, RecordTarget } from '@aws-cdk/aws-route53';
 import { ICertificate } from '@aws-cdk/aws-certificatemanager';
@@ -40,21 +40,21 @@ export class ThetaApi extends cdk.Construct {
                 DYNAMODB_TABLENAME: table.tableName
             },
             timeout: Duration.seconds(30),
-            memorySize: 250
+            memorySize: 512
         });
 
         table.grantReadWriteData(this.handler);
 
         // HttpApi
-        const domain = new gw2.DomainName(this, 'DomainName', {
+        const domain = new gw.DomainName(this, 'DomainName', {
             domainName,
             certificate
         });
 
-        const httpApi = new gw2.HttpApi(this, 'ThetaGangProxyApi', {
+        const httpApi = new gw.HttpApi(this, 'ThetaGangProxyApi', {
             corsPreflight: {
                 allowHeaders: ['Authorization', 'Content-Type'],
-                allowMethods: [gw2.CorsHttpMethod.GET, gw2.CorsHttpMethod.HEAD, gw2.CorsHttpMethod.OPTIONS, gw2.CorsHttpMethod.POST],
+                allowMethods: [gw.CorsHttpMethod.GET, gw.CorsHttpMethod.HEAD, gw.CorsHttpMethod.OPTIONS, gw.CorsHttpMethod.POST],
                 allowOrigins: ['https://thetagang.se'],
                 maxAge: Duration.days(10),
             },
@@ -68,10 +68,10 @@ export class ThetaApi extends cdk.Construct {
 
         const routes = httpApi.addRoutes({
             path: "/graphql",
-            methods: [gw2.HttpMethod.GET, gw2.HttpMethod.POST],
-            integration: new gw2i.LambdaProxyIntegration({
+            methods: [gw.HttpMethod.GET, gw.HttpMethod.POST],
+            integration: new gwi.LambdaProxyIntegration({
                 handler: this.handler,
-                payloadFormatVersion: gw2.PayloadFormatVersion.VERSION_1_0
+                payloadFormatVersion: gw.PayloadFormatVersion.VERSION_1_0
             })
         });
 
@@ -91,12 +91,12 @@ export class ThetaApi extends cdk.Construct {
 
     private addAuthorizer(
         stack: cdk.Construct,
-        httpApi: gw2.HttpApi,
+        httpApi: gw.HttpApi,
         userPool: IUserPool,
         userPoolClient: IUserPoolClient,
-    ): gw2.CfnAuthorizer {
+    ): gw.CfnAuthorizer {
         const region = Stack.of(this).region;
-        return new gw2.CfnAuthorizer(stack, 'CognitoAuthorizer', {
+        return new gw.CfnAuthorizer(stack, 'CognitoAuthorizer', {
             name: 'CognitoAuthorizer',
             identitySource: ['$request.header.Authorization'],
             apiId: httpApi.httpApiId,
