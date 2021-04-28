@@ -85,7 +85,7 @@ export class ThetaApi extends cdk.Construct {
         new ARecord(this, 'DomainAliasRecord', {
             recordName: domainName,
             zone,
-            target: RecordTarget.fromAlias(new targets.ApiGatewayv2Domain(domain))
+            target: RecordTarget.fromAlias(new targets.ApiGatewayv2DomainProperties(domain.regionalDomainName, domain.regionalHostedZoneId))
         });
     }
 
