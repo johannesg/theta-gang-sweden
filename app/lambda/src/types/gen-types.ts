@@ -68,12 +68,6 @@ export type OptionDetails = {
   rho?: Maybe<Scalars['Float']>;
   IV?: Maybe<Scalars['Float']>;
   interest?: Maybe<Scalars['Float']>;
-  delta2?: Maybe<Scalars['Float']>;
-  theta2?: Maybe<Scalars['Float']>;
-  vega2?: Maybe<Scalars['Float']>;
-  gamma2?: Maybe<Scalars['Float']>;
-  rho2?: Maybe<Scalars['Float']>;
-  IV2?: Maybe<Scalars['Float']>;
 };
 
 export type OptionMatrixItem = {
@@ -287,12 +281,6 @@ export type OptionDetailsResolvers<ContextType = ContextWithDataSources, ParentT
   rho?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   IV?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   interest?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  delta2?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  theta2?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  vega2?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  gamma2?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  rho2?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  IV2?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

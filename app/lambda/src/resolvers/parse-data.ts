@@ -1,9 +1,9 @@
 import numeral from '../utils/numeral';
 import { CallOrPutType, Instrument, InstrumentDetails, OptionDetails, OptionMatrixItem, OptionType } from '../types';
 
-export type ParsedOptionsOverview = {
+export type ParsedOptionsData = {
     underlying: InstrumentDetails
-    options: OptionDetails[]
+    options: Map<string, OptionDetails>
 }
 
 export function parseStockList($: cheerio.Selector): Instrument[] {
@@ -30,7 +30,7 @@ export function parseOptionsPage($: cheerio.Selector) {
     };
 }
 
-export function parseOptionsOverview($: cheerio.Selector): ParsedOptionsOverview {
+export function parseOptionsOverview($: cheerio.Selector): ParsedOptionsData {
     const listFilterResult = $("#listFilterResult");
 
     const underlyingTable = listFilterResult.find("table.optionLists").first();
@@ -38,9 +38,32 @@ export function parseOptionsOverview($: cheerio.Selector): ParsedOptionsOverview
 
     return {
         underlying: parseUnderlyingTable(underlyingTable),
-        options: parseOptionsList($, optionsTable)
+        options: new Map(parseOptionsList($, optionsTable, parseOptionOverviewItem))
     };
 }
+
+export function parseOptionsQuote($: cheerio.Selector): ParsedOptionsData {
+    const listFilterResult = $("#listFilterResult");
+
+    const underlyingTable = listFilterResult.find("table.optionLists").first();
+    const optionsTable = listFilterResult.find("table.optionList").first();
+
+    return {
+        underlying: parseUnderlyingTable(underlyingTable),
+        options: new Map(parseOptionsList($, optionsTable, parseOptionQuoteItem))
+    };
+}
+
+export function mergeOptionsLists(a: ParsedOptionsData, b: ParsedOptionsData): ParsedOptionsData {
+    const c = Array.from(a.options.entries(), ([key, val]) => { return [key, <OptionDetails>{ ...val, ...b.options.get(key) }]; });
+    // const c = Array.from(a.options.entries(), ([key, val]) => { return [key, val]; });
+    // console.log(c);
+    return {
+        underlying: a.underlying,
+        options: new Map<string, OptionDetails>(c as [])
+    };
+}
+
 
 function parseUnderlyingTable(table: cheerio.Cheerio): InstrumentDetails {
     const getAttr = (name: string) => {
@@ -82,10 +105,14 @@ function parseOptionsMatrix($: cheerio.Selector, table: cheerio.Cheerio): Option
         .get();
 }
 
-function parseOptionsList($: cheerio.Selector, table: cheerio.Cheerio): OptionDetails[] {
-    return table.find("tbody > tr")
-        .map((i, elem) => parseOptionItem(i, $(elem)))
+function parseOptionsList($: cheerio.Selector, table: cheerio.Cheerio, fn: (i: number, tr: cheerio.Cheerio) => OptionDetails): [string, OptionDetails][] {
+    const t = table.find("tbody > tr")
+        .map((i, elem) => {
+            const d = fn(i, $(elem));
+            return [[d.name, d]];
+        })
         .get();
+    return t;
 }
 
 function parseOptionMatrixItem(i: number, tr: cheerio.Cheerio): OptionMatrixItem {
@@ -125,7 +152,7 @@ function parseOptionMatrixItem(i: number, tr: cheerio.Cheerio): OptionMatrixItem
     }
 }
 
-function parseOptionItem(i: number, tr: cheerio.Cheerio): OptionDetails {
+function parseOptionOverviewItem(i: number, tr: cheerio.Cheerio): OptionDetails {
     var nameNode = tr.find(`td.overview.tLeft.instrumentName a`);
 
     const name = nameNode.attr("title") ?? "";
@@ -155,6 +182,36 @@ function parseOptionItem(i: number, tr: cheerio.Cheerio): OptionDetails {
     }
 }
 
+function parseOptionQuoteItem(i: number, tr: cheerio.Cheerio): OptionDetails {
+    var nameNode = tr.find(`td.quote.tLeft.instrumentName a`);
+
+    const name = nameNode.attr("title") ?? "";
+    const href = nameNode.attr("href") ?? "";
+
+    function str(i: number): string {
+        const val = tr.find("td").eq(i).text();
+        return val;
+    };
+
+    function num(i: number): number {
+        const val = tr.find("td").eq(i).text();
+        return numeral(val).value() ?? 0;
+    };
+
+    return {
+        name,
+        href,
+        change: num(2),
+        changePercent: num(3),
+        bid: num(4),
+        ask: num(5),
+        last: num(6),
+        high: num(7),
+        low: num(8),
+        volume: num(9)
+    }
+}
+
 
 function parseCallOrPut(text: string): CallOrPutType {
     switch (text) {
@@ -174,7 +231,7 @@ function parseOptionType(text: string): OptionType {
     throw `Invalid call or put: ${text}`;
 }
 
-export function parseOptionInfo(doc: cheerio.Selector): OptionDetails {
+export function parseOptionDetails(doc: cheerio.Selector): OptionDetails {
     const quoteBar = doc("div.component.quote div ul li");
     const dd = doc("div.derivative_greeks_data dd");
     const pi = doc("ul.primaryInfo.cleanList li div span.data");

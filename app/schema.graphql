@@ -85,12 +85,6 @@ type OptionDetails {
     IV: Float
 
     interest: Float
-    delta2: Float
-    theta2: Float
-    vega2: Float
-    gamma2: Float
-    rho2: Float
-    IV2: Float
 }
 
 enum OptionType {
