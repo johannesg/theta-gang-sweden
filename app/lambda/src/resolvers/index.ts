@@ -2,10 +2,10 @@ import { CallOrPutType, InstrumentDetails, OptionDetails, Resolvers } from "../t
 import { getInstruments, getOptionInfo, getOptionsList } from "./fetch-data";
 import { parseOptionInfo, parseOptionsOverview, parseOptionsPage, parseStockList } from "./parse-data";
 import * as cheerio from 'cheerio';
-import { getDaysFromNow, getNextMonth } from "../utils/date";
+import { getDaysFromNow } from '@theta-gang/shared/src/date';
 import { transformOverview } from "./transform-data";
 import { DateTime } from "luxon";
-import { calcGreeksCall, calcGreeksPut, calc_delta_call, calc_delta_put, calc_gamma, calc_iv_call, calc_iv_put, calc_rho_call, calc_rho_put, calc_theta_call, calc_theta_put, calc_vega, calc_vega2 } from "../utils/calc-greeks";
+import { calcGreeksCall, calcGreeksPut } from "@theta-gang/shared/src/calc-greeks";
 
 async function getOptionDetails(id: string | undefined): Promise<OptionDetails> {
     if (!id)

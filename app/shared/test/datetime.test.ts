@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { getNextMonth } from '../src/utils/date';
+import { getNextMonth } from '../src/date';
 
 describe("datetime tests", () => {
     test("next month", () => {

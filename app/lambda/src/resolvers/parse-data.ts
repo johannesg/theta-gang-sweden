@@ -1,7 +1,5 @@
 import numeral from '../utils/numeral';
 import { CallOrPutType, Instrument, InstrumentDetails, OptionDetails, OptionMatrixItem, OptionType } from '../types';
-import { calc_delta_call, calc_gamma, calc_iv_call, calc_theta_call, calc_vega } from '../utils/calc-greeks';
-import { getDaysFromNow } from '../utils/date';
 
 export type ParsedOptionsOverview = {
     underlying: InstrumentDetails

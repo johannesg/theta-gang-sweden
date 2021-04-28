@@ -1,4 +1,4 @@
-import { calcGreeksCall, calcGreeksPut, calc_delta_call, calc_delta_put, calc_gamma, calc_iv_call, calc_iv_put, calc_price_call, calc_price_put, calc_rho_call, calc_rho_put, calc_theta_call, calc_theta_put, calc_vega } from '../src/utils/calc-greeks';
+import { calcGreeksCall, calcGreeksPut, calc_delta_call, calc_delta_put, calc_gamma, calc_iv_call, calc_iv_put, calc_price_call, calc_price_put, calc_rho_call, calc_rho_put, calc_theta_call, calc_theta_put, calc_vega } from '../src/calc-greeks';
 
 describe("calculate greeks", () => {
     const underlying = 50;
