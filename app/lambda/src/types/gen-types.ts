@@ -67,6 +67,7 @@ export type OptionDetails = {
   gamma?: Maybe<Scalars['Float']>;
   rho?: Maybe<Scalars['Float']>;
   IV?: Maybe<Scalars['Float']>;
+  interest?: Maybe<Scalars['Float']>;
 };
 
 export type OptionMatrixItem = {
@@ -279,6 +280,7 @@ export type OptionDetailsResolvers<ContextType = ContextWithDataSources, ParentT
   gamma?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   rho?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   IV?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  interest?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

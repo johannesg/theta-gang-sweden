@@ -5,7 +5,9 @@ phases:
       - node --version
       - npm --version
       - npm install -g npm
-      - cd app/lambda
+      - cd app
+      - npm ci
+      - cd lambda
       - npm ci
   build:
     commands:

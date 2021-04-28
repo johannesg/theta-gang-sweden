@@ -1,11 +1,11 @@
 import { OptionMatrixItem, OptionsMatrix, OptionsWithExpiry } from "../types";
-import { ParsedOptionsOverview } from "./parse-data";
+import { ParsedOptionsData } from "./parse-data";
 
 export type ReduceResult = Record<string, Record<string, OptionMatrixItem>>
 
-export function transformOverview(overview: ParsedOptionsOverview): OptionsMatrix {
+export function transformOverview(overview: ParsedOptionsData): OptionsMatrix {
     const lastPrice = overview.underlying.lastPrice!;
-    const allOptions = overview.options.reduce<ReduceResult>((acc, cur) => {
+    const allOptions = Array.from(overview.options.values()).reduce<ReduceResult>((acc, cur) => {
         const key = cur.expires!;
         acc[key] = acc[key] || {};
 

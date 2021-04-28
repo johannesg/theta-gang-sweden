@@ -3,7 +3,7 @@ import { ApolloError } from 'apollo-server-errors';
 import axios from '../utils/axios';
 import { OptionType } from '../types';
 
-import { getNextMonth } from '../utils/date';
+import { getNextMonth } from '@theta-gang/shared/src/date';
 
 export async function getInstruments() {
     return getOptionsList("5668", OptionType.Standard, getNextMonth(), "overview"); // 5668 = XACT OMX30

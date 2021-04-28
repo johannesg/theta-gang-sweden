@@ -11,7 +11,7 @@ export function useCompositeOptionsQuery(): OptionsQueryResult {
 
     return useOptionsQuery({
         // pollInterval: 30000, 
-        variables: { id: instrument, type: optionType, expires: expires, includeDetails: true },
+        variables: { id: instrument, type: optionType, expires: expires, includeDetails: false },
         skip,
         notifyOnNetworkStatusChange: true,
     });
