@@ -68,6 +68,7 @@ export type OptionDetails = {
   gamma: Maybe<Scalars['Float']>;
   rho: Maybe<Scalars['Float']>;
   IV: Maybe<Scalars['Float']>;
+  interest: Maybe<Scalars['Float']>;
 };
 
 export type OptionMatrixItem = {
