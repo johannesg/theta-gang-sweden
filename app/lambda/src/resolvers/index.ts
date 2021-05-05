@@ -44,14 +44,23 @@ function calcGreeks(underlying: InstrumentDetails, option: OptionDetails) {
     option.vega = res.vega;
 }
 
+async function loadOptionsList(id: string, type: OptionType, expires: string, tab: string, page?: number): Promise<cheerio.Selector> {
+    const html = await getOptionsList(id, type, expires, tab, page);
+    return cheerio.load(html);
+}
+
+async function loadOptionsLists(id: string, type: OptionType, expires: string, tab: string, pages: number[]): Promise<cheerio.Selector[]> {
+    console.log(`Fetching extra ${pages.length} pages for ${id}, type: ${type}, tab: ${tab}`);
+    return Promise.all(pages.map(page => loadOptionsList(id, type, expires, tab, page)));
+}
+
 async function loadAndParseOptionsList(id: string, type: OptionType, expires: string, tab: string): Promise<ParsedOptionsData> {
-    const html = await getOptionsList(id, type, expires, tab);
-    const doc = cheerio.load(html);
+    const doc = await loadOptionsList(id, type, expires, tab);
     switch (tab) {
         case "overview":
-            return parseOptionsOverview(doc);
+            return parseOptionsOverview(doc, async pages => loadOptionsLists(id, type, expires, tab, pages));
         case "quote":
-            return parseOptionsQuote(doc);
+            return parseOptionsQuote(doc, async pages => loadOptionsLists(id, type, expires, tab, pages));
         default:
             throw `Invalid tab type: ${tab}`;
     }

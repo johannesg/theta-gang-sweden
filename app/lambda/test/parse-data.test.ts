@@ -15,6 +15,11 @@ function jsonToString(data: object): string {
     }, 4);
 }
 
+async function fetchOmxList(tab: string, page: number) : Promise<cheerio.Selector> {
+    const data = await fs.readFile(`test/data/OMX-Weeklies-${tab}-${page}.html`);
+    return cheerio.load(data);
+}
+
 fs.mkdir("out", { recursive: true});
 
 describe("parse tests", () => {
@@ -67,8 +72,8 @@ describe("parse tests", () => {
         const overviewData = await fs.readFile("test/optionslist_overview.html");
         const quoteData = await fs.readFile("test/optionslist_quote.html");
 
-        const overview = parseOptionsOverview(cheerio.load(overviewData));
-        const quote = parseOptionsQuote(cheerio.load(quoteData));
+        const overview = await parseOptionsOverview(cheerio.load(overviewData));
+        const quote = await parseOptionsQuote(cheerio.load(quoteData));
         const res = mergeOptionsLists(overview, quote);
         // console.log(util.inspect(res.underlying, {showHidden: false, depth: null}))
         // console.log(util.inspect(res.options, {showHidden: false, depth: null}))
@@ -79,8 +84,8 @@ describe("parse tests", () => {
         const overviewData = await fs.readFile("test/optionslist_overview.html");
         const quoteData = await fs.readFile("test/optionslist_quote.html");
 
-        const overview = parseOptionsOverview(cheerio.load(overviewData));
-        const quote = parseOptionsQuote(cheerio.load(quoteData));
+        const overview = await parseOptionsOverview(cheerio.load(overviewData));
+        const quote = await parseOptionsQuote(cheerio.load(quoteData));
         const merged = mergeOptionsLists(overview, quote);
 
         const res = transformOverview(merged);
@@ -89,14 +94,14 @@ describe("parse tests", () => {
         expect(res).not.toBeNull();
     });
 
-    test("can parse options list overview and transform (omx)", async () => {
-        const overviewData = await fs.readFile("test/data/OMX-Weeklies-overview-1.html");
-        const quoteData = await fs.readFile("test/data/OMX-Weeklies-quote-1.html");
+    test("can parse options list and transform (omx)", async () => {
+        const overviewData = await fetchOmxList("overview", 1);
+        const quoteData = await fetchOmxList("quote", 1);
 
-        const overview = parseOptionsOverview(cheerio.load(overviewData));
+        const overview = await parseOptionsOverview(overviewData);
         await fs.writeFile("out/omx-overview.json", jsonToString(overview));
 
-        const quote = parseOptionsQuote(cheerio.load(quoteData));
+        const quote = await parseOptionsQuote(quoteData);
         await fs.writeFile("out/omx-quote.json", jsonToString(quote));
 
         const merged = mergeOptionsLists(overview, quote);
@@ -106,6 +111,32 @@ describe("parse tests", () => {
         // console.log(util.inspect(res.underlying, {showHidden: false, depth: null}))
         // console.log(util.inspect(res.matrix, {showHidden: false, depth: null}))
         await fs.writeFile("out/omx-result.json", jsonToString(res));
+        expect(res).not.toBeNull();
+    });
+
+    test("can fetch more (omx)", async () => {
+        const overviewData = await fetchOmxList("overview", 1);
+        const quoteData = await fetchOmxList("quote", 1);
+
+        const overview = await parseOptionsOverview(overviewData, async pageNumbers => {
+            return await Promise.all(pageNumbers.map(async page => await fetchOmxList("overview", page)));
+        });
+
+        await fs.writeFile("out/fetchmore-omx-overview.json", jsonToString(overview));
+
+        const quote = await parseOptionsQuote(quoteData, async pageNumbers => {
+            return await Promise.all(pageNumbers.map(async page => await fetchOmxList("quote", page)));
+        });
+
+        await fs.writeFile("out/fetchmore-omx-quote.json", jsonToString(quote));
+
+        const merged = mergeOptionsLists(overview, quote);
+        await fs.writeFile("out/fetchmore-omx-merged.json", jsonToString(merged));
+
+        const res = transformOverview(merged);
+        // console.log(util.inspect(res.underlying, {showHidden: false, depth: null}))
+        // console.log(util.inspect(res.matrix, {showHidden: false, depth: null}))
+        await fs.writeFile("out/fetchmore-omx-result.json", jsonToString(res));
         expect(res).not.toBeNull();
     });
 

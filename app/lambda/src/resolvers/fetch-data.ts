@@ -9,7 +9,7 @@ export async function getInstruments() {
     return getOptionsList("5668", OptionType.Standard, getNextMonth(), "overview"); // 5668 = XACT OMX30
 }
 
-export async function getOptionsList(id: string, optionType: OptionType, expiry: string, activeTab: string) {
+export async function getOptionsList(id: string, optionType: OptionType, expiry: string, activeTab: string, page?: number) {
     const url = '/optioner-lista.html'
 
     const params = {
@@ -19,6 +19,7 @@ export async function getOptionsList(id: string, optionType: OptionType, expiry:
         sortField: "NAME",
         sortOrder: "ASCENDING",
         activeTab,
+        page,
         optionTypes: optionType.toUpperCase()
     }
 
