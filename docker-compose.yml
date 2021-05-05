@@ -1,4 +1,11 @@
 services:
+  html:
+    image: nginx
+    volumes: 
+      - ./app/client/public:/usr/share/nginx/html:ro
+    ports: 
+      - '8080:80'
+
   api:
     # container_name: api
     image: elthrasher/http-lambda-invoker
