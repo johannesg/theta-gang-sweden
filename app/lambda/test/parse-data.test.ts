@@ -5,8 +5,20 @@ import * as util from 'util';
 import * as cheerio from 'cheerio';
 import { transformOverview } from '../src/resolvers/transform-data';
 
+function jsonToString(data: object): string {
+    return JSON.stringify(data, (key, value) => {
+        if (value instanceof Map) {
+            return Object.fromEntries(value.entries())
+        } else {
+            return value;
+        }
+    }, 4);
+}
+
+fs.mkdir("out", { recursive: true});
+
 describe("parse tests", () => {
-    test("can parse stock list", async() => {
+    test("can parse stock list", async () => {
         const data = await fs.readFile("test/optionslist_overview.html");
 
         const doc = cheerio.load(data);
@@ -14,7 +26,7 @@ describe("parse tests", () => {
         const res = parseStockList(doc);
         // console.log(res);
         expect(res).not.toBeNull();
-        expect(res).toContainEqual({ id: "26188", name: "AAK"});
+        expect(res).toContainEqual({ id: "26188", name: "AAK" });
     });
 
 
@@ -73,7 +85,27 @@ describe("parse tests", () => {
 
         const res = transformOverview(merged);
         // console.log(util.inspect(res.underlying, {showHidden: false, depth: null}))
-        console.log(util.inspect(res.matrix, {showHidden: false, depth: null}))
+        // console.log(util.inspect(res.matrix, {showHidden: false, depth: null}))
+        expect(res).not.toBeNull();
+    });
+
+    test("can parse options list overview and transform (omx)", async () => {
+        const overviewData = await fs.readFile("test/data/OMX-Weeklies-overview-1.html");
+        const quoteData = await fs.readFile("test/data/OMX-Weeklies-quote-1.html");
+
+        const overview = parseOptionsOverview(cheerio.load(overviewData));
+        await fs.writeFile("out/omx-overview.json", jsonToString(overview));
+
+        const quote = parseOptionsQuote(cheerio.load(quoteData));
+        await fs.writeFile("out/omx-quote.json", jsonToString(quote));
+
+        const merged = mergeOptionsLists(overview, quote);
+        await fs.writeFile("out/omx-merged.json", jsonToString(merged));
+
+        const res = transformOverview(merged);
+        // console.log(util.inspect(res.underlying, {showHidden: false, depth: null}))
+        // console.log(util.inspect(res.matrix, {showHidden: false, depth: null}))
+        await fs.writeFile("out/omx-result.json", jsonToString(res));
         expect(res).not.toBeNull();
     });
 
