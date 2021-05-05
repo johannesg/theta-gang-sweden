@@ -1,6 +1,6 @@
-import { CallOrPutType, InstrumentDetails, OptionDetails, Resolvers } from "../types/gen-types";
+import { CallOrPutType, InstrumentDetails, OptionDetails, OptionType, Resolvers } from "../types/gen-types";
 import { getInstruments, getOptionInfo, getOptionsList } from "./fetch-data";
-import { mergeOptionsLists, parseOptionDetails, parseOptionsOverview, parseOptionsPage, parseOptionsQuote, parseStockList } from "./parse-data";
+import { mergeOptionsLists, ParsedOptionsData, parseOptionDetails, parseOptionsOverview, parseOptionsPage, parseOptionsQuote, parseStockList } from "./parse-data";
 import * as cheerio from 'cheerio';
 import { getDaysFromNow } from '@theta-gang/shared/src/date';
 import { transformOverview } from "./transform-data";
@@ -44,6 +44,54 @@ function calcGreeks(underlying: InstrumentDetails, option: OptionDetails) {
     option.vega = res.vega;
 }
 
+async function loadOptionsList(id: string, type: OptionType, expires: string, tab: string, page?: number): Promise<cheerio.Selector> {
+    const html = await getOptionsList(id, type, expires, tab, page);
+    return cheerio.load(html);
+}
+
+async function loadOptionsLists(id: string, type: OptionType, expires: string, tab: string, pages: number[]): Promise<cheerio.Selector[]> {
+    console.log(`Fetching extra ${pages.length} pages for ${id}, type: ${type}, tab: ${tab}`);
+    return Promise.all(pages.map(page => loadOptionsList(id, type, expires, tab, page)));
+}
+
+async function loadAndParseOptionsList(id: string, type: OptionType, expires: string, tab: string): Promise<ParsedOptionsData> {
+    const doc = await loadOptionsList(id, type, expires, tab);
+    switch (tab) {
+        case "overview":
+            return parseOptionsOverview(doc, async pages => loadOptionsLists(id, type, expires, tab, pages));
+        case "quote":
+            return parseOptionsQuote(doc, async pages => loadOptionsLists(id, type, expires, tab, pages));
+        default:
+            throw `Invalid tab type: ${tab}`;
+    }
+}
+
+async function loadOptionsMatrix(id: string, type: OptionType, expires: string) {
+    const start = DateTime.now();
+    const [overview, quote] = await Promise.all([
+        loadAndParseOptionsList(id, type, expires, "overview"),
+        loadAndParseOptionsList(id, type, expires, "quote")]);
+
+    let ms = -start.diffNow("milliseconds").milliseconds;
+    console.log(`Fetch options list: ${ms}`)
+    const optionsList = mergeOptionsLists(overview, quote);
+    ms = -start.diffNow("milliseconds").milliseconds;
+    console.log(`Merged options list: ${ms}`)
+    const matrix = transformOverview(optionsList);
+    ms = -start.diffNow("milliseconds").milliseconds;
+    console.log(`Transformed options list: ${ms}`)
+
+    matrix.matrix.forEach(x => {
+        x.options.forEach(o => {
+            calcGreeks(matrix.underlying!, o.call!);
+            calcGreeks(matrix.underlying!, o.put!);
+        })
+    })
+    ms = -start.diffNow("milliseconds").milliseconds;
+    console.log(`Calc greeks: ${ms}`)
+    return matrix;
+}
+
 export const resolvers: Resolvers = {
     Query: {
         instruments: async () => {
@@ -52,61 +100,7 @@ export const resolvers: Resolvers = {
             return parseStockList(doc);
         },
         matrix: async (_, { id, type, expires, includeDetails }) => {
-            const start = DateTime.now();
-            const [html_o, html_q] = await Promise.all([getOptionsList(id, type, expires, "overview"), getOptionsList(id, type, expires, "quote") ]);
-
-            const doc_o = cheerio.load(html_o);
-            const doc_q = cheerio.load(html_q);
-
-            let ms = -start.diffNow("milliseconds").milliseconds;
-            console.log(`Fetch options list: ${ms}`)
-
-            const overview = parseOptionsOverview(doc_o);
-            const quote = parseOptionsQuote(doc_q);
-
-            const optionsList = mergeOptionsLists(overview, quote);
-
-            ms = -start.diffNow("milliseconds").milliseconds;
-            console.log(`Parsed options list: ${ms}`)
-            const matrix = transformOverview(optionsList);
-
-            ms = -start.diffNow("milliseconds").milliseconds;
-            console.log(`Transformed options list: ${ms}`)
-
-            matrix.matrix.forEach(x => {
-                x.options.forEach(o => {
-                    calcGreeks(matrix.underlying!, o.call!);
-                    calcGreeks(matrix.underlying!, o.put!);
-                })
-            })
-
-            if (includeDetails) {
-                const allPromises = matrix.matrix.flatMap(m => {
-                    return m.options.flatMap(x => {
-                        const p1 = getOptionDetails(x.call?.href!)
-                            .then(d => {
-                                x.call = { ...x.call, ...d };
-                                calcGreeks(matrix.underlying!, x.call);
-                            });
-
-                        const p2 = getOptionDetails(x.put?.href!)
-                            .then(d => {
-                                x.put = { ...x.put, ...d }
-                                calcGreeks(matrix.underlying!, x.put);
-                            });
-
-                        return [p1, p2];
-                    });
-                });
-                await Promise.all(allPromises);
-
-
-            }
-
-            ms = -start.diffNow("milliseconds").milliseconds;
-            console.log(`Fetched options details: ${ms}`)
-
-            return matrix;
+            return loadOptionsMatrix(id, type, expires);
         },
         optionDetails: async (_, { id }) => {
             return await getOptionDetails(id);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, LinearProgress, Grid } from '@material-ui/core';
 import { Button, ButtonGroup } from '@material-ui/core';
@@ -230,7 +230,7 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
                     matrix.map(m => {
 
                         const rows = m.options;
-                        return <React.Fragment>
+                        return <React.Fragment key={m.expires}>
                             <TableRow>
                                 <TableCell colSpan={9} align="center"><strong>CALLS</strong></TableCell>
                                 <TableCell colSpan={5} align="center"><strong>EXP: { m.expires }  DTE: {getDaysFromNow(m.expires)}</strong></TableCell>
@@ -239,7 +239,7 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
                             {
                                 rows.map((row: OptionMatrixItem, i) => {
                                     const prevRow = i == 0 ? undefined : rows[i - 1];
-                                    return <MatrixTableRow row={row} prevRow={prevRow} price={price} />
+                                    return <MatrixTableRow key={row.call!.name!+row.put!.name!} row={row} prevRow={prevRow} price={price} />
                                 })
                             }
                         </React.Fragment>

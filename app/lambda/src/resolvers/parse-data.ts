@@ -30,27 +30,51 @@ export function parseOptionsPage($: cheerio.Selector) {
     };
 }
 
-export function parseOptionsOverview($: cheerio.Selector): ParsedOptionsData {
-    const listFilterResult = $("#listFilterResult");
+export async function parseOptionsOverview($: cheerio.Selector, fetchMore?: (pages: number[]) => Promise<cheerio.Selector[]>): Promise<ParsedOptionsData> {
+    const underlyingTable = $("#listFilterResult table.optionLists").first();
+    const optionsTables = [$];
 
-    const underlyingTable = listFilterResult.find("table.optionLists").first();
-    const optionsTable = listFilterResult.find("table.optionList").first();
+    const lastPageA = $("div.pager ul li.last a");
+    if (lastPageA && fetchMore) {
+        const lastPage = parseInt(lastPageA.attr("data-requestedpage") ?? "1");
+        if (lastPage > 1) {
+            const pageNumbers = Array.from({length: lastPage - 1}, (x, i) => i + 2);
+            const extraPages = await fetchMore(pageNumbers);
+            extraPages
+                .forEach($$ => optionsTables.push($$));
+        }
+    }
+
+    const options = optionsTables.flatMap($$ => parseOptionsList($$, parseOptionOverviewItem));
 
     return {
         underlying: parseUnderlyingTable(underlyingTable),
-        options: new Map(parseOptionsList($, optionsTable, parseOptionOverviewItem))
+        options: new Map(options)
     };
 }
 
-export function parseOptionsQuote($: cheerio.Selector): ParsedOptionsData {
+export async function parseOptionsQuote($: cheerio.Selector, fetchMore?: (pages: number[]) => Promise<cheerio.Selector[]>): Promise<ParsedOptionsData> {
     const listFilterResult = $("#listFilterResult");
 
     const underlyingTable = listFilterResult.find("table.optionLists").first();
-    const optionsTable = listFilterResult.find("table.optionList").first();
+    const optionsTables = [$];
+
+    const lastPageA = $("div.pager ul li.last a");
+    if (lastPageA && fetchMore) {
+        const lastPage = parseInt(lastPageA.attr("data-requestedpage") ?? "1");
+        if (lastPage > 1) {
+            const pageNumbers = Array.from({length: lastPage - 1}, (x, i) => i + 2);
+            const extraPages = await fetchMore(pageNumbers);
+            extraPages
+                .forEach($$ => optionsTables.push($$));
+        }
+    }
+
+    const options = optionsTables.flatMap($$ => parseOptionsList($$, parseOptionQuoteItem));
 
     return {
         underlying: parseUnderlyingTable(underlyingTable),
-        options: new Map(parseOptionsList($, optionsTable, parseOptionQuoteItem))
+        options: new Map(options)
     };
 }
 
@@ -105,7 +129,8 @@ function parseOptionsMatrix($: cheerio.Selector, table: cheerio.Cheerio): Option
         .get();
 }
 
-function parseOptionsList($: cheerio.Selector, table: cheerio.Cheerio, fn: (i: number, tr: cheerio.Cheerio) => OptionDetails): [string, OptionDetails][] {
+function parseOptionsList($: cheerio.Selector, fn: (i: number, tr: cheerio.Cheerio) => OptionDetails): [string, OptionDetails][] {
+    const table = $("#listFilterResult table.optionList").first();
     const t = table.find("tbody > tr")
         .map((i, elem) => {
             const d = fn(i, $(elem));

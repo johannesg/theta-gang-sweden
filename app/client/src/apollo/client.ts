@@ -6,12 +6,11 @@ import { cache } from './cache'
 export function createApolloClient(token: string) {
     return new ApolloClient({
         cache,
-        // uri: "https://catsapi.aws.jogus.io/graphql",
 
         link: new HttpLink({
             // uri: "http://localhost:3000",
-            // uri: "https://i0l6ot66ai.execute-api.eu-north-1.amazonaws.com/graphql",
-            uri: "https://api.thetagang.se/graphql",
+            // uri: "https://api.thetagang.se/graphql",
+            uri: process.env.API_URL,
             fetch
         }),
 

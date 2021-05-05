@@ -1,5 +1,7 @@
 import * as React from 'react'
 
+import { useEffect, useState } from 'react';
+
 import { ApolloConsumer, ApolloProvider } from "@apollo/client"
 import { createApolloClient } from '../apollo/client';
 
@@ -7,6 +9,8 @@ import { Typography, Grid, makeStyles, Box, Drawer, AppBar, Toolbar, Divider, Ta
 
 import { OptionFilters } from '../components/Filters';
 import { OptionsContainer } from '../components/OptionList';
+import { CallMissedSharp } from '@material-ui/icons';
+import { mergeClasses } from '@material-ui/styles';
 // import { OptionActions, OptionHeader, OptionsStrategy } from '../components/Sidebar';
 
 const drawerWidth = 400;
@@ -60,18 +64,19 @@ function Header() {
    </Typography>
 }
 
-function App() {
+function Main() {
   const classes = useStyles();
+  const [showChild, setShowChild] = useState(false); 
 
-  return <div className={classes.root}>
-    <AppBar position="fixed" className={classes.appBar}>
-      <Toolbar>
-        <Typography variant="h6" noWrap>
-          Theta Gang Sweden
-          </Typography>
-      </Toolbar>
-    </AppBar>
-    <main className={classes.content}>
+  // https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
+  useEffect(() => {
+    setShowChild(true);
+  }, []);
+
+  if (!showChild)
+    return <main className={classes.content}></main>
+
+  return <div className={classes.content}>
       <Grid container spacing={2}>
         <Grid item xs={12}><Header /></Grid>
         <Grid item xs={12}>
@@ -88,7 +93,21 @@ function App() {
         </Grid>
           <OptionsContainer></OptionsContainer>
       </Grid>
-    </main>
+    </div>
+}
+
+function App() {
+  const classes = useStyles();
+
+  return <div className={classes.root}>
+    <AppBar position="fixed" className={classes.appBar}>
+      <Toolbar>
+        <Typography variant="h6" noWrap>
+          Theta Gang Sweden
+          </Typography>
+      </Toolbar>
+    </AppBar>
+    <Main/>
     {/* <Drawer
       className={classes.drawer}
       variant="permanent"

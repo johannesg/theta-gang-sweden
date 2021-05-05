@@ -1,30 +1,42 @@
+import { html } from "cheerio";
 import { OptionMatrixItem, OptionsMatrix, OptionsWithExpiry } from "../types";
 import { ParsedOptionsData } from "./parse-data";
 
-export type ReduceResult = Record<string, Record<string, OptionMatrixItem>>
+type ReduceResult = Map<string, Map<number, OptionMatrixItem>>
+
+function compute<K,V>(m: Map<K,V>, key: K, fn: (key: K) => V): V {
+    let val = m.get(key);
+    if (val)
+        return val;
+
+    val = fn(key);
+    m.set(key, val);
+    return val;
+}
 
 export function transformOverview(overview: ParsedOptionsData): OptionsMatrix {
-    const lastPrice = overview.underlying.lastPrice!;
     const allOptions = Array.from(overview.options.values()).reduce<ReduceResult>((acc, cur) => {
         const key = cur.expires!;
-        acc[key] = acc[key] || {};
 
-        const strikes = acc[key];
-        strikes[cur.strike!] = strikes[cur.strike!] || { strike: cur.strike! };
-
-        const item = strikes[cur.strike!];
+        const strikes = compute(acc, key, k => new Map<number, OptionMatrixItem>());
+        const item = compute(strikes, cur.strike!, strike => ({ strike }));
 
         switch (cur.type) {
-            case "CALL": item.call = cur;
-            case "PUT": item.put = cur;
+            case "CALL":
+                item.call = cur;
+                break;
+            case "PUT":
+                item.put = cur;
+                break;
         }
 
         return acc;
-    }, {});
+    }, new Map());
 
-    const res: OptionsWithExpiry[] = Object.keys(allOptions)
+    const lastPrice = overview.underlying.lastPrice!;
+    const res: OptionsWithExpiry[] = Array.from(allOptions.keys())
         .map(expires => {
-            const topt = Object.values(allOptions[expires]).sort((a, b) => a.strike! - b.strike!);
+            const topt = Array.from(allOptions.get(expires)!.values()).sort((a, b) => a.strike! - b.strike!);
             const idx = topt.findIndex(item => lastPrice <= item.strike!);
             const start = Math.max(0, idx - 10);
             const options = topt.slice(start, start + 20);
