@@ -11,7 +11,7 @@ import { activeOption, ShoppingAction, addToShoppingCart, isInShoppingCart, shop
 import { InstrumentDetails, OptionDetails, OptionMatrixItem, OptionsWithExpiry } from '../apollo/types';
 import { OptionGreeksCall, OptionGreeksPut } from './OptionGreeks';
 import numeral from '../utils/numeral';
-import { getDaysFromNow } from "../utils/date";
+import { getDaysFromNow } from '@theta-gang/shared/src/date';
 
 const useStyles = makeStyles({
     table: {

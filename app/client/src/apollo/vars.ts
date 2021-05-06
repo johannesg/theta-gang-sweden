@@ -1,5 +1,5 @@
 import { makeVar } from "@apollo/client";
-import { getCurrentMonth } from "../utils/date";
+import { getCurrentMonth  } from '@theta-gang/shared/src/date';
 import { OptionDetails, OptionType } from "./types";
 import produce from 'immer';
 
