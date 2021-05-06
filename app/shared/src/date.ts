@@ -20,6 +20,13 @@ export function getNextMonths(num : number) : string[] {
         .map(i => now.plus({month: i}).toFormat('yyyy-MM'));
 }
 
-export function getDaysFromNow(expires: string) : number {
-    return Math.floor(DateTime.fromISO(expires).diffNow("days").days);
+export function getDaysFrom(date: string, from: string) : number {
+    const fromDate = DateTime.fromISO(from);
+
+    return Math.floor(DateTime.fromISO(date).diff(fromDate, "days").days);
+}
+
+export function getDaysFromNow(date: string) : number {
+    const now = DateTime.now().toISODate();
+    return getDaysFrom(date, now);
 }
