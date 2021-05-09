@@ -36,10 +36,10 @@ export function transformOverview(overview: ParsedOptionsData): OptionsMatrix {
     const lastPrice = overview.underlying.lastPrice!;
     const res: OptionsWithExpiry[] = Array.from(allOptions.keys())
         .map(expires => {
-            const topt = Array.from(allOptions.get(expires)!.values()).sort((a, b) => a.strike! - b.strike!);
-            const idx = topt.findIndex(item => lastPrice <= item.strike!);
-            const start = Math.max(0, idx - 10);
-            const options = topt.slice(start, start + 20);
+            const options = Array.from(allOptions.get(expires)!.values()).sort((a, b) => a.strike! - b.strike!);
+            // const idx = topt.findIndex(item => lastPrice <= item.strike!);
+            // const start = Math.max(0, idx - 10);
+            // const options = topt.slice(start, start + 20);
             // console.log(`idx: ${idx}, start: ${start}, count: ${topt.length}`);
             return {
                 expires,

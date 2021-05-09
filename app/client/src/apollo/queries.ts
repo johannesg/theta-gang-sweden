@@ -68,11 +68,9 @@ const QUERIES = gql`
         type
         strike
         parity
-        buyIV
         delta
         theta
         vega
-        sellIV
         gamma
         rho
         IV

@@ -61,11 +61,9 @@ export type OptionDetails = {
   expires: Maybe<Scalars['String']>;
   optionType: Maybe<OptionType>;
   parity: Maybe<Scalars['Int']>;
-  buyIV: Maybe<Scalars['Float']>;
   delta: Maybe<Scalars['Float']>;
   theta: Maybe<Scalars['Float']>;
   vega: Maybe<Scalars['Float']>;
-  sellIV: Maybe<Scalars['Float']>;
   gamma: Maybe<Scalars['Float']>;
   rho: Maybe<Scalars['Float']>;
   IV: Maybe<Scalars['Float']>;
@@ -158,7 +156,7 @@ export type DetailsQuery = { __typename?: 'Query', optionDetails: Maybe<(
 
 export type InstrumentDetailsFragment = { __typename?: 'InstrumentDetails', name: string, href: string, change: Maybe<number>, changePercent: Maybe<number>, lastPrice: Maybe<number>, buyPrice: Maybe<number>, sellPrice: Maybe<number>, highestPrice: Maybe<number>, lowestPrice: Maybe<number>, updated: Maybe<string>, totalVolumeTraded: Maybe<number> };
 
-export type OptionDetailsFragment = { __typename?: 'OptionDetails', name: Maybe<string>, href: Maybe<string>, type: Maybe<CallOrPutType>, strike: Maybe<number>, changePercent: Maybe<number>, change: Maybe<number>, updated: Maybe<string>, bid: Maybe<number>, ask: Maybe<number>, spread: Maybe<number>, last: Maybe<number>, high: Maybe<number>, low: Maybe<number>, volume: Maybe<number>, expires: Maybe<string>, optionType: Maybe<OptionType>, parity: Maybe<number>, buyIV: Maybe<number>, delta: Maybe<number>, theta: Maybe<number>, vega: Maybe<number>, sellIV: Maybe<number>, gamma: Maybe<number>, rho: Maybe<number>, IV: Maybe<number> };
+export type OptionDetailsFragment = { __typename?: 'OptionDetails', name: Maybe<string>, href: Maybe<string>, type: Maybe<CallOrPutType>, strike: Maybe<number>, changePercent: Maybe<number>, change: Maybe<number>, updated: Maybe<string>, bid: Maybe<number>, ask: Maybe<number>, spread: Maybe<number>, last: Maybe<number>, high: Maybe<number>, low: Maybe<number>, volume: Maybe<number>, expires: Maybe<string>, optionType: Maybe<OptionType>, parity: Maybe<number>, delta: Maybe<number>, theta: Maybe<number>, vega: Maybe<number>, gamma: Maybe<number>, rho: Maybe<number>, IV: Maybe<number> };
 
 export const InstrumentDetailsFragmentDoc = gql`
     fragment InstrumentDetails on InstrumentDetails {
@@ -196,11 +194,9 @@ export const OptionDetailsFragmentDoc = gql`
   type
   strike
   parity
-  buyIV
   delta
   theta
   vega
-  sellIV
   gamma
   rho
   IV
@@ -348,7 +344,7 @@ export type InstrumentDetailsFieldPolicy = {
 	updated?: FieldPolicy<any> | FieldReadFunction<any>,
 	totalVolumeTraded?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type OptionDetailsKeySpecifier = ('name' | 'href' | 'type' | 'strike' | 'changePercent' | 'change' | 'bid' | 'ask' | 'spread' | 'last' | 'high' | 'low' | 'volume' | 'updated' | 'expires' | 'optionType' | 'parity' | 'buyIV' | 'delta' | 'theta' | 'vega' | 'sellIV' | 'gamma' | 'rho' | 'IV' | 'interest' | OptionDetailsKeySpecifier)[];
+export type OptionDetailsKeySpecifier = ('name' | 'href' | 'type' | 'strike' | 'changePercent' | 'change' | 'bid' | 'ask' | 'spread' | 'last' | 'high' | 'low' | 'volume' | 'updated' | 'expires' | 'optionType' | 'parity' | 'delta' | 'theta' | 'vega' | 'gamma' | 'rho' | 'IV' | 'interest' | OptionDetailsKeySpecifier)[];
 export type OptionDetailsFieldPolicy = {
 	name?: FieldPolicy<any> | FieldReadFunction<any>,
 	href?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -367,11 +363,9 @@ export type OptionDetailsFieldPolicy = {
 	expires?: FieldPolicy<any> | FieldReadFunction<any>,
 	optionType?: FieldPolicy<any> | FieldReadFunction<any>,
 	parity?: FieldPolicy<any> | FieldReadFunction<any>,
-	buyIV?: FieldPolicy<any> | FieldReadFunction<any>,
 	delta?: FieldPolicy<any> | FieldReadFunction<any>,
 	theta?: FieldPolicy<any> | FieldReadFunction<any>,
 	vega?: FieldPolicy<any> | FieldReadFunction<any>,
-	sellIV?: FieldPolicy<any> | FieldReadFunction<any>,
 	gamma?: FieldPolicy<any> | FieldReadFunction<any>,
 	rho?: FieldPolicy<any> | FieldReadFunction<any>,
 	IV?: FieldPolicy<any> | FieldReadFunction<any>,

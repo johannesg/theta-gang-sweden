@@ -122,7 +122,7 @@ function BuySellButtons({ option }: { option: OptionDetails }) {
     </ButtonGroup>
 }
 
-function MatrixTableRow({ row, prevRow, price }: { row: OptionMatrixItem, prevRow: OptionMatrixItem | undefined, price: number }) {
+function MatrixTableRow({ row, prevRow, underlying }: { row: OptionMatrixItem, prevRow: OptionMatrixItem | undefined, underlying: InstrumentDetails }) {
     const classes = useStyles();
     const activeOptionVar = useReactiveVar(activeOption);
     const shoppingCartVar = useReactiveVar(shoppingCart);
@@ -139,6 +139,7 @@ function MatrixTableRow({ row, prevRow, price }: { row: OptionMatrixItem, prevRo
         }
     }
 
+    const price = underlying?.lastPrice ?? 0;
     const call = row!.call!;
     const put = row!.put!;
     const strike = row!.strike!;
@@ -159,13 +160,13 @@ function MatrixTableRow({ row, prevRow, price }: { row: OptionMatrixItem, prevRo
         {/* <TableCell className={cellClassCall} onClick={callHandler}>
                             <BuySellButtons option={call}></BuySellButtons>
                         </TableCell> */}
-        <OptionGreeksCall option={call}></OptionGreeksCall>
+        <OptionGreeksCall underlying={underlying} option={call}></OptionGreeksCall>
         <TableCell className={clsx(cellClassCall, classes.bid)} align="right" onClick={callHandler}>{numeral(call.bid).format("#0.00")}</TableCell>
         <TableCell className={clsx(cellClassCall, classes.ask)} align="right" onClick={callHandler}>{numeral(call.ask).format("#0.00")}</TableCell>
         <TableCell className={classes.strike} align="center">{strike}</TableCell>
         <TableCell className={clsx(cellClassPut, classes.bid)} align="right" onClick={putHandler}>{numeral(put.bid).format("#0.00")}</TableCell>
         <TableCell className={clsx(cellClassPut, classes.ask)} align="right" onClick={putHandler}>{numeral(put.ask).format("#0.00")}</TableCell>
-        <OptionGreeksPut option={put}></OptionGreeksPut>
+        <OptionGreeksPut underlying={underlying} option={put}></OptionGreeksPut>
         {/* <TableCell className={cellClassPut} >
                             <BuySellButtons option={put}></BuySellButtons>
                         </TableCell> */}
@@ -239,7 +240,7 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
                             {
                                 rows.map((row: OptionMatrixItem, i) => {
                                     const prevRow = i == 0 ? undefined : rows[i - 1];
-                                    return <MatrixTableRow key={row.call!.name!+row.put!.name!} row={row} prevRow={prevRow} price={price} />
+                                    return <MatrixTableRow key={row.call!.name!+row.put!.name!} row={row} prevRow={prevRow} underlying={underlying} />
                                 })
                             }
                         </React.Fragment>

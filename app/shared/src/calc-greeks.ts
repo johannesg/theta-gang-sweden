@@ -11,12 +11,12 @@ import { jStat } from 'jstat';
 
 const { abs, sqrt, pow, log, exp } = Math;
 
-function norm_cdf(z: number) : number {
+function norm_cdf(z: number): number {
     var mean = 0, sd = 1;
     return jStat.normal.cdf(z, mean, sd);
 }
 
-function norm_pdf(z: number) : number {
+function norm_pdf(z: number): number {
     var mean = 0, sd = 1;
     return jStat.normal.pdf(z, mean, sd);
 }
@@ -67,7 +67,7 @@ function _delta_put(d1: number) {
     return norm_cdf(d1) - 1
 }
 
-function _gamma(S: number, K: number, t: number, r: number, vol: number, d2: number) : number {
+function _gamma(S: number, K: number, t: number, r: number, vol: number, d2: number): number {
     return (K * exp(-r * t) * (norm_pdf(d2) / (pow(S, 2) * vol * sqrt(t))));
 }
 
@@ -234,36 +234,55 @@ export type OptionGreeks = {
     rho: number
 }
 
-export function calcGreeksCall(info: OptionInfo) : OptionGreeks {
-    const [S, K, r, t, price] = [info.underlyingPrice, info.strike, info.riskFreeInterestRate, info.daysToExpiration / 365, info.price];
+const emptyGreeks: OptionGreeks = { iv: 0, delta: 0, gamma: 0, theta: 0, vega: 0, rho: 0 };
+// const emptyGreeks: OptionGreeks = {};
 
-    const sigma = _calc_iv(S, K, t, r, price, _price_call);
-    if (!sigma)
-        return { iv: 0, delta: 0, gamma: 0, theta: 0, vega: 0, rho: 0};
+export function calcGreeksCall(info: OptionInfo): OptionGreeks {
+    try {
+        const [S, K, r, t, price] = [info.underlyingPrice, info.strike, info.riskFreeInterestRate, info.daysToExpiration / 365, info.price];
 
-    const [d1, d2] = d(sigma, S, K, r, t);
-    const delta = _delta_call(d1);
-    const gamma = _gamma(S, K, t, r, sigma, d2);
-    const theta = _theta_call(S, K, t, r, sigma, d1, d2) / 365;
-    const vega = _vega(S, t, d1) / 100;
-    const rho = _rho_call(K, t, r, d2);
+        if (!price)
+            return emptyGreeks;
 
-    return { iv: sigma, delta, gamma, theta, vega, rho };
+        const sigma = _calc_iv(S, K, t, r, price, _price_call);
+        if (!sigma)
+            return emptyGreeks;
+
+        const [d1, d2] = d(sigma, S, K, r, t);
+        const delta = _delta_call(d1);
+        const gamma = _gamma(S, K, t, r, sigma, d2);
+        const theta = _theta_call(S, K, t, r, sigma, d1, d2) / 365;
+        const vega = _vega(S, t, d1) / 100;
+        const rho = _rho_call(K, t, r, d2);
+
+        return { iv: sigma, delta, gamma, theta, vega, rho };
+    } catch (err) {
+        console.log(`calcGreeksCall: ${err}. underlying: ${info.underlyingPrice}, strike: ${info.strike}, interest: ${info.riskFreeInterestRate}, dte: ${info.daysToExpiration}, price: ${info.price}`);
+        return emptyGreeks;
+    }
 }
 
-export function calcGreeksPut(info: OptionInfo) {
-    const [S, K, r, t, price] = [info.underlyingPrice, info.strike, info.riskFreeInterestRate, info.daysToExpiration / 365, info.price];
+export function calcGreeksPut(info: OptionInfo): OptionGreeks {
+    try {
+        const [S, K, r, t, price] = [info.underlyingPrice, info.strike, info.riskFreeInterestRate, info.daysToExpiration / 365, info.price];
 
-    const sigma = _calc_iv(S, K, t, r, price, _price_put);
-    if (!sigma)
-        return { iv: 0, delta: 0, gamma: 0, theta: 0, vega: 0, rho: 0};
+        if (!price)
+            return emptyGreeks;
 
-    const [d1, d2] = d(sigma, S, K, r, t);
-    const delta = _delta_put(d1);
-    const gamma = _gamma(S, K, t, r, sigma, d2);
-    const theta = _theta_put(S, K, t, r, sigma, d1, d2) / 365;
-    const vega = _vega(S, t, d1) / 100;
-    const rho = _rho_put(K, t, r, d2);
+        const sigma = _calc_iv(S, K, t, r, price, _price_put);
+        if (!sigma)
+            return emptyGreeks;
 
-    return { iv: sigma, delta, gamma, theta, vega, rho };
+        const [d1, d2] = d(sigma, S, K, r, t);
+        const delta = _delta_put(d1);
+        const gamma = _gamma(S, K, t, r, sigma, d2);
+        const theta = _theta_put(S, K, t, r, sigma, d1, d2) / 365;
+        const vega = _vega(S, t, d1) / 100;
+        const rho = _rho_put(K, t, r, d2);
+
+        return { iv: sigma, delta, gamma, theta, vega, rho };
+    } catch (err) {
+        console.log(`calcGreeksPut: ${err}. underlying: ${info.underlyingPrice}, strike: ${info.strike}, interest: ${info.riskFreeInterestRate}, dte: ${info.daysToExpiration}, price: ${info.price}`);
+        return emptyGreeks;
+    }
 }

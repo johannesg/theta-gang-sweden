@@ -59,11 +59,9 @@ export type OptionDetails = {
   expires?: Maybe<Scalars['String']>;
   optionType?: Maybe<OptionType>;
   parity?: Maybe<Scalars['Int']>;
-  buyIV?: Maybe<Scalars['Float']>;
   delta?: Maybe<Scalars['Float']>;
   theta?: Maybe<Scalars['Float']>;
   vega?: Maybe<Scalars['Float']>;
-  sellIV?: Maybe<Scalars['Float']>;
   gamma?: Maybe<Scalars['Float']>;
   rho?: Maybe<Scalars['Float']>;
   IV?: Maybe<Scalars['Float']>;
@@ -272,11 +270,9 @@ export type OptionDetailsResolvers<ContextType = ContextWithDataSources, ParentT
   expires?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   optionType?: Resolver<Maybe<ResolversTypes['OptionType']>, ParentType, ContextType>;
   parity?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  buyIV?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   delta?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   theta?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   vega?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  sellIV?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   gamma?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   rho?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   IV?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
