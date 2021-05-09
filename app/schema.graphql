@@ -75,11 +75,9 @@ type OptionDetails {
     strike: Float,
     parity: Int,
 
-    buyIV: Float
     delta: Float
     theta: Float
     vega: Float
-    sellIV: Float
     gamma: Float
     rho: Float
     IV: Float

@@ -20,6 +20,7 @@
     "@graphql-codegen/add": "latest",
     "@graphql-codegen/cli": "latest",
     "@graphql-codegen/typescript": "latest",
+    "@graphql-codegen/typescript-apollo-client-helpers": "^1.1.5",
     "@graphql-codegen/typescript-operations": "latest",
     "@graphql-codegen/typescript-react-apollo": "latest",
     "@graphql-codegen/typescript-resolvers": "latest",
