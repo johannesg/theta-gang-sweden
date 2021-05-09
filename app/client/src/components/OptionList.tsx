@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, LinearProgress, Grid } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, LinearProgress, Grid, Collapse } from '@material-ui/core';
 import { Button, ButtonGroup } from '@material-ui/core';
 import { blue, green, red, yellow } from '@material-ui/core/colors';
 import { NetworkStatus, useReactiveVar } from '@apollo/client';
@@ -14,13 +14,19 @@ import numeral from '../utils/numeral';
 import { getDaysFromNow } from '@theta-gang/shared/src/date';
 
 const useStyles = makeStyles({
+    container: {
+        maxHeight: 1000
+    },
     table: {
         minWidth: 650,
+        borderCollapse: 'collapse',
 
         '& th,td': {
             fontSize: "0.7rem",
             padding: "2px 10px 2px 10px"
         },
+    },
+    head: {
     },
     strike: {
         backgroundColor: "#e6f8d2"
@@ -197,10 +203,10 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
         console.log(`Selected: ${activeOption()?.name}`)
     }
 
-    return <TableContainer component={Paper}>
-        <Table className={classes.table} size="small" aria-label="a dense table">
-            <TableHead>
-                <TableRow>
+    return <TableContainer component={Paper} className={classes.container}>
+        <Table stickyHeader className={classes.table} size="small" aria-label="a dense table">
+            <TableHead >
+                <TableRow className={classes.head} >
                     <TableCell align="right">Updated</TableCell>
                     <TableCell align="right">Vega</TableCell>
                     <TableCell align="right">Theta</TableCell>
@@ -234,13 +240,13 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
                         return <React.Fragment key={m.expires}>
                             <TableRow>
                                 <TableCell colSpan={9} align="center"><strong>CALLS</strong></TableCell>
-                                <TableCell colSpan={5} align="center"><strong>EXP: { m.expires }  DTE: {getDaysFromNow(m.expires)}</strong></TableCell>
+                                <TableCell colSpan={5} align="center"><strong>EXP: {m.expires}  DTE: {getDaysFromNow(m.expires)}</strong></TableCell>
                                 <TableCell colSpan={9} align="center"><strong>PUTS</strong></TableCell>
                             </TableRow>
                             {
                                 rows.map((row: OptionMatrixItem, i) => {
                                     const prevRow = i == 0 ? undefined : rows[i - 1];
-                                    return <MatrixTableRow key={row.call!.name!+row.put!.name!} row={row} prevRow={prevRow} underlying={underlying} />
+                                    return <MatrixTableRow key={row.call!.name! + row.put!.name!} row={row} prevRow={prevRow} underlying={underlying} />
                                 })
                             }
                         </React.Fragment>
