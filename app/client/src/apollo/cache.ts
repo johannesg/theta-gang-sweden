@@ -1,3 +1,10 @@
 import { InMemoryCache } from "@apollo/client";
+import { TypedTypePolicies } from './types';
 
-export const cache = new InMemoryCache();
+const typePolicies: TypedTypePolicies = {
+
+};
+
+export const cache = new InMemoryCache({
+    typePolicies
+});

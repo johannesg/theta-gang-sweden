@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { FieldPolicy, FieldReadFunction, TypePolicies, TypePolicy } from '@apollo/client/cache';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
@@ -124,13 +125,7 @@ export type QueryOptionDetailsArgs = {
 export type InstrumentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type InstrumentsQuery = (
-  { __typename?: 'Query' }
-  & { instruments: Maybe<Array<Maybe<(
-    { __typename?: 'Instrument' }
-    & Pick<Instrument, 'id' | 'name'>
-  )>>> }
-);
+export type InstrumentsQuery = { __typename?: 'Query', instruments: Maybe<Array<Maybe<{ __typename?: 'Instrument', id: string, name: string }>>> };
 
 export type OptionsQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -140,53 +135,30 @@ export type OptionsQueryVariables = Exact<{
 }>;
 
 
-export type OptionsQuery = (
-  { __typename?: 'Query' }
-  & { matrix: Maybe<(
-    { __typename?: 'OptionsMatrix' }
-    & { underlying: Maybe<(
+export type OptionsQuery = { __typename?: 'Query', matrix: Maybe<{ __typename?: 'OptionsMatrix', underlying: Maybe<(
       { __typename?: 'InstrumentDetails' }
       & InstrumentDetailsFragment
-    )>, matrix: Array<(
-      { __typename?: 'OptionsWithExpiry' }
-      & Pick<OptionsWithExpiry, 'expires'>
-      & { options: Array<(
-        { __typename?: 'OptionMatrixItem' }
-        & Pick<OptionMatrixItem, 'strike'>
-        & { call: Maybe<(
+    )>, matrix: Array<{ __typename?: 'OptionsWithExpiry', expires: string, options: Array<{ __typename?: 'OptionMatrixItem', strike: Maybe<number>, call: Maybe<(
           { __typename?: 'OptionDetails' }
           & OptionDetailsFragment
         )>, put: Maybe<(
           { __typename?: 'OptionDetails' }
           & OptionDetailsFragment
-        )> }
-      )> }
-    )> }
-  )> }
-);
+        )> }> }> }> };
 
 export type DetailsQueryVariables = Exact<{
   href: Scalars['ID'];
 }>;
 
 
-export type DetailsQuery = (
-  { __typename?: 'Query' }
-  & { optionDetails: Maybe<(
+export type DetailsQuery = { __typename?: 'Query', optionDetails: Maybe<(
     { __typename?: 'OptionDetails' }
     & OptionDetailsFragment
-  )> }
-);
+  )> };
 
-export type InstrumentDetailsFragment = (
-  { __typename?: 'InstrumentDetails' }
-  & Pick<InstrumentDetails, 'name' | 'href' | 'change' | 'changePercent' | 'lastPrice' | 'buyPrice' | 'sellPrice' | 'highestPrice' | 'lowestPrice' | 'updated' | 'totalVolumeTraded'>
-);
+export type InstrumentDetailsFragment = { __typename?: 'InstrumentDetails', name: string, href: string, change: Maybe<number>, changePercent: Maybe<number>, lastPrice: Maybe<number>, buyPrice: Maybe<number>, sellPrice: Maybe<number>, highestPrice: Maybe<number>, lowestPrice: Maybe<number>, updated: Maybe<string>, totalVolumeTraded: Maybe<number> };
 
-export type OptionDetailsFragment = (
-  { __typename?: 'OptionDetails' }
-  & Pick<OptionDetails, 'name' | 'href' | 'type' | 'strike' | 'changePercent' | 'change' | 'updated' | 'bid' | 'ask' | 'spread' | 'last' | 'high' | 'low' | 'volume' | 'expires' | 'optionType' | 'parity' | 'buyIV' | 'delta' | 'theta' | 'vega' | 'sellIV' | 'gamma' | 'rho' | 'IV'>
-);
+export type OptionDetailsFragment = { __typename?: 'OptionDetails', name: Maybe<string>, href: Maybe<string>, type: Maybe<CallOrPutType>, strike: Maybe<number>, changePercent: Maybe<number>, change: Maybe<number>, updated: Maybe<string>, bid: Maybe<number>, ask: Maybe<number>, spread: Maybe<number>, last: Maybe<number>, high: Maybe<number>, low: Maybe<number>, volume: Maybe<number>, expires: Maybe<string>, optionType: Maybe<OptionType>, parity: Maybe<number>, buyIV: Maybe<number>, delta: Maybe<number>, theta: Maybe<number>, vega: Maybe<number>, sellIV: Maybe<number>, gamma: Maybe<number>, rho: Maybe<number>, IV: Maybe<number> };
 
 export const InstrumentDetailsFragmentDoc = gql`
     fragment InstrumentDetails on InstrumentDetails {
@@ -357,3 +329,112 @@ export function useDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<De
 export type DetailsQueryHookResult = ReturnType<typeof useDetailsQuery>;
 export type DetailsLazyQueryHookResult = ReturnType<typeof useDetailsLazyQuery>;
 export type DetailsQueryResult = Apollo.QueryResult<DetailsQuery, DetailsQueryVariables>;
+export type InstrumentKeySpecifier = ('id' | 'name' | InstrumentKeySpecifier)[];
+export type InstrumentFieldPolicy = {
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	name?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type InstrumentDetailsKeySpecifier = ('name' | 'href' | 'change' | 'changePercent' | 'buyPrice' | 'sellPrice' | 'lastPrice' | 'highestPrice' | 'lowestPrice' | 'updated' | 'totalVolumeTraded' | InstrumentDetailsKeySpecifier)[];
+export type InstrumentDetailsFieldPolicy = {
+	name?: FieldPolicy<any> | FieldReadFunction<any>,
+	href?: FieldPolicy<any> | FieldReadFunction<any>,
+	change?: FieldPolicy<any> | FieldReadFunction<any>,
+	changePercent?: FieldPolicy<any> | FieldReadFunction<any>,
+	buyPrice?: FieldPolicy<any> | FieldReadFunction<any>,
+	sellPrice?: FieldPolicy<any> | FieldReadFunction<any>,
+	lastPrice?: FieldPolicy<any> | FieldReadFunction<any>,
+	highestPrice?: FieldPolicy<any> | FieldReadFunction<any>,
+	lowestPrice?: FieldPolicy<any> | FieldReadFunction<any>,
+	updated?: FieldPolicy<any> | FieldReadFunction<any>,
+	totalVolumeTraded?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type OptionDetailsKeySpecifier = ('name' | 'href' | 'type' | 'strike' | 'changePercent' | 'change' | 'bid' | 'ask' | 'spread' | 'last' | 'high' | 'low' | 'volume' | 'updated' | 'expires' | 'optionType' | 'parity' | 'buyIV' | 'delta' | 'theta' | 'vega' | 'sellIV' | 'gamma' | 'rho' | 'IV' | 'interest' | OptionDetailsKeySpecifier)[];
+export type OptionDetailsFieldPolicy = {
+	name?: FieldPolicy<any> | FieldReadFunction<any>,
+	href?: FieldPolicy<any> | FieldReadFunction<any>,
+	type?: FieldPolicy<any> | FieldReadFunction<any>,
+	strike?: FieldPolicy<any> | FieldReadFunction<any>,
+	changePercent?: FieldPolicy<any> | FieldReadFunction<any>,
+	change?: FieldPolicy<any> | FieldReadFunction<any>,
+	bid?: FieldPolicy<any> | FieldReadFunction<any>,
+	ask?: FieldPolicy<any> | FieldReadFunction<any>,
+	spread?: FieldPolicy<any> | FieldReadFunction<any>,
+	last?: FieldPolicy<any> | FieldReadFunction<any>,
+	high?: FieldPolicy<any> | FieldReadFunction<any>,
+	low?: FieldPolicy<any> | FieldReadFunction<any>,
+	volume?: FieldPolicy<any> | FieldReadFunction<any>,
+	updated?: FieldPolicy<any> | FieldReadFunction<any>,
+	expires?: FieldPolicy<any> | FieldReadFunction<any>,
+	optionType?: FieldPolicy<any> | FieldReadFunction<any>,
+	parity?: FieldPolicy<any> | FieldReadFunction<any>,
+	buyIV?: FieldPolicy<any> | FieldReadFunction<any>,
+	delta?: FieldPolicy<any> | FieldReadFunction<any>,
+	theta?: FieldPolicy<any> | FieldReadFunction<any>,
+	vega?: FieldPolicy<any> | FieldReadFunction<any>,
+	sellIV?: FieldPolicy<any> | FieldReadFunction<any>,
+	gamma?: FieldPolicy<any> | FieldReadFunction<any>,
+	rho?: FieldPolicy<any> | FieldReadFunction<any>,
+	IV?: FieldPolicy<any> | FieldReadFunction<any>,
+	interest?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type OptionMatrixItemKeySpecifier = ('call' | 'strike' | 'put' | OptionMatrixItemKeySpecifier)[];
+export type OptionMatrixItemFieldPolicy = {
+	call?: FieldPolicy<any> | FieldReadFunction<any>,
+	strike?: FieldPolicy<any> | FieldReadFunction<any>,
+	put?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type OptionsListKeySpecifier = ('underlying' | 'options' | OptionsListKeySpecifier)[];
+export type OptionsListFieldPolicy = {
+	underlying?: FieldPolicy<any> | FieldReadFunction<any>,
+	options?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type OptionsMatrixKeySpecifier = ('underlying' | 'matrix' | OptionsMatrixKeySpecifier)[];
+export type OptionsMatrixFieldPolicy = {
+	underlying?: FieldPolicy<any> | FieldReadFunction<any>,
+	matrix?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type OptionsWithExpiryKeySpecifier = ('expires' | 'options' | OptionsWithExpiryKeySpecifier)[];
+export type OptionsWithExpiryFieldPolicy = {
+	expires?: FieldPolicy<any> | FieldReadFunction<any>,
+	options?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type QueryKeySpecifier = ('instruments' | 'matrix' | 'optionDetails' | QueryKeySpecifier)[];
+export type QueryFieldPolicy = {
+	instruments?: FieldPolicy<any> | FieldReadFunction<any>,
+	matrix?: FieldPolicy<any> | FieldReadFunction<any>,
+	optionDetails?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type TypedTypePolicies = TypePolicies & {
+	Instrument?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | InstrumentKeySpecifier | (() => undefined | InstrumentKeySpecifier),
+		fields?: InstrumentFieldPolicy,
+	},
+	InstrumentDetails?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | InstrumentDetailsKeySpecifier | (() => undefined | InstrumentDetailsKeySpecifier),
+		fields?: InstrumentDetailsFieldPolicy,
+	},
+	OptionDetails?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | OptionDetailsKeySpecifier | (() => undefined | OptionDetailsKeySpecifier),
+		fields?: OptionDetailsFieldPolicy,
+	},
+	OptionMatrixItem?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | OptionMatrixItemKeySpecifier | (() => undefined | OptionMatrixItemKeySpecifier),
+		fields?: OptionMatrixItemFieldPolicy,
+	},
+	OptionsList?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | OptionsListKeySpecifier | (() => undefined | OptionsListKeySpecifier),
+		fields?: OptionsListFieldPolicy,
+	},
+	OptionsMatrix?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | OptionsMatrixKeySpecifier | (() => undefined | OptionsMatrixKeySpecifier),
+		fields?: OptionsMatrixFieldPolicy,
+	},
+	OptionsWithExpiry?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | OptionsWithExpiryKeySpecifier | (() => undefined | OptionsWithExpiryKeySpecifier),
+		fields?: OptionsWithExpiryFieldPolicy,
+	},
+	Query?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | QueryKeySpecifier | (() => undefined | QueryKeySpecifier),
+		fields?: QueryFieldPolicy,
+	}
+};

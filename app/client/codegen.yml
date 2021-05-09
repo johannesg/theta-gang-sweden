@@ -11,6 +11,7 @@ generates:
       - typescript
       - typescript-operations
       - typescript-react-apollo
+      - typescript-apollo-client-helpers
       # - typescript-resolvers
     config:
       withHOC: false
@@ -18,3 +19,4 @@ generates:
       withComponent: false
       useIndexSignature: true
       avoidOptionals: true
+      preResolveTypes: true
