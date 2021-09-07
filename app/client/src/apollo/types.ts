@@ -133,26 +133,14 @@ export type OptionsQueryVariables = Exact<{
 }>;
 
 
-export type OptionsQuery = { __typename?: 'Query', matrix: Maybe<{ __typename?: 'OptionsMatrix', underlying: Maybe<(
-      { __typename?: 'InstrumentDetails' }
-      & InstrumentDetailsFragment
-    )>, matrix: Array<{ __typename?: 'OptionsWithExpiry', expires: string, options: Array<{ __typename?: 'OptionMatrixItem', strike: Maybe<number>, call: Maybe<(
-          { __typename?: 'OptionDetails' }
-          & OptionDetailsFragment
-        )>, put: Maybe<(
-          { __typename?: 'OptionDetails' }
-          & OptionDetailsFragment
-        )> }> }> }> };
+export type OptionsQuery = { __typename?: 'Query', matrix: Maybe<{ __typename?: 'OptionsMatrix', underlying: Maybe<{ __typename?: 'InstrumentDetails', name: string, href: string, change: Maybe<number>, changePercent: Maybe<number>, lastPrice: Maybe<number>, buyPrice: Maybe<number>, sellPrice: Maybe<number>, highestPrice: Maybe<number>, lowestPrice: Maybe<number>, updated: Maybe<string>, totalVolumeTraded: Maybe<number> }>, matrix: Array<{ __typename?: 'OptionsWithExpiry', expires: string, options: Array<{ __typename?: 'OptionMatrixItem', strike: Maybe<number>, call: Maybe<{ __typename?: 'OptionDetails', name: Maybe<string>, href: Maybe<string>, type: Maybe<CallOrPutType>, strike: Maybe<number>, changePercent: Maybe<number>, change: Maybe<number>, updated: Maybe<string>, bid: Maybe<number>, ask: Maybe<number>, spread: Maybe<number>, last: Maybe<number>, high: Maybe<number>, low: Maybe<number>, volume: Maybe<number>, expires: Maybe<string>, optionType: Maybe<OptionType>, parity: Maybe<number>, delta: Maybe<number>, theta: Maybe<number>, vega: Maybe<number>, gamma: Maybe<number>, rho: Maybe<number>, IV: Maybe<number> }>, put: Maybe<{ __typename?: 'OptionDetails', name: Maybe<string>, href: Maybe<string>, type: Maybe<CallOrPutType>, strike: Maybe<number>, changePercent: Maybe<number>, change: Maybe<number>, updated: Maybe<string>, bid: Maybe<number>, ask: Maybe<number>, spread: Maybe<number>, last: Maybe<number>, high: Maybe<number>, low: Maybe<number>, volume: Maybe<number>, expires: Maybe<string>, optionType: Maybe<OptionType>, parity: Maybe<number>, delta: Maybe<number>, theta: Maybe<number>, vega: Maybe<number>, gamma: Maybe<number>, rho: Maybe<number>, IV: Maybe<number> }> }> }> }> };
 
 export type DetailsQueryVariables = Exact<{
   href: Scalars['ID'];
 }>;
 
 
-export type DetailsQuery = { __typename?: 'Query', optionDetails: Maybe<(
-    { __typename?: 'OptionDetails' }
-    & OptionDetailsFragment
-  )> };
+export type DetailsQuery = { __typename?: 'Query', optionDetails: Maybe<{ __typename?: 'OptionDetails', name: Maybe<string>, href: Maybe<string>, type: Maybe<CallOrPutType>, strike: Maybe<number>, changePercent: Maybe<number>, change: Maybe<number>, updated: Maybe<string>, bid: Maybe<number>, ask: Maybe<number>, spread: Maybe<number>, last: Maybe<number>, high: Maybe<number>, low: Maybe<number>, volume: Maybe<number>, expires: Maybe<string>, optionType: Maybe<OptionType>, parity: Maybe<number>, delta: Maybe<number>, theta: Maybe<number>, vega: Maybe<number>, gamma: Maybe<number>, rho: Maybe<number>, IV: Maybe<number> }> };
 
 export type InstrumentDetailsFragment = { __typename?: 'InstrumentDetails', name: string, href: string, change: Maybe<number>, changePercent: Maybe<number>, lastPrice: Maybe<number>, buyPrice: Maybe<number>, sellPrice: Maybe<number>, highestPrice: Maybe<number>, lowestPrice: Maybe<number>, updated: Maybe<string>, totalVolumeTraded: Maybe<number> };
 
@@ -398,7 +386,7 @@ export type QueryFieldPolicy = {
 	matrix?: FieldPolicy<any> | FieldReadFunction<any>,
 	optionDetails?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type TypedTypePolicies = TypePolicies & {
+export type StrictTypedTypePolicies = {
 	Instrument?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | InstrumentKeySpecifier | (() => undefined | InstrumentKeySpecifier),
 		fields?: InstrumentFieldPolicy,
@@ -432,3 +420,4 @@ export type TypedTypePolicies = TypePolicies & {
 		fields?: QueryFieldPolicy,
 	}
 };
+export type TypedTypePolicies = StrictTypedTypePolicies & TypePolicies;
