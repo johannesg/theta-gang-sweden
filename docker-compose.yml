@@ -17,10 +17,13 @@ services:
       - '3000:3000'
   lambda:
     image: lambci/lambda:nodejs12.x
+    # image: amazon/aws-sam-cli-build-image-nodejs14.x
+    # image: amazon/aws-lambda-nodejs:14 // No watch mode
     volumes:
       - ./app/lambda/build:/var/task
     ports:
       - '9229:9229'
+      # - '9001:8080'
     environment:
       DOCKER_LAMBDA_WATCH: 1
       DOCKER_LAMBDA_STAY_OPEN: 1
@@ -29,14 +32,14 @@ services:
       DYNAMODB_TABLENAME: Cats
       AWS_ACCESS_KEY_ID: DUMMYIDEXAMPLE
       AWS_SECRET_ACCESS_KEY: DUMMYEXAMPLEKEY
+    command:
+      - index.handler
 
       #
       # NODE_TLS_REJECT_UNAUTHORIZED: 0
       # JWT_TOKEN_SECRET: "7ca1edd2ea6a0940144ad2d1ee884943c3a48a422419b87a7c11235d229d29e1ab24955dba2f0859a1ee6ae8a16e926899c01e9b16598e9f598d9a362deb3755"
       # COSMOS_CONNECTION_STRING: AccountEndpoint=https://host.docker.internal:8081/;AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
       # COSMOS_DATABASE: Apollo
-    command:
-      - index.handler
   # dynamodb:
   #   image: amazon/dynamodb-local
   #   ports:
