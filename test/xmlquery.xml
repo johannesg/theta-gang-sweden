@@ -1,0 +1,15 @@
+<post>
+<param name="Exchange" value="NMF"/>
+<param name="SubSystem" value="Prices"/>
+<param name="Action" value="GetDerivatives"/>
+<param name="inst__a" value="0,1,2,52,23,24,37,35,36,50,33,68,51"/>
+<param name="ext_xslt" value="/nordicV3/inst_table.xsl"/>
+<param name="XPath" value="//derivatives/calloptions/inst[not(contains(@fnm, 'BINARY'))]"/>
+<param name="ext_xslt_lang" value="en"/>
+<param name="ext_xslt_tableId" value="optionsAndFuturesTable"/>
+<param name="ext_xslt_tableClass" value="tablesorter"/>
+<param name="ext_xslt_options" value=",noflag,nolink,"/>
+<param name="ext_xslt_notlabel" value="fnm"/>
+<param name="Instrument" value="SSE366"/>
+<param name="app" value="/optionsandfutures/microsite"/>
+</post>
