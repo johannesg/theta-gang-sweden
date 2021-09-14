@@ -1,3 +1,7 @@
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 module.exports = {
   siteMetadata: {
     title: "Theta Gang Sweden",
@@ -5,6 +9,12 @@ module.exports = {
   // flags: { PRESERVE_WEBPACK_CACHE: true },
   plugins: [
     // 'amplify',
+    {
+      resolve: 'apollo',
+      options: {
+        baseUrl: process.env.API_URL
+      }
+    },
     'top-layout',
     {
       resolve: 'gatsby-plugin-material-ui',

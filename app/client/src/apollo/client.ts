@@ -3,14 +3,18 @@ import fetch from 'cross-fetch';
 
 import { cache } from './cache'
 
+let _baseUrl = "";
+
+export function configure({ baseUrl }: { baseUrl: string}) {
+    _baseUrl = baseUrl;
+}
+
 export function createApolloClient(token: string) {
     return new ApolloClient({
         cache,
 
         link: new HttpLink({
-            // uri: "http://localhost:3000",
-            // uri: "https://api.thetagang.se/graphql",
-            uri: process.env.API_URL,
+            uri: _baseUrl,
             fetch
         }),
 
