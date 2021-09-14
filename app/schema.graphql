@@ -71,8 +71,6 @@ type OptionDetails {
     
     expires: String
     optionType: OptionType
-    type: CallOrPutType
-    strike: Float,
     parity: Int,
 
     delta: Float
