@@ -50,7 +50,7 @@ export class ThetaStack extends cdk.Stack {
       table
     });
 
-    const site = new ThetaApp(this, "App", {
+    const site = new ThetaApp(this, "AppSite", {
       domainName: this.appDomain,
       zone,
       certificate: certificateEdge,
