@@ -32,6 +32,9 @@ export class PipelineStack extends Stack {
             environment: {
                 buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
             },
+            environmentVariables: {
+                "API_URL": { value: `https://${props.stack.apiDomain}/graphql` }
+            }
         });
 
         // Create Artifacts
