@@ -1,36 +1,41 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
-import { App, Fn } from '@aws-cdk/core';
+import { App } from '@aws-cdk/core';
 import { ThetaStack } from '../lib/theta-stack';
 import { PipelineStack } from '../lib/pipeline-stack';
-import { CertStack } from '../lib/cert-stack';
-import { ThetaTableStack } from '../lib/theta-table-stack';
+import { ResourcesStack } from '../lib/resources-stack';
 
 const prefix = "ThetaGang"
 
 const app = new App();
-const certStack = new CertStack(app, prefix + 'CertStack', {
-    env: {
-        account: process.env.CDK_DEFAULT_ACCOUNT,
-        region: process.env.CDK_DEFAULT_REGION
-    }
+const env = { account: '700595718361', region: 'eu-north-1' };
+
+const resources = new ResourcesStack(app, prefix + 'ResourcesStack', {
+    env
 });
-const tables = new ThetaTableStack(app, prefix + 'TableStack', {});
 
 const thetagang = new ThetaStack(app, prefix + 'Stack', {
-    env: {
-        account: process.env.CDK_DEFAULT_ACCOUNT,
-        region: process.env.CDK_DEFAULT_REGION
-    },
-    certificateArn: Fn.importValue(certStack.certificateArn.exportName!),
-    certificateEdgeArn: Fn.importValue(certStack.certificateEdgeArn.exportName!),
-    tableArn: Fn.importValue(tables.tableArn.exportName!)
+    env,
+    apiDomain: "api.thetagang.se",
+    appDomain: "thetagang.se",
+    resources
+});
+
+const thetagangDev = new ThetaStack(app, prefix + 'StackDev', {
+    env,
+    apiDomain: "api-dev.thetagang.se",
+    appDomain: "dev.thetagang.se",
+    resources
 });
 
 new PipelineStack(app, prefix + 'PipelineStack', {
     stack: thetagang,
-    env: {
-        account: process.env.CDK_DEFAULT_ACCOUNT,
-        region: process.env.CDK_DEFAULT_REGION
-    }
+    env,
+    branch: "master"
+});
+
+new PipelineStack(app, prefix + 'PipelineStackDev', {
+    stack: thetagangDev,
+    env,
+    branch: "dev"
 });

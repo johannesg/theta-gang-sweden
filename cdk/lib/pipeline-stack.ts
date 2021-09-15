@@ -6,6 +6,7 @@ import { ThetaStack } from './theta-stack';
 
 type PipelineStackProps = StackProps & {
     stack: ThetaStack
+    branch: string
 }
 
 export class PipelineStack extends Stack {
@@ -39,16 +40,14 @@ export class PipelineStack extends Stack {
         const lambdaBuildArtifact = new codepipeline.Artifact('LambdaBuildArtifact');
         const appBuildArtifact = new codepipeline.Artifact('AppBuildArtifact');
 
-        const sourceAction = new codepipeline_actions.GitHubSourceAction({
+        const sourceAction = new codepipeline_actions.CodeStarConnectionsSourceAction({
             actionName: 'GitHub',
             output: sourceArtifact,
-            oauthToken: SecretValue.secretsManager('GITHUB', { jsonField: "GITHUB_TOKEN" }),
-            trigger: codepipeline_actions.GitHubTrigger.WEBHOOK,
-            // Replace these with your actual GitHub project info
+            connectionArn: "arn:aws:codestar-connections:eu-north-1:700595718361:connection/c196d509-6bef-45d7-bc6b-fd45e5dd9095",
             owner: 'johannesg',
             repo: 'theta-gang-sweden',
-            branch: 'master'
-          });
+            branch: props.branch
+        });
 
         const lambdaBuildAction = new codepipeline_actions.CodeBuildAction({
             actionName: 'Lambda_Build',
@@ -70,9 +69,9 @@ export class PipelineStack extends Stack {
         });
 
         const deployAction = new codepipeline_actions.CloudFormationCreateUpdateStackAction({
-            actionName: 'Theta_CFN_Deploy',
-            templatePath: cdkBuildArtifact.atPath('ThetaGangStack.template.json'),
-            stackName: 'ThetaGangStack',
+            actionName: 'CFN_Deploy',
+            templatePath: cdkBuildArtifact.atPath(`${props.stack.stackName}.template.json`),
+            stackName: props.stack.stackName,
             adminPermissions: true,
             parameterOverrides: {
                 ...props.stack.lambdaCode.assign(lambdaBuildArtifact.s3Location),
