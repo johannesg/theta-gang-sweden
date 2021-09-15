@@ -6,12 +6,12 @@ import { IHostedZone, ARecord, RecordTarget } from '@aws-cdk/aws-route53';
 import { ICertificate } from '@aws-cdk/aws-certificatemanager';
 import * as targets from '@aws-cdk/aws-route53-targets';
 import * as s3 from '@aws-cdk/aws-s3';
-import { IUserPool, IUserPoolClient } from '@aws-cdk/aws-cognito';
-import { CfnOutput, Duration, Stack } from '@aws-cdk/core';
+import { CfnOutput, Duration } from '@aws-cdk/core';
 import { ITable } from '@aws-cdk/aws-dynamodb';
 
 export interface ThetaApiProps {
     domainName: string
+    appDomain: string
     // auth: CatsAuthentication
     zone: IHostedZone
     certificate: ICertificate
@@ -22,40 +22,40 @@ export interface ThetaApiProps {
 export class ThetaApi extends cdk.Construct {
     public readonly handler: Function;
 
-    constructor(scope: cdk.Construct, id: string, { source, domainName, zone, certificate, table }: ThetaApiProps) {
+    constructor(scope: cdk.Construct, id: string, props: ThetaApiProps) {
         super(scope, id);
 
-        new cdk.CfnOutput(this, 'Site', { value: 'https://' + domainName });
+        new cdk.CfnOutput(this, 'ApiUrl', { value: `https://${props.domainName}` });
 
-        const sourceBucket = s3.Bucket.fromBucketName(this, 'LambdaSourceBucket', source.bucketName);
+        const sourceBucket = s3.Bucket.fromBucketName(this, 'LambdaSourceBucket', props.source.bucketName);
 
         this.handler = new Function(this, 'ApolloHandler', {
             runtime: Runtime.NODEJS_14_X,
-            code: Code.fromBucket(sourceBucket, source.objectKey),
+            code: Code.fromBucket(sourceBucket, props.source.objectKey),
             // code: Code.fromAsset("../app/lambda/build"),
             handler: 'index.handler',
             description: `Function generated on: ${new Date().toISOString()}`,
             environment: {
                 NODE_OPTIONS: "--enable-source-maps",
-                DYNAMODB_TABLENAME: table.tableName
+                DYNAMODB_TABLENAME: props.table.tableName
             },
             timeout: Duration.seconds(30),
             memorySize: 512
         });
 
-        table.grantReadWriteData(this.handler);
+        props.table.grantReadWriteData(this.handler);
 
         // HttpApi
         const domain = new gw.DomainName(this, 'DomainName', {
-            domainName,
-            certificate
+            domainName: props.domainName,
+            certificate: props.certificate
         });
 
-        const httpApi = new gw.HttpApi(this, 'ThetaGangProxyApi', {
+        const httpApi = new gw.HttpApi(this, 'HttpApi', {
             corsPreflight: {
                 allowHeaders: ['Authorization', 'Content-Type'],
                 allowMethods: [gw.CorsHttpMethod.GET, gw.CorsHttpMethod.HEAD, gw.CorsHttpMethod.OPTIONS, gw.CorsHttpMethod.POST],
-                allowOrigins: ['https://thetagang.se'],
+                allowOrigins: [`https://${props.appDomain}`],
                 maxAge: Duration.days(10),
             },
             defaultDomainMapping: {
@@ -64,9 +64,8 @@ export class ThetaApi extends cdk.Construct {
         });
 
         new CfnOutput(this, "HttpApiEndpoint", { value: httpApi.apiEndpoint });
-        // const authorizer2 = this.addAuthorizer(this, httpApi, auth.userPool, auth.userPoolClient)
 
-        const routes = httpApi.addRoutes({
+        httpApi.addRoutes({
             path: "/graphql",
             methods: [gw.HttpMethod.GET, gw.HttpMethod.POST],
             integration: new gwi.LambdaProxyIntegration({
@@ -75,36 +74,10 @@ export class ThetaApi extends cdk.Construct {
             })
         });
 
-        // https://dev.to/martzcodes/token-authorizers-with-apigatewayv2-tricks-apigwv1-doesn-t-want-you-to-know-41jn
-        // routes.forEach((route) => {
-        //     const routeCfn = route.node.defaultChild as gw2.CfnRoute;
-        //     routeCfn.authorizerId = authorizer2.ref;
-        //     routeCfn.authorizationType = "JWT"; // THIS HAS TO MATCH THE AUTHORIZER TYPE ABOVE
-        // });
-
         new ARecord(this, 'DomainAliasRecord', {
-            recordName: domainName,
-            zone,
+            recordName: props.domainName,
+            zone: props.zone,
             target: RecordTarget.fromAlias(new targets.ApiGatewayv2DomainProperties(domain.regionalDomainName, domain.regionalHostedZoneId))
-        });
-    }
-
-    private addAuthorizer(
-        stack: cdk.Construct,
-        httpApi: gw.HttpApi,
-        userPool: IUserPool,
-        userPoolClient: IUserPoolClient,
-    ): gw.CfnAuthorizer {
-        const region = Stack.of(this).region;
-        return new gw.CfnAuthorizer(stack, 'CognitoAuthorizer', {
-            name: 'CognitoAuthorizer',
-            identitySource: ['$request.header.Authorization'],
-            apiId: httpApi.httpApiId,
-            authorizerType: 'JWT',
-            jwtConfiguration: {
-                audience: [userPoolClient.userPoolClientId],
-                issuer: `https://cognito-idp.${region}.amazonaws.com/${userPool.userPoolId}`,
-            },
         });
     }
 }

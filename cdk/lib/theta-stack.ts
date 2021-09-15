@@ -42,6 +42,7 @@ export class ThetaStack extends cdk.Stack {
 
     const api = new ThetaApi(this, "Api", {
       domainName: this.apiDomain,
+      appDomain: this.appDomain,
       // auth,
       zone,
       certificate: certificate,
