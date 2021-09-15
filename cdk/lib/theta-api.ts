@@ -51,7 +51,7 @@ export class ThetaApi extends cdk.Construct {
             certificate: props.certificate
         });
 
-        const httpApi = new gw.HttpApi(this, 'HttpApi', {
+        const httpApi = new gw.HttpApi(this, 'ThetaGangProxyApi', {
             corsPreflight: {
                 allowHeaders: ['Authorization', 'Content-Type'],
                 allowMethods: [gw.CorsHttpMethod.GET, gw.CorsHttpMethod.HEAD, gw.CorsHttpMethod.OPTIONS, gw.CorsHttpMethod.POST],
