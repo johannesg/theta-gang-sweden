@@ -3,6 +3,7 @@ import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 import { FieldPolicy, FieldReadFunction, TypePolicies, TypePolicy } from '@apollo/client/cache';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -111,7 +112,7 @@ export type Query = {
 export type QueryMatrixArgs = {
   expires: Scalars['String'];
   id: Scalars['ID'];
-  includeDetails: Maybe<Scalars['Boolean']>;
+  includeDetails: InputMaybe<Scalars['Boolean']>;
   type: OptionType;
 };
 
@@ -123,28 +124,28 @@ export type QueryOptionDetailsArgs = {
 export type InstrumentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type InstrumentsQuery = { __typename?: 'Query', instruments: Maybe<Array<Maybe<{ __typename?: 'Instrument', id: string, name: string }>>> };
+export type InstrumentsQuery = { __typename?: 'Query', instruments: Array<{ __typename?: 'Instrument', id: string, name: string } | null | undefined> | null | undefined };
 
 export type OptionsQueryVariables = Exact<{
   id: Scalars['ID'];
   type: OptionType;
   expires: Scalars['String'];
-  includeDetails: Maybe<Scalars['Boolean']>;
+  includeDetails: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
-export type OptionsQuery = { __typename?: 'Query', matrix: Maybe<{ __typename?: 'OptionsMatrix', underlying: Maybe<{ __typename?: 'InstrumentDetails', name: string, href: string, change: Maybe<number>, changePercent: Maybe<number>, lastPrice: Maybe<number>, buyPrice: Maybe<number>, sellPrice: Maybe<number>, highestPrice: Maybe<number>, lowestPrice: Maybe<number>, updated: Maybe<string>, totalVolumeTraded: Maybe<number> }>, matrix: Array<{ __typename?: 'OptionsWithExpiry', expires: string, options: Array<{ __typename?: 'OptionMatrixItem', strike: Maybe<number>, call: Maybe<{ __typename?: 'OptionDetails', name: Maybe<string>, href: Maybe<string>, type: Maybe<CallOrPutType>, strike: Maybe<number>, changePercent: Maybe<number>, change: Maybe<number>, updated: Maybe<string>, bid: Maybe<number>, ask: Maybe<number>, spread: Maybe<number>, last: Maybe<number>, high: Maybe<number>, low: Maybe<number>, volume: Maybe<number>, expires: Maybe<string>, optionType: Maybe<OptionType>, parity: Maybe<number>, delta: Maybe<number>, theta: Maybe<number>, vega: Maybe<number>, gamma: Maybe<number>, rho: Maybe<number>, IV: Maybe<number> }>, put: Maybe<{ __typename?: 'OptionDetails', name: Maybe<string>, href: Maybe<string>, type: Maybe<CallOrPutType>, strike: Maybe<number>, changePercent: Maybe<number>, change: Maybe<number>, updated: Maybe<string>, bid: Maybe<number>, ask: Maybe<number>, spread: Maybe<number>, last: Maybe<number>, high: Maybe<number>, low: Maybe<number>, volume: Maybe<number>, expires: Maybe<string>, optionType: Maybe<OptionType>, parity: Maybe<number>, delta: Maybe<number>, theta: Maybe<number>, vega: Maybe<number>, gamma: Maybe<number>, rho: Maybe<number>, IV: Maybe<number> }> }> }> }> };
+export type OptionsQuery = { __typename?: 'Query', matrix: { __typename?: 'OptionsMatrix', underlying: { __typename?: 'InstrumentDetails', name: string, href: string, change: number | null | undefined, changePercent: number | null | undefined, lastPrice: number | null | undefined, buyPrice: number | null | undefined, sellPrice: number | null | undefined, highestPrice: number | null | undefined, lowestPrice: number | null | undefined, updated: string | null | undefined, totalVolumeTraded: number | null | undefined } | null | undefined, matrix: Array<{ __typename?: 'OptionsWithExpiry', expires: string, options: Array<{ __typename?: 'OptionMatrixItem', strike: number | null | undefined, call: { __typename?: 'OptionDetails', name: string | null | undefined, href: string | null | undefined, type: CallOrPutType | null | undefined, strike: number | null | undefined, changePercent: number | null | undefined, change: number | null | undefined, updated: string | null | undefined, bid: number | null | undefined, ask: number | null | undefined, spread: number | null | undefined, last: number | null | undefined, high: number | null | undefined, low: number | null | undefined, volume: number | null | undefined, expires: string | null | undefined, optionType: OptionType | null | undefined, parity: number | null | undefined, delta: number | null | undefined, theta: number | null | undefined, vega: number | null | undefined, gamma: number | null | undefined, rho: number | null | undefined, IV: number | null | undefined } | null | undefined, put: { __typename?: 'OptionDetails', name: string | null | undefined, href: string | null | undefined, type: CallOrPutType | null | undefined, strike: number | null | undefined, changePercent: number | null | undefined, change: number | null | undefined, updated: string | null | undefined, bid: number | null | undefined, ask: number | null | undefined, spread: number | null | undefined, last: number | null | undefined, high: number | null | undefined, low: number | null | undefined, volume: number | null | undefined, expires: string | null | undefined, optionType: OptionType | null | undefined, parity: number | null | undefined, delta: number | null | undefined, theta: number | null | undefined, vega: number | null | undefined, gamma: number | null | undefined, rho: number | null | undefined, IV: number | null | undefined } | null | undefined }> }> } | null | undefined };
 
 export type DetailsQueryVariables = Exact<{
   href: Scalars['ID'];
 }>;
 
 
-export type DetailsQuery = { __typename?: 'Query', optionDetails: Maybe<{ __typename?: 'OptionDetails', name: Maybe<string>, href: Maybe<string>, type: Maybe<CallOrPutType>, strike: Maybe<number>, changePercent: Maybe<number>, change: Maybe<number>, updated: Maybe<string>, bid: Maybe<number>, ask: Maybe<number>, spread: Maybe<number>, last: Maybe<number>, high: Maybe<number>, low: Maybe<number>, volume: Maybe<number>, expires: Maybe<string>, optionType: Maybe<OptionType>, parity: Maybe<number>, delta: Maybe<number>, theta: Maybe<number>, vega: Maybe<number>, gamma: Maybe<number>, rho: Maybe<number>, IV: Maybe<number> }> };
+export type DetailsQuery = { __typename?: 'Query', optionDetails: { __typename?: 'OptionDetails', name: string | null | undefined, href: string | null | undefined, type: CallOrPutType | null | undefined, strike: number | null | undefined, changePercent: number | null | undefined, change: number | null | undefined, updated: string | null | undefined, bid: number | null | undefined, ask: number | null | undefined, spread: number | null | undefined, last: number | null | undefined, high: number | null | undefined, low: number | null | undefined, volume: number | null | undefined, expires: string | null | undefined, optionType: OptionType | null | undefined, parity: number | null | undefined, delta: number | null | undefined, theta: number | null | undefined, vega: number | null | undefined, gamma: number | null | undefined, rho: number | null | undefined, IV: number | null | undefined } | null | undefined };
 
-export type InstrumentDetailsFragment = { __typename?: 'InstrumentDetails', name: string, href: string, change: Maybe<number>, changePercent: Maybe<number>, lastPrice: Maybe<number>, buyPrice: Maybe<number>, sellPrice: Maybe<number>, highestPrice: Maybe<number>, lowestPrice: Maybe<number>, updated: Maybe<string>, totalVolumeTraded: Maybe<number> };
+export type InstrumentDetailsFragment = { __typename?: 'InstrumentDetails', name: string, href: string, change: number | null | undefined, changePercent: number | null | undefined, lastPrice: number | null | undefined, buyPrice: number | null | undefined, sellPrice: number | null | undefined, highestPrice: number | null | undefined, lowestPrice: number | null | undefined, updated: string | null | undefined, totalVolumeTraded: number | null | undefined };
 
-export type OptionDetailsFragment = { __typename?: 'OptionDetails', name: Maybe<string>, href: Maybe<string>, type: Maybe<CallOrPutType>, strike: Maybe<number>, changePercent: Maybe<number>, change: Maybe<number>, updated: Maybe<string>, bid: Maybe<number>, ask: Maybe<number>, spread: Maybe<number>, last: Maybe<number>, high: Maybe<number>, low: Maybe<number>, volume: Maybe<number>, expires: Maybe<string>, optionType: Maybe<OptionType>, parity: Maybe<number>, delta: Maybe<number>, theta: Maybe<number>, vega: Maybe<number>, gamma: Maybe<number>, rho: Maybe<number>, IV: Maybe<number> };
+export type OptionDetailsFragment = { __typename?: 'OptionDetails', name: string | null | undefined, href: string | null | undefined, type: CallOrPutType | null | undefined, strike: number | null | undefined, changePercent: number | null | undefined, change: number | null | undefined, updated: string | null | undefined, bid: number | null | undefined, ask: number | null | undefined, spread: number | null | undefined, last: number | null | undefined, high: number | null | undefined, low: number | null | undefined, volume: number | null | undefined, expires: string | null | undefined, optionType: OptionType | null | undefined, parity: number | null | undefined, delta: number | null | undefined, theta: number | null | undefined, vega: number | null | undefined, gamma: number | null | undefined, rho: number | null | undefined, IV: number | null | undefined };
 
 export const InstrumentDetailsFragmentDoc = gql`
     fragment InstrumentDetails on InstrumentDetails {
