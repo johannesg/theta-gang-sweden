@@ -1,18 +1,19 @@
-import * as cdk from '@aws-cdk/core';
-import { UserPool, VerificationEmailStyle, UserPoolClient, AccountRecovery } from '@aws-cdk/aws-cognito';
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import * as cognito from 'aws-cdk-lib/aws-cognito';
 
-export class CatsAuthentication extends cdk.Construct {
-    public readonly userPool: UserPool;
-    public readonly userPoolClient: UserPoolClient;
+export class CatsAuthentication extends Construct {
+    public readonly userPool: cognito.UserPool;
+    public readonly userPoolClient: cognito.UserPoolClient;
 
-    constructor(scope: cdk.Construct, id: string) {
+    constructor(scope: Construct, id: string) {
         super(scope, id);
 
-        this.userPool = new UserPool(this, "UserPool", {
+        this.userPool = new cognito.UserPool(this, "UserPool", {
             selfSignUpEnabled: false,
-            accountRecovery: AccountRecovery.EMAIL_ONLY,
+            accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
             userVerification: {
-                emailStyle: VerificationEmailStyle.CODE
+                emailStyle: cognito.VerificationEmailStyle.CODE
             },
             autoVerify: {
                 email: true
@@ -31,7 +32,7 @@ export class CatsAuthentication extends cdk.Construct {
             }
         });
 
-        this.userPoolClient = new UserPoolClient(this, "UserPoolClient", {
+        this.userPoolClient = new cognito.UserPoolClient(this, "UserPoolClient", {
             userPool: this.userPool,
             authFlows: {
                 userPassword: true,

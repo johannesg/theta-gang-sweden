@@ -1,13 +1,15 @@
-import * as cdk from '@aws-cdk/core';
-import * as gw from '@aws-cdk/aws-apigatewayv2';
-import * as gwi from '@aws-cdk/aws-apigatewayv2-integrations';
-import { Function, Runtime, Code } from '@aws-cdk/aws-lambda';
-import { IHostedZone, ARecord, RecordTarget } from '@aws-cdk/aws-route53';
-import { ICertificate } from '@aws-cdk/aws-certificatemanager';
-import * as targets from '@aws-cdk/aws-route53-targets';
-import * as s3 from '@aws-cdk/aws-s3';
-import { CfnOutput, Duration } from '@aws-cdk/core';
-import { ITable } from '@aws-cdk/aws-dynamodb';
+import { CfnOutput, Duration } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import * as cdk from 'aws-cdk-lib';
+import * as gw from '@aws-cdk/aws-apigatewayv2-alpha';
+import * as gwi from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
+import * as targets from 'aws-cdk-lib/aws-route53-targets';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+
+import { Function, Runtime, Code } from 'aws-cdk-lib/aws-lambda';
+import { IHostedZone, ARecord, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { ITable } from 'aws-cdk-lib/aws-dynamodb';
 
 export interface ThetaApiProps {
     domainName: string
@@ -19,10 +21,10 @@ export interface ThetaApiProps {
     table: ITable
 }
 
-export class ThetaApi extends cdk.Construct {
+export class ThetaApi extends Construct {
     public readonly handler: Function;
 
-    constructor(scope: cdk.Construct, id: string, props: ThetaApiProps) {
+    constructor(scope: Construct, id: string, props: ThetaApiProps) {
         super(scope, id);
 
         new cdk.CfnOutput(this, 'ApiUrl', { value: `https://${props.domainName}` });
@@ -68,8 +70,7 @@ export class ThetaApi extends cdk.Construct {
         httpApi.addRoutes({
             path: "/graphql",
             methods: [gw.HttpMethod.GET, gw.HttpMethod.POST],
-            integration: new gwi.LambdaProxyIntegration({
-                handler: this.handler,
+            integration: new gwi.HttpLambdaIntegration ("ApiIntegration", this.handler, {
                 payloadFormatVersion: gw.PayloadFormatVersion.VERSION_1_0
             })
         });

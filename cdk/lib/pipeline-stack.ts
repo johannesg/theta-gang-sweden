@@ -1,7 +1,9 @@
-import { Stack, Construct, StackProps, SecretValue } from '@aws-cdk/core';
-import * as codebuild from '@aws-cdk/aws-codebuild';
-import * as codepipeline from '@aws-cdk/aws-codepipeline';
-import * as codepipeline_actions from '@aws-cdk/aws-codepipeline-actions';
+import { Stack, StackProps, SecretValue } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import * as codebuild from 'aws-cdk-lib/aws-codebuild';
+import * as codepipeline from 'aws-cdk-lib/aws-codepipeline';
+import * as codepipeline_actions from 'aws-cdk-lib/aws-codepipeline-actions';
+
 import { ThetaStack } from './theta-stack';
 
 type PipelineStackProps = StackProps & {

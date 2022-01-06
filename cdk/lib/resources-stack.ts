@@ -1,14 +1,19 @@
-import { Stack, Construct, StackProps, CfnOutput } from '@aws-cdk/core';
-import { HostedZone } from '@aws-cdk/aws-route53';
-import { DnsValidatedCertificate } from '@aws-cdk/aws-certificatemanager';
-import * as dynamodb from '@aws-cdk/aws-dynamodb';
+import { Stack, StackProps, CfnOutput } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as certificatemanager from 'aws-cdk-lib/aws-certificatemanager';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+
+const { HostedZone } = route53;
+const { DnsValidatedCertificate } = certificatemanager;
 
 export class ResourcesStack extends Stack {
     public readonly certificateArn: CfnOutput
     public readonly certificateEdgeArn: CfnOutput
     public readonly tableName: CfnOutput
     public readonly tableArn: CfnOutput
-    
+
     constructor(scope: Construct, id: string, props: StackProps | undefined) {
         super(scope, id, props);
 
@@ -46,7 +51,7 @@ export class ResourcesStack extends Stack {
 
         table.addGlobalSecondaryIndex({
             indexName: "GSI1",
-            partitionKey: { name: 'GSI1_PK', type: dynamodb.AttributeType.STRING},
+            partitionKey: { name: 'GSI1_PK', type: dynamodb.AttributeType.STRING },
             sortKey: { name: 'GSI1_SK', type: dynamodb.AttributeType.STRING }
         })
 

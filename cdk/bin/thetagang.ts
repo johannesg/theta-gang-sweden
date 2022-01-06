@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
-import { App } from '@aws-cdk/core';
+import { App } from 'aws-cdk-lib';
 import { ThetaStack } from '../lib/theta-stack';
 import { PipelineStack } from '../lib/pipeline-stack';
 import { ResourcesStack } from '../lib/resources-stack';

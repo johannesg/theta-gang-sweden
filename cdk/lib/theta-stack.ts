@@ -1,10 +1,12 @@
-import * as cdk from '@aws-cdk/core';
-import { Fn } from '@aws-cdk/core';
-import { HostedZone } from '@aws-cdk/aws-route53';
-import { Certificate } from '@aws-cdk/aws-certificatemanager';
+import * as cdk from 'aws-cdk-lib';
+import { Fn } from 'aws-cdk-lib';
+import { HostedZone } from 'aws-cdk-lib/aws-route53';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { Table } from 'aws-cdk-lib/aws-dynamodb';
+import { Construct } from 'constructs';
+
 import { ThetaApi } from './theta-api';
 import { S3ObjectParameter } from './utils';
-import { Table } from '@aws-cdk/aws-dynamodb';
 import { ThetaApp } from './theta-app';
 import { ResourcesStack } from './resources-stack';
 
@@ -20,7 +22,7 @@ export class ThetaStack extends cdk.Stack {
   public readonly apiDomain: string;
   public readonly appDomain: string;
 
-  constructor(scope: cdk.Construct, id: string, props: ThetaStackProps) {
+  constructor(scope: Construct, id: string, props: ThetaStackProps) {
     super(scope, id, props);
 
     this.lambdaCode = new S3ObjectParameter(this, "LambdaCode");
