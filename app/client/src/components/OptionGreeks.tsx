@@ -25,7 +25,7 @@ export function OptionGreeksCall({ underlying, option }: OptionGreeksProps) {
   // const greeks = calcGreeksCall({ daysToExpiration: dte, price, riskFreeInterestRate: interest, strike, underlyingPrice });
 
   return <React.Fragment>
-    <TableCell align="right">{option?.updated}</TableCell>
+    {/* <TableCell align="right">{option?.updated}</TableCell> */}
     <TableCell align="right">{numeral(option?.vega).format("#0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.theta).format("#0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.gamma).format("#0.00")}</TableCell>
@@ -59,6 +59,6 @@ export function OptionGreeksPut({ underlying, option }: OptionGreeksProps) {
     <TableCell align="right">{numeral(option?.gamma).format("#0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.theta).format("#0.00")}</TableCell>
     <TableCell align="right">{numeral(option?.vega).format("#0.00")}</TableCell>
-    <TableCell align="right">{option?.updated}</TableCell>
+    {/* <TableCell align="right">{option?.updated}</TableCell> */}
   </React.Fragment>
 }

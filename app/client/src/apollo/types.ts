@@ -29,69 +29,69 @@ export type Instrument = {
 
 export type InstrumentDetails = {
   __typename?: 'InstrumentDetails';
-  name: Scalars['String'];
-  href: Scalars['String'];
+  buyPrice: Maybe<Scalars['Float']>;
   change: Maybe<Scalars['Float']>;
   changePercent: Maybe<Scalars['Float']>;
-  buyPrice: Maybe<Scalars['Float']>;
-  sellPrice: Maybe<Scalars['Float']>;
-  lastPrice: Maybe<Scalars['Float']>;
   highestPrice: Maybe<Scalars['Float']>;
+  href: Scalars['String'];
+  lastPrice: Maybe<Scalars['Float']>;
   lowestPrice: Maybe<Scalars['Float']>;
-  updated: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  sellPrice: Maybe<Scalars['Float']>;
   totalVolumeTraded: Maybe<Scalars['Int']>;
+  updated: Maybe<Scalars['String']>;
 };
 
 export type OptionDetails = {
   __typename?: 'OptionDetails';
-  name: Maybe<Scalars['String']>;
-  href: Maybe<Scalars['String']>;
-  type: Maybe<CallOrPutType>;
-  strike: Maybe<Scalars['Float']>;
-  changePercent: Maybe<Scalars['Float']>;
-  change: Maybe<Scalars['Float']>;
-  bid: Maybe<Scalars['Float']>;
+  IV: Maybe<Scalars['Float']>;
   ask: Maybe<Scalars['Float']>;
-  spread: Maybe<Scalars['Float']>;
-  last: Maybe<Scalars['Float']>;
-  high: Maybe<Scalars['Float']>;
-  low: Maybe<Scalars['Float']>;
-  volume: Maybe<Scalars['Int']>;
-  updated: Maybe<Scalars['String']>;
+  bid: Maybe<Scalars['Float']>;
+  change: Maybe<Scalars['Float']>;
+  changePercent: Maybe<Scalars['Float']>;
+  delta: Maybe<Scalars['Float']>;
   expires: Maybe<Scalars['String']>;
+  gamma: Maybe<Scalars['Float']>;
+  high: Maybe<Scalars['Float']>;
+  href: Maybe<Scalars['String']>;
+  interest: Maybe<Scalars['Float']>;
+  last: Maybe<Scalars['Float']>;
+  low: Maybe<Scalars['Float']>;
+  name: Maybe<Scalars['String']>;
   optionType: Maybe<OptionType>;
   parity: Maybe<Scalars['Int']>;
-  delta: Maybe<Scalars['Float']>;
-  theta: Maybe<Scalars['Float']>;
-  vega: Maybe<Scalars['Float']>;
-  gamma: Maybe<Scalars['Float']>;
   rho: Maybe<Scalars['Float']>;
-  IV: Maybe<Scalars['Float']>;
-  interest: Maybe<Scalars['Float']>;
+  spread: Maybe<Scalars['Float']>;
+  strike: Maybe<Scalars['Float']>;
+  theta: Maybe<Scalars['Float']>;
+  type: Maybe<CallOrPutType>;
+  updated: Maybe<Scalars['String']>;
+  vega: Maybe<Scalars['Float']>;
+  volume: Maybe<Scalars['Int']>;
 };
 
 export type OptionMatrixItem = {
   __typename?: 'OptionMatrixItem';
   call: Maybe<OptionDetails>;
-  strike: Maybe<Scalars['Float']>;
   put: Maybe<OptionDetails>;
+  strike: Maybe<Scalars['Float']>;
 };
 
 export enum OptionType {
-  Weekly = 'WEEKLY',
-  Standard = 'STANDARD'
+  Standard = 'STANDARD',
+  Weekly = 'WEEKLY'
 }
 
 export type OptionsList = {
   __typename?: 'OptionsList';
-  underlying: Maybe<InstrumentDetails>;
   options: Maybe<Array<Maybe<OptionMatrixItem>>>;
+  underlying: Maybe<InstrumentDetails>;
 };
 
 export type OptionsMatrix = {
   __typename?: 'OptionsMatrix';
-  underlying: Maybe<InstrumentDetails>;
   matrix: Array<OptionsWithExpiry>;
+  underlying: Maybe<InstrumentDetails>;
 };
 
 export type OptionsWithExpiry = {
@@ -109,10 +109,10 @@ export type Query = {
 
 
 export type QueryMatrixArgs = {
-  id: Scalars['ID'];
-  type: OptionType;
   expires: Scalars['String'];
+  id: Scalars['ID'];
   includeDetails: Maybe<Scalars['Boolean']>;
+  type: OptionType;
 };
 
 
@@ -318,62 +318,62 @@ export type InstrumentFieldPolicy = {
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
 	name?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type InstrumentDetailsKeySpecifier = ('name' | 'href' | 'change' | 'changePercent' | 'buyPrice' | 'sellPrice' | 'lastPrice' | 'highestPrice' | 'lowestPrice' | 'updated' | 'totalVolumeTraded' | InstrumentDetailsKeySpecifier)[];
+export type InstrumentDetailsKeySpecifier = ('buyPrice' | 'change' | 'changePercent' | 'highestPrice' | 'href' | 'lastPrice' | 'lowestPrice' | 'name' | 'sellPrice' | 'totalVolumeTraded' | 'updated' | InstrumentDetailsKeySpecifier)[];
 export type InstrumentDetailsFieldPolicy = {
-	name?: FieldPolicy<any> | FieldReadFunction<any>,
-	href?: FieldPolicy<any> | FieldReadFunction<any>,
-	change?: FieldPolicy<any> | FieldReadFunction<any>,
-	changePercent?: FieldPolicy<any> | FieldReadFunction<any>,
 	buyPrice?: FieldPolicy<any> | FieldReadFunction<any>,
-	sellPrice?: FieldPolicy<any> | FieldReadFunction<any>,
-	lastPrice?: FieldPolicy<any> | FieldReadFunction<any>,
-	highestPrice?: FieldPolicy<any> | FieldReadFunction<any>,
-	lowestPrice?: FieldPolicy<any> | FieldReadFunction<any>,
-	updated?: FieldPolicy<any> | FieldReadFunction<any>,
-	totalVolumeTraded?: FieldPolicy<any> | FieldReadFunction<any>
-};
-export type OptionDetailsKeySpecifier = ('name' | 'href' | 'type' | 'strike' | 'changePercent' | 'change' | 'bid' | 'ask' | 'spread' | 'last' | 'high' | 'low' | 'volume' | 'updated' | 'expires' | 'optionType' | 'parity' | 'delta' | 'theta' | 'vega' | 'gamma' | 'rho' | 'IV' | 'interest' | OptionDetailsKeySpecifier)[];
-export type OptionDetailsFieldPolicy = {
-	name?: FieldPolicy<any> | FieldReadFunction<any>,
-	href?: FieldPolicy<any> | FieldReadFunction<any>,
-	type?: FieldPolicy<any> | FieldReadFunction<any>,
-	strike?: FieldPolicy<any> | FieldReadFunction<any>,
-	changePercent?: FieldPolicy<any> | FieldReadFunction<any>,
 	change?: FieldPolicy<any> | FieldReadFunction<any>,
-	bid?: FieldPolicy<any> | FieldReadFunction<any>,
+	changePercent?: FieldPolicy<any> | FieldReadFunction<any>,
+	highestPrice?: FieldPolicy<any> | FieldReadFunction<any>,
+	href?: FieldPolicy<any> | FieldReadFunction<any>,
+	lastPrice?: FieldPolicy<any> | FieldReadFunction<any>,
+	lowestPrice?: FieldPolicy<any> | FieldReadFunction<any>,
+	name?: FieldPolicy<any> | FieldReadFunction<any>,
+	sellPrice?: FieldPolicy<any> | FieldReadFunction<any>,
+	totalVolumeTraded?: FieldPolicy<any> | FieldReadFunction<any>,
+	updated?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type OptionDetailsKeySpecifier = ('IV' | 'ask' | 'bid' | 'change' | 'changePercent' | 'delta' | 'expires' | 'gamma' | 'high' | 'href' | 'interest' | 'last' | 'low' | 'name' | 'optionType' | 'parity' | 'rho' | 'spread' | 'strike' | 'theta' | 'type' | 'updated' | 'vega' | 'volume' | OptionDetailsKeySpecifier)[];
+export type OptionDetailsFieldPolicy = {
+	IV?: FieldPolicy<any> | FieldReadFunction<any>,
 	ask?: FieldPolicy<any> | FieldReadFunction<any>,
-	spread?: FieldPolicy<any> | FieldReadFunction<any>,
-	last?: FieldPolicy<any> | FieldReadFunction<any>,
-	high?: FieldPolicy<any> | FieldReadFunction<any>,
-	low?: FieldPolicy<any> | FieldReadFunction<any>,
-	volume?: FieldPolicy<any> | FieldReadFunction<any>,
-	updated?: FieldPolicy<any> | FieldReadFunction<any>,
+	bid?: FieldPolicy<any> | FieldReadFunction<any>,
+	change?: FieldPolicy<any> | FieldReadFunction<any>,
+	changePercent?: FieldPolicy<any> | FieldReadFunction<any>,
+	delta?: FieldPolicy<any> | FieldReadFunction<any>,
 	expires?: FieldPolicy<any> | FieldReadFunction<any>,
+	gamma?: FieldPolicy<any> | FieldReadFunction<any>,
+	high?: FieldPolicy<any> | FieldReadFunction<any>,
+	href?: FieldPolicy<any> | FieldReadFunction<any>,
+	interest?: FieldPolicy<any> | FieldReadFunction<any>,
+	last?: FieldPolicy<any> | FieldReadFunction<any>,
+	low?: FieldPolicy<any> | FieldReadFunction<any>,
+	name?: FieldPolicy<any> | FieldReadFunction<any>,
 	optionType?: FieldPolicy<any> | FieldReadFunction<any>,
 	parity?: FieldPolicy<any> | FieldReadFunction<any>,
-	delta?: FieldPolicy<any> | FieldReadFunction<any>,
-	theta?: FieldPolicy<any> | FieldReadFunction<any>,
-	vega?: FieldPolicy<any> | FieldReadFunction<any>,
-	gamma?: FieldPolicy<any> | FieldReadFunction<any>,
 	rho?: FieldPolicy<any> | FieldReadFunction<any>,
-	IV?: FieldPolicy<any> | FieldReadFunction<any>,
-	interest?: FieldPolicy<any> | FieldReadFunction<any>
+	spread?: FieldPolicy<any> | FieldReadFunction<any>,
+	strike?: FieldPolicy<any> | FieldReadFunction<any>,
+	theta?: FieldPolicy<any> | FieldReadFunction<any>,
+	type?: FieldPolicy<any> | FieldReadFunction<any>,
+	updated?: FieldPolicy<any> | FieldReadFunction<any>,
+	vega?: FieldPolicy<any> | FieldReadFunction<any>,
+	volume?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type OptionMatrixItemKeySpecifier = ('call' | 'strike' | 'put' | OptionMatrixItemKeySpecifier)[];
+export type OptionMatrixItemKeySpecifier = ('call' | 'put' | 'strike' | OptionMatrixItemKeySpecifier)[];
 export type OptionMatrixItemFieldPolicy = {
 	call?: FieldPolicy<any> | FieldReadFunction<any>,
-	strike?: FieldPolicy<any> | FieldReadFunction<any>,
-	put?: FieldPolicy<any> | FieldReadFunction<any>
+	put?: FieldPolicy<any> | FieldReadFunction<any>,
+	strike?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type OptionsListKeySpecifier = ('underlying' | 'options' | OptionsListKeySpecifier)[];
+export type OptionsListKeySpecifier = ('options' | 'underlying' | OptionsListKeySpecifier)[];
 export type OptionsListFieldPolicy = {
-	underlying?: FieldPolicy<any> | FieldReadFunction<any>,
-	options?: FieldPolicy<any> | FieldReadFunction<any>
+	options?: FieldPolicy<any> | FieldReadFunction<any>,
+	underlying?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type OptionsMatrixKeySpecifier = ('underlying' | 'matrix' | OptionsMatrixKeySpecifier)[];
+export type OptionsMatrixKeySpecifier = ('matrix' | 'underlying' | OptionsMatrixKeySpecifier)[];
 export type OptionsMatrixFieldPolicy = {
-	underlying?: FieldPolicy<any> | FieldReadFunction<any>,
-	matrix?: FieldPolicy<any> | FieldReadFunction<any>
+	matrix?: FieldPolicy<any> | FieldReadFunction<any>,
+	underlying?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type OptionsWithExpiryKeySpecifier = ('expires' | 'options' | OptionsWithExpiryKeySpecifier)[];
 export type OptionsWithExpiryFieldPolicy = {

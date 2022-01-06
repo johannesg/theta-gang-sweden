@@ -77,7 +77,7 @@ function SelectExpiry() {
         currentExpiry(event.target.value as string);
     };
 
-    const months = getNextMonths(12);
+    const months = getNextMonths(24);
 
     const items = months.map(m => <MenuItem key={m} value={m}>{m}</MenuItem>);
 

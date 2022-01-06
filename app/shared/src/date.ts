@@ -16,7 +16,7 @@ export function getNextMonth(): string {
 export function getNextMonths(num : number) : string[] {
     const now = DateTime.now();
     
-    return Array.from(Array(10)).map((_, i) => i)
+    return Array.from(Array(num)).map((_, i) => i)
         .map(i => now.plus({month: i}).toFormat('yyyy-MM'));
 }
 

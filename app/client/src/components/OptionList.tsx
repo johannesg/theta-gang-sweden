@@ -207,7 +207,7 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
         <Table stickyHeader className={classes.table} size="small" aria-label="a dense table">
             <TableHead >
                 <TableRow className={classes.head} >
-                    <TableCell align="right">Updated</TableCell>
+                    {/* <TableCell align="right">Updated</TableCell> */}
                     <TableCell align="right">Vega</TableCell>
                     <TableCell align="right">Theta</TableCell>
                     <TableCell align="right">Gamma</TableCell>
@@ -229,7 +229,7 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
                     <TableCell align="right">Gamma</TableCell>
                     <TableCell align="right">Theta</TableCell>
                     <TableCell align="right">Vega</TableCell>
-                    <TableCell align="right">Updated</TableCell>
+                    {/* <TableCell align="right">Updated</TableCell> */}
                 </TableRow>
             </TableHead>
             <TableBody>

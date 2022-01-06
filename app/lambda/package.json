@@ -11,8 +11,9 @@
     "watch": "concurrently \"npm:watch-*\" --raw",
     "watch-ql": "graphql-codegen -w",
     "watch-tsc": "tsc -w",
-    "local": "nodemon src/local.js",
-    "build": "graphql-codegen && esbuild src/index.ts --bundle --outfile=build/index.js --platform=node --target=node14 --external:aws-sdk --sourcemap"
+    "local": "nodemon build/local.js",
+    "build": "graphql-codegen && esbuild src/index.ts --bundle --outfile=build/index.js --platform=node --target=node14 --external:aws-sdk --sourcemap",
+    "build-local": "graphql-codegen && esbuild src/local.ts --bundle --outfile=build/local.js --platform=node --target=node14 --external:aws-sdk --sourcemap"
   },
   "author": "",
   "license": "ISC",
