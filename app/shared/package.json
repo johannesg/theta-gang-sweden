@@ -11,14 +11,14 @@
   },
   "dependencies": {
     "jstat": "^1.9.4",
-    "luxon": "^1.26.0"
+    "luxon": "^2.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.23",
-    "@types/luxon": "^1.26.5",
+    "@types/jest": "^27.0.0",
+    "@types/luxon": "^2.0.0",
     "@types/node": "^15.0.1",
-    "jest": "^26.6.3",
-    "ts-jest": "^26.5.5",
+    "jest": "^27.0.0",
+    "ts-jest": "^27.0.0",
     "typescript": "^4.2.4"
   }
 }
