@@ -98,7 +98,7 @@ export function UnderlyingTable({ underlying }: { underlying: InstrumentDetails 
                     <TableRow>
                         <TableCell>{row?.name}</TableCell>
                         <TableCell align="right">{numeral(row?.change).format("#0.00")}</TableCell>
-                        <TableCell align="right">{numeral(row?.changePercent).format("%0.00")} %</TableCell>
+                        <TableCell align="right">{numeral(row?.changePercent).format("%0.00")}</TableCell>
                         <TableCell align="right">{numeral(row?.lastPrice).format("#0.00") ?? "-"}</TableCell>
                         <TableCell align="right">{numeral(row?.buyPrice).format("#0.00") ?? "-"}</TableCell>
                         <TableCell align="right">{numeral(row?.sellPrice).format("#0.00") ?? "-"}</TableCell>
