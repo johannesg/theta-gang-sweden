@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, LinearProgress, Grid, Collapse } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, LinearProgress, Grid, Collapse, CardContent, CardHeader, Card } from '@material-ui/core';
 import { Button, ButtonGroup } from '@material-ui/core';
-import { blue, green, red, yellow } from '@material-ui/core/colors';
 import { NetworkStatus, useReactiveVar } from '@apollo/client';
 import clsx from 'clsx';
 
@@ -12,61 +10,7 @@ import { InstrumentDetails, OptionDetails, OptionMatrixItem, OptionsWithExpiry }
 import { OptionGreeksCall, OptionGreeksPut } from './OptionGreeks';
 import numeral from '../utils/numeral';
 import { getDaysFromNow } from '@theta-gang/shared/src/date';
-
-const useStyles = makeStyles({
-    container: {
-        maxHeight: 1000
-    },
-    table: {
-        minWidth: 650,
-        borderCollapse: 'collapse',
-
-        '& th,td': {
-            fontSize: "0.7rem",
-            padding: "2px 10px 2px 10px"
-        },
-    },
-    head: {
-    },
-    strike: {
-        backgroundColor: "#e6f8d2"
-    },
-    mark: {
-        borderTop: "2px solid red"
-        // : red[500]
-    },
-    selected: {
-        // boxSizing: "border-box",
-        // border: "2px solid yellow",
-        backgroundColor: yellow[500]
-    },
-    markAsBuy: {
-        backgroundColor: green[500]
-    },
-    markAsSell: {
-        backgroundColor: red[500]
-    },
-    buttonGroup: {
-    },
-    buyButton: {
-        padding: "2px 2px",
-        lineHeight: 1,
-        fontSize: "0.7rem",
-        backgroundColor: green[500],
-    },
-    sellButton: {
-        padding: "2px 2px",
-        lineHeight: 1,
-        fontSize: "0.7rem",
-        backgroundColor: red[500],
-    },
-    bid: {
-        color: blue[500],
-    },
-    ask: {
-        color: red[500],
-    }
-});
+import { useStyles } from './styles'
 
 export function UnderlyingTable({ underlying }: { underlying: InstrumentDetails | undefined }) {
     const classes = useStyles();
@@ -154,30 +98,26 @@ function MatrixTableRow({ row, prevRow, underlying }: { row: OptionMatrixItem, p
 
     const rowClass = clsx((price <= strike && price >= prevStrike) && classes.mark);
 
-    const cellClassCall = isActive(call) ? classes.selected : getShoppingCartStatusClass(call);
-    const cellClassPut = isActive(put) ? classes.selected : getShoppingCartStatusClass(put);
+    function selectItem(item: OptionDetails) {
+        if (item === activeOptionVar)
+            activeOption(null);
+        else
+            activeOption(item);
 
-    // const callHandler = () => selectItem(call);
-    // const putHandler = () => selectItem(put);
-    const callHandler = () => { };
-    const putHandler = () => { };
+        console.log(`Selected: ${activeOption()?.name}`)
+    }
 
     return <TableRow hover className={rowClass} key={call.name}>
         {/* <TableCell className={cellClassCall} onClick={callHandler}>
                             <BuySellButtons option={call}></BuySellButtons>
                         </TableCell> */}
         <OptionGreeksCall underlying={underlying} option={call}></OptionGreeksCall>
-        <TableCell className={clsx(cellClassCall, classes.bid)} align="right" onClick={callHandler}>{numeral(call.bid).format("#0.00")}</TableCell>
-        <TableCell className={clsx(cellClassCall, classes.ask)} align="right" onClick={callHandler}>{numeral(call.ask).format("#0.00")}</TableCell>
         <TableCell className={classes.strike} align="center">{strike}</TableCell>
-        <TableCell className={clsx(cellClassPut, classes.bid)} align="right" onClick={putHandler}>{numeral(put.bid).format("#0.00")}</TableCell>
-        <TableCell className={clsx(cellClassPut, classes.ask)} align="right" onClick={putHandler}>{numeral(put.ask).format("#0.00")}</TableCell>
         <OptionGreeksPut underlying={underlying} option={put}></OptionGreeksPut>
         {/* <TableCell className={cellClassPut} >
                             <BuySellButtons option={put}></BuySellButtons>
                         </TableCell> */}
     </TableRow>
-
 }
 
 
@@ -189,7 +129,6 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
 
     const activeOptionVar = useReactiveVar(activeOption);
     const shoppingCartVar = useReactiveVar(shoppingCart);
-
 
     const price = underlying?.lastPrice ?? 0;
     console.log(`Price: ${price}`);
@@ -264,6 +203,8 @@ export function OptionsContainer() {
     const underlying = data?.matrix?.underlying as InstrumentDetails;
     const matrix = data?.matrix?.matrix as OptionsWithExpiry[] ?? [];
 
+    const activeOptionVar = useReactiveVar(activeOption);
+
     return <React.Fragment>
         <Grid item xs={12}>
             {progress ? <LinearProgress></LinearProgress> : <div></div>}
@@ -272,5 +213,31 @@ export function OptionsContainer() {
         <Grid item xs={12}>
             <OptionMatrix matrix={matrix} underlying={underlying}></OptionMatrix>
         </Grid>
+        {activeOptionVar ? <Grid item xs={5}><OptionDetailsPanel underlying={underlying} option={activeOptionVar} /></Grid>
+            : null
+        }
     </React.Fragment>
+}
+
+function OptionDetailsPanel({ underlying, option }: { underlying: InstrumentDetails, option: OptionDetails }) {
+    var title = `${option.type}: ${option.name}`
+    return <Card>
+        <CardHeader title={title}></CardHeader>
+        <CardContent>
+            <Grid container>
+                <Grid container xs={4}>
+                    <Grid item xs={6}>IV:</Grid>
+                    <Grid item xs={6}>{option.IV}%</Grid>
+                    <Grid item xs={6}>Delta:</Grid>
+                    <Grid item xs={6}>{option.delta}</Grid>
+                    <Grid item xs={6}>Gamma:</Grid>
+                    <Grid item xs={6}>{option.gamma}</Grid>
+                    <Grid item xs={6}>Theta:</Grid>
+                    <Grid item xs={6}>{option.theta}</Grid>
+                    <Grid item xs={6}>Vega:</Grid>
+                    <Grid item xs={6}>{option.vega}</Grid>
+                </Grid>
+            </Grid>
+        </CardContent>
+    </Card>
 }
