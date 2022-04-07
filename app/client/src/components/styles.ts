@@ -53,5 +53,25 @@ export const useStyles = makeStyles({
     },
     ask: {
         color: red[500],
+    },
+    // Tried this: https://stackoverflow.com/questions/43173235/make-a-flexbox-middle-part-scroll-without-the-container-taking-100-of-the-page
+    mainContainer: {
+        flexDirection: 'column',
+        flexGrow: 1
+    },
+    matrixPanel: {
+        height: "60vh",
+        overflow: 'scroll',
+        flexDirection: 'column',
+        flexGrow: 1
+    },
+    detailsPanel: {
+        // flexDirection: 'column',
+        // flexGrow: 1
+    },
+    underlyingPanel: {
+        // flexDirection: 'column',
+        // flexGrow: 1
+
     }
 });

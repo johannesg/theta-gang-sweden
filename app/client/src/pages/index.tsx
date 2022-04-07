@@ -9,7 +9,7 @@ import { Typography, Grid, makeStyles, Box, Drawer, AppBar, Toolbar, Divider, Ta
 
 import { OptionFilters } from '../components/Filters';
 import { OptionsContainer } from '../components/OptionList';
-import { CallMissedSharp } from '@material-ui/icons';
+import { CallMissedSharp, Height } from '@material-ui/icons';
 import { mergeClasses } from '@material-ui/styles';
 // import { OptionActions, OptionHeader, OptionsStrategy } from '../components/Sidebar';
 
@@ -18,6 +18,8 @@ const drawerWidth = 400;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+    flexDirection: 'column',
+    height: "100vh"
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -77,7 +79,7 @@ function Main() {
     return <main className={classes.content}></main>
 
   return <div className={classes.content}>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} className={classes.mainContainer}>
         <Grid item xs={12}><Header /></Grid>
         <Grid item xs={12}>
           <Box className={classes.actions}>

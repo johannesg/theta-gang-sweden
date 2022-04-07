@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, LinearProgress, Grid, Collapse, CardContent, CardHeader, Card } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, LinearProgress, Grid, Collapse, CardContent, CardHeader, Card, Box, Container } from '@material-ui/core';
 import { Button, ButtonGroup } from '@material-ui/core';
 import { NetworkStatus, useReactiveVar } from '@apollo/client';
 import clsx from 'clsx';
@@ -142,7 +142,7 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
         console.log(`Selected: ${activeOption()?.name}`)
     }
 
-    return <TableContainer component={Paper} className={classes.container}>
+    return <TableContainer component={Paper}>
         <Table stickyHeader className={classes.table} size="small" aria-label="a dense table">
             <TableHead >
                 <TableRow className={classes.head} >
@@ -197,6 +197,7 @@ export function OptionMatrix({ matrix, underlying }: { matrix: OptionsWithExpiry
 }
 
 export function OptionsContainer() {
+    const classes = useStyles();
     const { loading, error, data, networkStatus } = useCompositeOptionsQuery();
     const progress = loading || networkStatus === NetworkStatus.refetch;
 
@@ -206,36 +207,66 @@ export function OptionsContainer() {
     const activeOptionVar = useReactiveVar(activeOption);
 
     return <React.Fragment>
-        <Grid item xs={12}>
+        {/* <Box width={"100%"}>
+<Container> */}
+        <Grid item xs={12} className={classes.underlyingPanel}>
             {progress ? <LinearProgress></LinearProgress> : <div></div>}
             <UnderlyingTable underlying={underlying} ></UnderlyingTable>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} className={classes.matrixPanel} >
             <OptionMatrix matrix={matrix} underlying={underlying}></OptionMatrix>
         </Grid>
-        {activeOptionVar ? <Grid item xs={5}><OptionDetailsPanel underlying={underlying} option={activeOptionVar} /></Grid>
+        {activeOptionVar ? <Grid item xs={5} className={classes.detailsPanel}><OptionDetailsPanel underlying={underlying} option={activeOptionVar} /></Grid>
             : null
         }
+        {/* </Container>
+        </Box> */}
     </React.Fragment>
 }
 
 function OptionDetailsPanel({ underlying, option }: { underlying: InstrumentDetails, option: OptionDetails }) {
-    var title = `${option.type}: ${option.name}`
+    var title = `${option.type} @ ${option.strike} : ${option.name}`
+
+    var intrinsicValue = option.type == "CALL"
+        ? (underlying.lastPrice ?? 0) - (option.strike ?? 0)
+        : (option.strike ?? 0) - (underlying.lastPrice ?? 0);
+
+    var extrinsicValueAsk = option.ask - intrinsicValue;
+    var extrinsicValueBid = option.bid - intrinsicValue;
+
     return <Card>
         <CardHeader title={title}></CardHeader>
         <CardContent>
             <Grid container>
                 <Grid container xs={4}>
                     <Grid item xs={6}>IV:</Grid>
-                    <Grid item xs={6}>{option.IV}%</Grid>
+                    <Grid item xs={6}><strong>{numeral(option?.IV).format("%0.00")}</strong></Grid>
                     <Grid item xs={6}>Delta:</Grid>
-                    <Grid item xs={6}>{option.delta}</Grid>
+                    <Grid item xs={6}><strong>{numeral(option?.delta).format("#0.00")}</strong></Grid>
                     <Grid item xs={6}>Gamma:</Grid>
-                    <Grid item xs={6}>{option.gamma}</Grid>
+                    <Grid item xs={6}><strong>{numeral(option?.gamma).format("#0.00")}</strong></Grid>
                     <Grid item xs={6}>Theta:</Grid>
-                    <Grid item xs={6}>{option.theta}</Grid>
+                    <Grid item xs={6}><strong>{numeral(option?.theta).format("#0.00")}</strong></Grid>
                     <Grid item xs={6}>Vega:</Grid>
-                    <Grid item xs={6}>{option.vega}</Grid>
+                    <Grid item xs={6}><strong>{numeral(option?.vega).format("#0.00")}</strong></Grid>
+                </Grid>
+                <Grid container xs={4}>
+                    <Grid item xs={6}>Bid:</Grid>
+                    <Grid item xs={6}><strong>{numeral(option.bid).format("#0.00")}</strong></Grid>
+                    <Grid item xs={6}>Ask:</Grid>
+                    <Grid item xs={6}><strong>{numeral(option.ask).format("#0.00")}</strong></Grid>
+                    <Grid item xs={6}>Spread:</Grid>
+                    <Grid item xs={6}><strong>{numeral(option.spread).format("%0.00")}</strong></Grid>
+                    <Grid item xs={6}>Volume:</Grid>
+                    <Grid item xs={6}><strong>{numeral(option.volume).format("#0.00")}</strong></Grid>
+                </Grid>
+                <Grid container xs={4}>
+                    <Grid item xs={6}>Intrinsic Value:</Grid>
+                    <Grid item xs={6}><strong>{numeral(intrinsicValue).format("#0.00")}</strong></Grid>
+                    <Grid item xs={6}>Extrinsic Value (Bid):</Grid>
+                    <Grid item xs={6}><strong>{numeral(extrinsicValueBid).format("#0.00")}</strong></Grid>
+                    <Grid item xs={6}>Extrinsic Value (Ask):</Grid>
+                    <Grid item xs={6}><strong>{numeral(extrinsicValueAsk).format("#0.00")}</strong></Grid>
                 </Grid>
             </Grid>
         </CardContent>
