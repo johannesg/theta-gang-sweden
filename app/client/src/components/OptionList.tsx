@@ -216,7 +216,7 @@ export function OptionsContainer() {
         <Grid item xs={12} className={classes.matrixPanel} >
             <OptionMatrix matrix={matrix} underlying={underlying}></OptionMatrix>
         </Grid>
-        {activeOptionVar ? <Grid item xs={5} className={classes.detailsPanel}><OptionDetailsPanel underlying={underlying} option={activeOptionVar} /></Grid>
+        {activeOptionVar ? <Grid item xs={7} className={classes.detailsPanel}><OptionDetailsPanel underlying={underlying} option={activeOptionVar} /></Grid>
             : null
         }
         {/* </Container>
@@ -224,15 +224,22 @@ export function OptionsContainer() {
     </React.Fragment>
 }
 
-function OptionDetailsPanel({ underlying, option }: { underlying: InstrumentDetails, option: OptionDetails }) {
-    var title = `${option.type} @ ${option.strike} : ${option.name}`
+function NumberLabel({ value, format } : {value?: number, format?: string}) {
+    return <span style={{textAlign: "right", flexDirection: 'row-reverse'}}><strong>{value ? numeral(value).format(format ?? "#0.00") : ""}</strong></span>
+}
 
-    var intrinsicValue = option.type == "CALL"
+function OptionDetailsPanel({ underlying, option }: { underlying: InstrumentDetails, option: OptionDetails }) {
+    const title = `${option.type} @ ${option.strike} : ${option.name}`
+
+    const intrinsicValue = option.type == "CALL"
         ? (underlying.lastPrice ?? 0) - (option.strike ?? 0)
         : (option.strike ?? 0) - (underlying.lastPrice ?? 0);
 
-    var extrinsicValueAsk = option.ask - intrinsicValue;
-    var extrinsicValueBid = option.bid - intrinsicValue;
+    const mid = ((option.ask ?? 0) + (option.bid ?? 0)) / 2;
+
+    const extrinsicValueAsk = (option.ask ?? 0) - intrinsicValue;
+    const extrinsicValueBid = (option.bid ?? 0) - intrinsicValue;
+    const extrinsicValueMid = mid - intrinsicValue;
 
     return <Card>
         <CardHeader title={title}></CardHeader>
@@ -240,15 +247,15 @@ function OptionDetailsPanel({ underlying, option }: { underlying: InstrumentDeta
             <Grid container>
                 <Grid container xs={4}>
                     <Grid item xs={6}>IV:</Grid>
-                    <Grid item xs={6}><strong>{numeral(option?.IV).format("%0.00")}</strong></Grid>
+                    <Grid item xs={6}><NumberLabel value={option.IV!} format="%0.00"/></Grid>
                     <Grid item xs={6}>Delta:</Grid>
-                    <Grid item xs={6}><strong>{numeral(option?.delta).format("#0.00")}</strong></Grid>
+                    <Grid item xs={6}><NumberLabel value={option.delta!} /></Grid>
                     <Grid item xs={6}>Gamma:</Grid>
-                    <Grid item xs={6}><strong>{numeral(option?.gamma).format("#0.00")}</strong></Grid>
+                    <Grid item xs={6}><NumberLabel value={option.gamma!} /></Grid>
                     <Grid item xs={6}>Theta:</Grid>
-                    <Grid item xs={6}><strong>{numeral(option?.theta).format("#0.00")}</strong></Grid>
+                    <Grid item xs={6}><NumberLabel value={option.theta!} /></Grid>
                     <Grid item xs={6}>Vega:</Grid>
-                    <Grid item xs={6}><strong>{numeral(option?.vega).format("#0.00")}</strong></Grid>
+                    <Grid item xs={6}><NumberLabel value={option.vega!} /></Grid>
                 </Grid>
                 <Grid container xs={4}>
                     <Grid item xs={6}>Bid:</Grid>
@@ -258,7 +265,7 @@ function OptionDetailsPanel({ underlying, option }: { underlying: InstrumentDeta
                     <Grid item xs={6}>Spread:</Grid>
                     <Grid item xs={6}><strong>{numeral(option.spread).format("%0.00")}</strong></Grid>
                     <Grid item xs={6}>Volume:</Grid>
-                    <Grid item xs={6}><strong>{numeral(option.volume).format("#0.00")}</strong></Grid>
+                    <Grid item xs={6}><strong>{numeral(option.volume).format("#0")}</strong></Grid>
                 </Grid>
                 <Grid container xs={4}>
                     <Grid item xs={6}>Intrinsic Value:</Grid>
@@ -267,6 +274,8 @@ function OptionDetailsPanel({ underlying, option }: { underlying: InstrumentDeta
                     <Grid item xs={6}><strong>{numeral(extrinsicValueBid).format("#0.00")}</strong></Grid>
                     <Grid item xs={6}>Extrinsic Value (Ask):</Grid>
                     <Grid item xs={6}><strong>{numeral(extrinsicValueAsk).format("#0.00")}</strong></Grid>
+                    <Grid item xs={6}>Extrinsic Value (Mid):</Grid>
+                    <Grid item xs={6}><strong>{numeral(extrinsicValueMid).format("#0.00")}</strong></Grid>
                 </Grid>
             </Grid>
         </CardContent>
