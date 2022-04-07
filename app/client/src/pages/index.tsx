@@ -79,7 +79,7 @@ function Main() {
     return <main className={classes.content}></main>
 
   return <div className={classes.content}>
-      <Grid container spacing={2} className={classes.mainContainer}>
+      <Grid container spacing={2}>
         <Grid item xs={12}><Header /></Grid>
         <Grid item xs={12}>
           <Box className={classes.actions}>

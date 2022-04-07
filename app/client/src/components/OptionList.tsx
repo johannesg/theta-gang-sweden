@@ -224,16 +224,21 @@ export function OptionsContainer() {
     </React.Fragment>
 }
 
-function NumberLabel({ value, format } : {value?: number, format?: string}) {
-    return <span style={{textAlign: "right", flexDirection: 'row-reverse'}}><strong>{value ? numeral(value).format(format ?? "#0.00") : ""}</strong></span>
+function NumberLabel({ value, format }: { value?: number, format?: string }) {
+    return <span style={{ textAlign: "right", flexDirection: 'row-reverse' }}><strong>{value ? numeral(value).format(format ?? "#0.00") : ""}</strong></span>
 }
 
 function OptionDetailsPanel({ underlying, option }: { underlying: InstrumentDetails, option: OptionDetails }) {
+    if (!option || !underlying)
+        return <div></div>
     const title = `${option.type} @ ${option.strike} : ${option.name}`
 
-    const intrinsicValue = option.type == "CALL"
+    var intrinsicValue = option.type == "CALL"
         ? (underlying.lastPrice ?? 0) - (option.strike ?? 0)
         : (option.strike ?? 0) - (underlying.lastPrice ?? 0);
+
+    if (intrinsicValue < 0)
+        intrinsicValue = 0;
 
     const mid = ((option.ask ?? 0) + (option.bid ?? 0)) / 2;
 
@@ -247,7 +252,7 @@ function OptionDetailsPanel({ underlying, option }: { underlying: InstrumentDeta
             <Grid container>
                 <Grid container xs={4}>
                     <Grid item xs={6}>IV:</Grid>
-                    <Grid item xs={6}><NumberLabel value={option.IV!} format="%0.00"/></Grid>
+                    <Grid item xs={6}><NumberLabel value={option.IV!} format="%0.00" /></Grid>
                     <Grid item xs={6}>Delta:</Grid>
                     <Grid item xs={6}><NumberLabel value={option.delta!} /></Grid>
                     <Grid item xs={6}>Gamma:</Grid>
