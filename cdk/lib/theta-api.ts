@@ -32,7 +32,7 @@ export class ThetaApi extends Construct {
         const sourceBucket = s3.Bucket.fromBucketName(this, 'LambdaSourceBucket', props.source.bucketName);
 
         this.handler = new Function(this, 'ApolloHandler', {
-            runtime: Runtime.NODEJS_14_X,
+            runtime: Runtime.NODEJS_18_X,
             code: Code.fromBucket(sourceBucket, props.source.objectKey),
             // code: Code.fromAsset("../app/lambda/build"),
             handler: 'index.handler',

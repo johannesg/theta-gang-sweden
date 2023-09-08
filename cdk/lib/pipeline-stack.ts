@@ -18,24 +18,24 @@ export class PipelineStack extends Stack {
         const cdkBuild = new codebuild.PipelineProject(this, 'CdkBuild', {
             buildSpec: codebuild.BuildSpec.fromSourceFilename("ci/build-cdk.yml"),
             environment: {
-                buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
+                buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
             }
         });
 
         const lambdaBuild = new codebuild.PipelineProject(this, 'LambdaBuild', {
             buildSpec: codebuild.BuildSpec.fromSourceFilename("ci/build-api.yml"),
             environment: {
-                buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
+                buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
             },
         });
 
         const appBuild = new codebuild.PipelineProject(this, 'AppBuild', {
             buildSpec: codebuild.BuildSpec.fromSourceFilename("ci/build-app.yml"),
             environment: {
-                buildImage: codebuild.LinuxBuildImage.STANDARD_5_0,
+                buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
             },
             environmentVariables: {
-                "API_URL": { value: `https://${props.stack.apiDomain}/graphql` }
+                "VITE_API_URL": { value: `https://${props.stack.apiDomain}/graphql` }
             }
         });
 

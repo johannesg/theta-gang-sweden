@@ -13,6 +13,6 @@ phases:
     commands:
       - npm run build
 artifacts:
-  base-directory: app/client/public
+  base-directory: app/client/dist
   files:
     - '**/*'
