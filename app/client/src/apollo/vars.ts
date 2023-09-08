@@ -39,7 +39,7 @@ export function removeFromShoppingCart(item: ShoppingCartItem) {
     }));
 }
 
-export function isInShoppingCart(cart: ShoppingCartItem[], option: OptionDetails): ShoppingAction | undefined {
+export function isInShoppingCart(_cart: ShoppingCartItem[], option: OptionDetails): ShoppingAction | undefined {
     const item = shoppingCart().find(si => si.option === option);
     if (item) {
         console.log(`Found ${item.option.name}`);

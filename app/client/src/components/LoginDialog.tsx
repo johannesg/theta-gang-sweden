@@ -1,5 +1,3 @@
-import React from 'react';
-import { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -10,10 +8,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 type LoginDialogProps = {
     open: boolean
-    onClose: 
+    onClose: (() => void)
 }
 
 export default function LoginDialog({ open } : LoginDialogProps) {
+    const handleClose = () => {};
     return (
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
             <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>

@@ -14,7 +14,7 @@ export type OptionGreeksProps = {
   option: OptionDetails
 }
 
-export function OptionGreeksCall({ underlying, option }: OptionGreeksProps) {
+export function OptionGreeksCall({ /*underlying,*/ option }: OptionGreeksProps) {
   // const underlyingPrice = underlying.buyPrice && underlying.sellPrice
   //   ? ((underlying.buyPrice! + underlying.sellPrice!) / 2)
   //   : underlying.lastPrice ?? 0;
@@ -26,7 +26,7 @@ export function OptionGreeksCall({ underlying, option }: OptionGreeksProps) {
   // const interest = option.interest ?? -.003;
 
   // const greeks = calcGreeksCall({ daysToExpiration: dte, price, riskFreeInterestRate: interest, strike, underlyingPrice });
-  var classes = useStyles();
+  const classes = useStyles();
 
   const activeOptionVar = useReactiveVar(activeOption);
 
@@ -55,7 +55,7 @@ export function OptionGreeksCall({ underlying, option }: OptionGreeksProps) {
   </React.Fragment>
 }
 
-export function OptionGreeksPut({ underlying, option }: OptionGreeksProps) {
+export function OptionGreeksPut({ /* underlying, */option }: OptionGreeksProps) {
   // const underlyingPrice = underlying.buyPrice && underlying.sellPrice
   //   ? ((underlying.buyPrice! + underlying.sellPrice!) / 2)
   //   : underlying.lastPrice ?? 0;
@@ -67,7 +67,7 @@ export function OptionGreeksPut({ underlying, option }: OptionGreeksProps) {
   // const interest = option.interest ?? -.003;
 
   // const greeks = calcGreeksPut({ daysToExpiration: dte, price, riskFreeInterestRate: interest, strike, underlyingPrice });
-  var classes = useStyles();
+  const classes = useStyles();
 
   const activeOptionVar = useReactiveVar(activeOption);
 

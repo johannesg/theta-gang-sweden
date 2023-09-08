@@ -1,16 +1,14 @@
-import * as React from 'react'
-
 import { useEffect, useState } from 'react';
 
 import { ApolloConsumer, ApolloProvider } from "@apollo/client"
-import { createApolloClient } from '../apollo/client';
+import { createApolloClient } from './apollo/client';
 
-import { Typography, Grid, makeStyles, Box, Drawer, AppBar, Toolbar, Divider, Table, TableHead, TableCell, TableBody, TableRow, Button } from '@material-ui/core'
+import { Typography, Grid, makeStyles, Box, AppBar, Toolbar, Button } from '@material-ui/core'
 
-import { OptionFilters } from '../components/Filters';
-import { OptionsContainer } from '../components/OptionList';
-import { CallMissedSharp, Height } from '@material-ui/icons';
-import { mergeClasses } from '@material-ui/styles';
+import { OptionFilters } from './components/Filters';
+import { OptionsContainer } from './components/OptionList';
+// import { CallMissedSharp, Height } from '@material-ui/icons';
+// import { mergeClasses } from '@material-ui/styles';
 // import { OptionActions, OptionHeader, OptionsStrategy } from '../components/Sidebar';
 
 const drawerWidth = 400;
@@ -138,7 +136,7 @@ function App() {
   </div>
 }
 
-export default function Index() {
+export default function ThetaGangApp() {
   const apolloClient = createApolloClient("");
 
   return (

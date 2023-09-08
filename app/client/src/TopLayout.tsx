@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
-import theme from '../../src/theme';
+import theme from './theme';
 
 type TopLayoutProps = {
   children: React.ReactNode
@@ -19,12 +19,12 @@ const useGlobalStyles = makeStyles({
   }
 });
 
-function MyThemeProvider({ children }) {
+function MyThemeProvider({ children }: { children: React.ReactNode }) {
   useGlobalStyles();
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 }
 
-export default function TopLayout({children} : TopLayoutProps) {
+export default function TopLayout({ children }: TopLayoutProps) {
   return (
     <React.Fragment>
       <Helmet>

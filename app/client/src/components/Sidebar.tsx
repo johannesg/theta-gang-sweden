@@ -20,8 +20,8 @@ export function OptionActions() {
   const { data } = useDetailsQuery({ skip: option === null, variables: { href: option?.href ?? "" } })
   const greeks = data?.optionDetails;
 
-  const buy = option?.buy ?? 0;
-  const sell = option?.sell ?? 0;
+  const buy = option?.bid ?? 0;
+  const sell = option?.ask ?? 0;
   const mid = (buy + sell) / 2;
   const spread = (sell - buy) / mid;
 
