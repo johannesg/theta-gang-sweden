@@ -6,7 +6,6 @@ phases:
     commands:
       - node --version
       - npm --version
-      - npm install -g npm
       - cd app
       - npm ci
       - cd lambda
