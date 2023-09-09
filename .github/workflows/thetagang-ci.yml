@@ -27,15 +27,17 @@ jobs:
           cache-dependency-path: |
             app/package-lock.json
             app/lambda/package-lock.json
-      - run: |
+      - name: Install dependencies
+        run: |
           cd app
           npm ci
           cd lambda
           npm ci
-      - run: |
+      - name: Build
+        run: |
           cd app/lambda
           npm run build
-      - name: Archive production artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: lambda
@@ -63,16 +65,18 @@ jobs:
             app/package-lock.json
             app/client/package-lock.json
       - run: |
-            echo "Using baseurl: ${{ vars.VITE_API_URL }}"
-      - run: |
+            echo "Using baseurl: ${{ vars.API_URL }}"
+      - name: Install dependencies
+        run: |
           cd app
           npm ci
           cd client
           npm ci
-      - run: |
+      - name: Build
+        run: |
           cd app/client
-          npm run build
-      - name: Archive production artifacts
+          VITE_API_URL=${{vars.API_URL}} npm run build
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: client
@@ -103,12 +107,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Download production artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
           name: lambda
           path: app/lambda/build
-      - name: Download production artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
           name: client
@@ -121,15 +125,19 @@ jobs:
           cache: "npm"
           cache-dependency-path: |
             cdk/package-lock.json
-      - run: |
+      - name: Install dependencies
+        run: |
           cd cdk
           npm ci
-      - run: |
+      - name: Build
+        run: |
           cd cdk
           npm run build
-      - run: |
+      - name: CDK Synth
+        run: |
           cd cdk
           npx cdk synth
-      - run: |
+      - name: CDK Deploy
+        run: |
           cd cdk
           npx cdk deploy ${{ vars.CDK_DEPLOY_STACK_NAME }} --require-approval never
