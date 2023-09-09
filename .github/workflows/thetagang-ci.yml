@@ -107,8 +107,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Download all artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v3
+        with:
+          name: lambda
+          path: app/lambda/build
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: client
+          path: app/client/dist
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
