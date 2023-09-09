@@ -73,41 +73,8 @@ jobs:
           path: |
             app/client/dist
 
-  build-cdk:
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "npm"
-          cache-dependency-path: |
-            cdk/package-lock.json
-      - run: |
-          cd cdk
-          npm ci
-      - run: |
-          cd cdk
-          npm run build
-      - run: |
-          cd cdk
-          npm run cdk synth
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: cdk
-          path: |
-            cdk/cdk.out
-
   deploy:
-    needs: [build-lambda, build-client, build-cdk]
+    needs: [build-lambda, build-client]
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials
