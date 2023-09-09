@@ -105,18 +105,10 @@ jobs:
           role-to-assume: arn:aws:iam::700595718361:role/jogus-github-deploy-role
           aws-region: eu-north-1
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: lambda
-          path: app/lambda/build
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: client
-          path: app/client/dist
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
