@@ -82,8 +82,8 @@ jobs:
   deploy:
     needs: [build-lambda, build-client]
     runs-on: ubuntu-latest
-    # environment: 
-    #     name: ${{ github.ref_name }}
+    environment: 
+        name: ${{ github.ref_name }}
 
     permissions:
         id-token: write
@@ -96,7 +96,7 @@ jobs:
 
     steps:
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v3
         with:
           role-to-assume: arn:aws:iam::700595718361:role/jogus-github-deploy-role
           aws-region: eu-north-1
