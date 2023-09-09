@@ -17,16 +17,16 @@ export interface ThetaStackProps extends cdk.StackProps {
 }
 
 export class ThetaStack extends cdk.Stack {
-  public readonly lambdaCode: S3ObjectParameter;
-  public readonly appCode: S3ObjectParameter;
+  // public readonly lambdaCode: S3ObjectParameter;
+  // public readonly appCode: S3ObjectParameter;
   public readonly apiDomain: string;
   public readonly appDomain: string;
 
   constructor(scope: Construct, id: string, props: ThetaStackProps) {
     super(scope, id, props);
 
-    this.lambdaCode = new S3ObjectParameter(this, "LambdaCode");
-    this.appCode = new S3ObjectParameter(this, "AppCode");
+    // this.lambdaCode = new S3ObjectParameter(this, "LambdaCode");
+    // this.appCode = new S3ObjectParameter(this, "AppCode");
 
     const zone = HostedZone.fromLookup(this, 'Zone', { domainName: "thetagang.se" });
     const certificate = Certificate.fromCertificateArn(this, "SiteCertificate", Fn.importValue(props.resources.certificateArn.exportName!));
@@ -48,7 +48,7 @@ export class ThetaStack extends cdk.Stack {
       // auth,
       zone,
       certificate: certificate,
-      source: this.lambdaCode.location,
+      // source: this.lambdaCode.location,
       table
     });
 
@@ -56,7 +56,7 @@ export class ThetaStack extends cdk.Stack {
       domainName: this.appDomain,
       zone,
       certificate: certificateEdge,
-      source: this.appCode.location
+      // source: this.appCode.location
     });
   }
 }

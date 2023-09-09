@@ -79,8 +79,8 @@ export class PipelineStack extends Stack {
             stackName: props.stack.stackName,
             adminPermissions: true,
             parameterOverrides: {
-                ...props.stack.lambdaCode.assign(lambdaBuildArtifact.s3Location),
-                ...props.stack.appCode.assign(appBuildArtifact.s3Location),
+                // ...props.stack.lambdaCode.assign(lambdaBuildArtifact.s3Location),
+                // ...props.stack.appCode.assign(appBuildArtifact.s3Location),
             },
             extraInputs: [lambdaBuildArtifact, appBuildArtifact],
         });

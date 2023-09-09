@@ -1,0 +1,148 @@
+name: ThetaGang CI
+
+on:
+  push:
+    branches: ["master", "dev"]
+  pull_request:
+    branches: ["master", "dev"]
+
+jobs:
+  build-lambda:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: |
+            app/package-lock.json
+            app/lambda/package-lock.json
+      - run: |
+          cd app
+          npm ci
+          cd lambda
+          npm ci
+      - run: |
+          cd app/lambda
+          npm run build
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: lambda
+          path: |
+            app/lambda/build
+
+  build-client:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: |
+            app/package-lock.json
+            app/client/package-lock.json
+      - run: |
+          cd app
+          npm ci
+          cd client
+          npm ci
+      - run: |
+          cd app/client
+          npm run build
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: client
+          path: |
+            app/client/dist
+
+  build-cdk:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: |
+            cdk/package-lock.json
+      - run: |
+          cd cdk
+          npm ci
+      - run: |
+          cd cdk
+          npm run build
+      - run: |
+          cd cdk
+          npm run cdk synth
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: cdk
+          path: |
+            cdk/cdk.out
+
+  deploy:
+    needs: [build-lambda, build-client, build-cdk]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::700595718361:role/jogus-github-deploy-role
+          aws-region: eu-north-1
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download production artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: lambda
+          path: app/lambda/build
+      - name: Download production artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: client
+          path: app/client/dist
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: |
+            cdk/package-lock.json
+      - run: |
+          cd cdk
+          npm ci
+      - run: |
+          cd cdk
+          npm run build
+      - run: |
+          cd cdk
+          npm run cdk synth
+      - run: |
+          cd cdk
+          npm run cdk deploy ${CDK_DEPLOY_STACK_NAME} --require-approval never

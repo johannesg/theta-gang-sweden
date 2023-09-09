@@ -17,7 +17,7 @@ export interface ThetaApiProps {
     // auth: CatsAuthentication
     zone: IHostedZone
     certificate: ICertificate
-    source: s3.Location
+    // source: s3.Location
     table: ITable
 }
 
@@ -29,12 +29,12 @@ export class ThetaApi extends Construct {
 
         new cdk.CfnOutput(this, 'ApiUrl', { value: `https://${props.domainName}` });
 
-        const sourceBucket = s3.Bucket.fromBucketName(this, 'LambdaSourceBucket', props.source.bucketName);
+        // const sourceBucket = s3.Bucket.fromBucketName(this, 'LambdaSourceBucket', props.source.bucketName);
 
         this.handler = new Function(this, 'ApolloHandler', {
             runtime: Runtime.NODEJS_18_X,
-            code: Code.fromBucket(sourceBucket, props.source.objectKey),
-            // code: Code.fromAsset("../app/lambda/build"),
+            // code: Code.fromBucket(sourceBucket, props.source.objectKey),
+            code: Code.fromAsset("../app/lambda/build"),
             handler: 'index.handler',
             description: `Function generated on: ${new Date().toISOString()}`,
             environment: {
