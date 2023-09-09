@@ -120,7 +120,7 @@ jobs:
           npm run build
       - run: |
           cd cdk
-          npm run cdk synth
+          npx cdk synth
       - run: |
           cd cdk
-          npm run cdk deploy ${CDK_DEPLOY_STACK_NAME} --require-approval never
+          npx cdk deploy ${{ env.CDK_DEPLOY_STACK_NAME }} --require-approval never
