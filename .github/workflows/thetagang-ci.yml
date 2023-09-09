@@ -63,6 +63,8 @@ jobs:
             app/package-lock.json
             app/client/package-lock.json
       - run: |
+            echo "Using baseurl: ${{ vars.VITE_API_URL }}"
+      - run: |
           cd app
           npm ci
           cd client
@@ -80,8 +82,8 @@ jobs:
   deploy:
     needs: [build-lambda, build-client]
     runs-on: ubuntu-latest
-    environment: 
-        name: ${{ github.ref_name }}
+    # environment: 
+    #     name: ${{ github.ref_name }}
 
     permissions:
         id-token: write
@@ -130,4 +132,4 @@ jobs:
           npx cdk synth
       - run: |
           cd cdk
-          npx cdk deploy ${{ env.CDK_DEPLOY_STACK_NAME }} --require-approval never
+          npx cdk deploy ${{ vars.CDK_DEPLOY_STACK_NAME }} --require-approval never
