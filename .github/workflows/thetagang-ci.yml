@@ -9,6 +9,8 @@ on:
 jobs:
   build-lambda:
     runs-on: ubuntu-latest
+    environment: 
+        name: ${{ github.ref_name }}
 
     strategy:
       matrix:
@@ -42,6 +44,8 @@ jobs:
 
   build-client:
     runs-on: ubuntu-latest
+    environment: 
+        name: ${{ github.ref_name }}
 
     strategy:
       matrix:
@@ -76,6 +80,9 @@ jobs:
   deploy:
     needs: [build-lambda, build-client]
     runs-on: ubuntu-latest
+    environment: 
+        name: ${{ github.ref_name }}
+
     permissions:
         id-token: write
         contents: read
