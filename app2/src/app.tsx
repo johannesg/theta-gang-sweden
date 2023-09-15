@@ -41,9 +41,9 @@ export const app = new Elysia()
   .get("/instruments", ( { html }) => 
           html(
               <Dropdown label="Instrument">
-                  <DropdownItem hxGet="/instrument/one" hxTarget="#options"> One </DropdownItem>
-                  <DropdownItem hxGet="/instrument/two" hxTarget="#options"> Two </DropdownItem>
-                  <DropdownItem hxGet="/instrument/three" hxTarget="#options"> Three </DropdownItem>
+                  <DropdownItem hxGet="/instrument/one" hxTarget="#options">One</DropdownItem>
+                  <DropdownItem hxGet="/instrument/two" hxTarget="#options">Two</DropdownItem>
+                  <DropdownItem hxGet="/instrument/three" hxTarget="#options">Three</DropdownItem>
               </Dropdown>
               )
       )
@@ -69,9 +69,9 @@ const BaseHtml = ({ children }: elements.Children) => `
 ${children}
 `;
 
-type DropdownProps = elements.Children & {
+type DropdownProps = {
     label: string
-    children: typeof DropdownItem
+    children?: typeof DropdownItem[]
 }
 
 type DropdownItemProps = elements.Children & {
