@@ -1,6 +1,9 @@
-import { Elysia, t } from "elysia";
-import { html } from "@elysiajs/html";
-import * as elements from "typed-html";
+/** @jsx jsx */
+
+import { html } from 'hono/html';
+import { Hono } from 'hono';
+import { jsx } from 'hono/jsx';
+import fs from 'fs/promises';
 
 type Option = {
     label: string
@@ -13,8 +16,8 @@ const options: Option[] = [
     { label: "Three", value: "3" }
 ];
 
-export const app = new Elysia()
-    .use(html())
+export const app = new Hono()
+    // .use(html())
     .get("/", ({ html }) =>
         html(
             <BaseHtml>
@@ -66,18 +69,19 @@ export const app = new Elysia()
             </form>
         )
     )
-    .post("/options", ({ body, html }) => {
-        const { instrument, type, expiry } = body;
+    .post("/options", async ({ req, html }) => {
+        const { instrument, type, expiry } = await req.parseBody();
         return html(<div>
             <p>Instrument: {instrument}</p>
             <p>Type: {type}</p>
             <p>Expiry: {expiry}</p>
         </div>)
     })
-    .get("/styles.css", () => Bun.file("./tailwind-gen/styles.css"));
+    // .get("/styles.css", () => Bun.file("./tailwind-gen/styles.css"));
+    .get("/styles.css", async (c) => c.body(await fs.readFile("./tailwind-gen/styles.css")));
 
 
-const BaseHtml = ({ children }: elements.Children) => `
+const BaseHtml = ({ children }: elements.Children) => html`
 <!DOCTYPE html>
 <html lang="en">
 

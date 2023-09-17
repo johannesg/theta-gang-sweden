@@ -10,13 +10,14 @@
     "downlevelIteration": true,
     "skipLibCheck": true,
     "jsx": "react",
-    "jsxFactory": "elements.createElement",
+    "jsxImportSource": "hono/jsx",
+    // "jsxFactory": "elements.createElement",
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
     "noEmit": true,
     "types": [
-      "bun-types" // add Bun global
+      // "bun-types" // add Bun global
     ]
   }
 }

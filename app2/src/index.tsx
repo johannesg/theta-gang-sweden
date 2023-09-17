@@ -1,6 +1,10 @@
 import { app } from './app';
+import { serve } from '@hono/node-server'
+import { serveStatic } from '@hono/node-server/serve-static'
 
-app.listen(3000);
+app.use('/static/*', serveStatic({ root: './tailwind-gen' }))
 
-console.log(`🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`);
+serve(app);
+
+console.log(`Hono is running at http://localhost:3000`);
 
