@@ -11,4 +11,20 @@
         background-size: .75em .75em;
         padding-right: 2.5rem;
     }
+
+    .matrix-table {
+        @apply w-full shadow-md border border-gray-100
+    }
+
+    .matrix-table th {
+        @apply font-sans text-xs font-medium tracking-tight
+    }
+    .matrix-table tr {
+        /* @apply p-2 */
+    }
+
+    .matrix-table td {
+        @apply font-sans text-xs font-normal tracking-tight
+    }
+
 }

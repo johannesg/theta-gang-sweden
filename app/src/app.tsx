@@ -6,6 +6,7 @@ import fs from 'fs/promises';
 import { loadInstruments, loadOptionsMatrix } from './resolvers';
 import { getNextMonths } from './utils';
 import { OptionType } from './types';
+import numeral from 'numeral';
 
 type Option = {
     label: string
@@ -19,6 +20,7 @@ const options: Option[] = [
 ];
 
 export const app = new Hono()
+    //
     // .use(html())
     .get("/", ({ html }) =>
         html(
@@ -40,10 +42,10 @@ export const app = new Hono()
                     <div class="p-4" id="matrix">
 
                         <div>
-                            <table>
+                            <table class="matrix-table">
                                 <thead>
                                     <tr>
-                                        <th class="font-sans text-xs font-semibold">Name</th>
+                                        <th>Name</th>
                                         <th>Change</th>
                                         <th>Percent</th>
                                         <th>Last</th>
@@ -83,21 +85,61 @@ export const app = new Hono()
                         {months.map(m => (<option>{m}</option>))}
                     </Select>
                 </div>
+                <div class="mt-4">
+                <button hx-post="/matrix" class="py-1.5 px-3 font-sans uppercase bg-blue-500 rounded-sm text-white hover:bg-blue-800">Refresh</button>
+                </div>
             </form>
         );
     })
     .post("/matrix", async ({ req, html }) => {
         const { instrument, type, expiry } = await req.parseBody();
 
-        const matrix = await loadOptionsMatrix(instrument, type, expiry);
+        const { matrix, underlying } = await loadOptionsMatrix(instrument, type, expiry);
         return html(<div>
-            <p>Instrument: {matrix.underlying?.name}</p>
+            <p>Instrument: {underlying?.name}</p>
             <p>Type: {type}</p>
             <p>Expiry: {expiry}</p>
+
+            <div class="mt-4">
+                <table class="matrix-table">
+                    <thead class="p-2">
+                        <tr class="border-b">
+                            <th class="p-1 pl-3 text-left">Name</th>
+                            <th class="text-right">Change</th>
+                            <th class="text-right">Percent</th>
+                            <th class="text-right">Last</th>
+                            <th class="text-right">Bid</th>
+                            <th class="text-right">Ask</th>
+                            <th class="text-right">High</th>
+                            <th class="text-right">Low</th>
+                            <th class="text-right">Updated</th>
+                            <th class="pr-3 text-right">Volume</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="p-1 pl-3 text-left">{underlying?.name}</td>
+                            <td class="text-right">{underlying?.change}</td>
+                            <td class="text-right">{numeral(underlying?.changePercent).format("0.00%")}</td>
+                            <td class="text-right">{underlying?.lastPrice}</td>
+                            <td class="text-right">{underlying?.buyPrice}</td>
+                            <td class="text-right">{underlying?.sellPrice}</td>
+                            <td class="text-right">{underlying?.highestPrice}</td>
+                            <td class="text-right">{underlying?.lowestPrice}</td>
+                            <td class="text-right">{underlying?.updated}</td>
+                            <td class="pr-3 text-right">{underlying?.totalVolumeTraded}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>)
     })
     // .get("/styles.css", () => Bun.file("./tailwind-gen/styles.css"));
-    .get("/styles.css", async (c) => c.body(await fs.readFile("./tailwind-gen/styles.css")));
+    .get("/styles.css", async (c) => {
+        c.header('Content-Type', "text/css");
+        return c.body(await fs.readFile("./tailwind-gen/styles.css")
+        );
+    });
 
 
 const BaseHtml: FC = ({ children }) => html`<!DOCTYPE html>
