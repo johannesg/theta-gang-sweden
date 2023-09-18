@@ -7,7 +7,10 @@
 //
 // Huge inspiration from this github repo: https://github.com/kpmooney/numerical_methods_youtube
 //
-import { jStat } from 'jstat';
+// import { jStat } from 'jstat';
+import * as jstat from 'jstat';
+const { jStat } = jstat;
+// const { jStat } = require('jstat');
 
 const { abs, sqrt, pow, log, exp } = Math;
 

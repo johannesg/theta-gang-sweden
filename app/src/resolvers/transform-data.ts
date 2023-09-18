@@ -47,8 +47,10 @@ export function transformOverview(overview: ParsedOptionsData): OptionsMatrix {
             };
         });
 
+    const matrix = res.sort((a, b) => a.expires.localeCompare(b.expires));
+
     return {
         underlying: overview.underlying,
-        matrix: res.sort((a, b) => a.expires.localeCompare(b.expires))
+        matrix
     };
 }

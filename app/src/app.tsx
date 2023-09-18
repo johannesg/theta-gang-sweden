@@ -1,9 +1,11 @@
-/** @jsx jsx */
-
 import { html } from 'hono/html';
 import { Hono } from 'hono';
 import { jsx } from 'hono/jsx';
+import type { FC } from 'hono/jsx'
 import fs from 'fs/promises';
+import { loadInstruments, loadOptionsMatrix } from './resolvers';
+import { getNextMonths } from './utils';
+import { OptionType } from './types';
 
 type Option = {
     label: string
@@ -35,44 +37,61 @@ export const app = new Hono()
                         Loading
                     </div>
 
-                    <div class="p-4">
-                    </div>
-                    <div id="options">
-                        <p>HEJ</p>
+                    <div class="p-4" id="matrix">
+
+                        <div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="font-sans text-xs font-semibold">Name</th>
+                                        <th>Change</th>
+                                        <th>Percent</th>
+                                        <th>Last</th>
+                                        <th>Bid</th>
+                                        <th>Ask</th>
+                                        <th>High</th>
+                                        <th>Low</th>
+                                        <th>Updated</th>
+                                        <th>Volume</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </body>
             </BaseHtml>
         )
     )
-    .get("/instruments", ({ html }) =>
-        html(
-            <form hx-post="/options" hx-trigger="change" hx-target="#options">
+    .get("/instruments", async ({ html }) => {
+        const instruments = await loadInstruments();
+        const months = getNextMonths(24);
+        return html(
+            <form hx-post="/matrix" hx-trigger="change" hx-target="#matrix">
                 <div class="flex gap-3">
                     <Select name="instrument" label="Instrument">
                         <option selected>Choose an instrument</option>
-                        <option value="US">United States</option>
-                        <option value="CA">Canada</option>
-                        <option value="FR">France</option>
-                        <option value="DE">Germany</option>
+                        {instruments.map(i => (<option value={i.id}>{i.name}</option>))}
                     </Select>
 
                     <Select name="type" label="Type">
-                        <option>2: One</option>
-                        <option>2: Two</option>
+                        <option value={OptionType.Standard}>Standard</option>
+                        <option value={OptionType.Weekly}>Weekly</option>
                     </Select>
 
                     <Select name="expiry" label="Expiry">
-                        <option>3: One</option>
-                        <option>3: Two</option>
+                        {months.map(m => (<option>{m}</option>))}
                     </Select>
                 </div>
             </form>
-        )
-    )
-    .post("/options", async ({ req, html }) => {
+        );
+    })
+    .post("/matrix", async ({ req, html }) => {
         const { instrument, type, expiry } = await req.parseBody();
+
+        const matrix = await loadOptionsMatrix(instrument, type, expiry);
         return html(<div>
-            <p>Instrument: {instrument}</p>
+            <p>Instrument: {matrix.underlying?.name}</p>
             <p>Type: {type}</p>
             <p>Expiry: {expiry}</p>
         </div>)
@@ -81,8 +100,7 @@ export const app = new Hono()
     .get("/styles.css", async (c) => c.body(await fs.readFile("./tailwind-gen/styles.css")));
 
 
-const BaseHtml = ({ children }: elements.Children) => html`
-<!DOCTYPE html>
+const BaseHtml: FC = ({ children }) => html`<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -93,17 +111,16 @@ const BaseHtml = ({ children }: elements.Children) => html`
   <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="/styles.css" rel="stylesheet">
 </head>
 
 ${children}
 `;
 
-type SelectProps = { name, label: string, children: { name: string, label: string, children: elements.Children[] } }
-function Select({ name, label, children }: SelectProps) {
-    return (<label class="text-sm text-gray-500">{label}
-        <select name={name} class="custom-select py-2.5 px-0 w-full text-lg text-gray-800 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer">
+const Select: FC = ({ name, label, children }) => {
+    return (<label class="text-xs text-gray-500">{label}
+        <select name={name} class="custom-select py-2.5 px-0 w-full text-base leading-none font-normal text-gray-800 bg-transparent border-0 border-b border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 hover:border-gray-200 peer">
             {children}
         </select>
     </label>

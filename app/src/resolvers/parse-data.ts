@@ -275,22 +275,22 @@ export function parseOptionDetails(doc: cheerio.Selector): OptionDetails {
 
 
     return {
-        change: numeral(quoteBar.find("div span.change").text()).value(),
-        changePercent: numeral(quoteBar.find("div span.changePercent").text()).value(),
-        bid: numeral(quoteBar.find("span.buyPrice").text()).value(),
-        ask: numeral(quoteBar.find("span.sellPrice").text()).value(),
-        last: numeral(quoteBar.find("span.lastPrice").text()).value(),
-        spread: numeral(quoteBar.find("span.spread").text()).value(),
-        high: numeral(quoteBar.find("span.highestPrice").text()).value(),
-        low: numeral(quoteBar.find("span.lowestPrice").text()).value(),
-        volume: numeral(quoteBar.find("span.totalVolumeTraded").text()).value(),
+        change: numeral(quoteBar.find("div span.change").text()).value() ?? 0,
+        changePercent: numeral(quoteBar.find("div span.changePercent").text()).value() ?? 0,
+        bid: numeral(quoteBar.find("span.buyPrice").text()).value() ?? 0,
+        ask: numeral(quoteBar.find("span.sellPrice").text()).value() ?? 0,
+        last: numeral(quoteBar.find("span.lastPrice").text()).value() ?? 0,
+        spread: numeral(quoteBar.find("span.spread").text()).value() ?? 0,
+        high: numeral(quoteBar.find("span.highestPrice").text()).value() ?? 0,
+        low: numeral(quoteBar.find("span.lowestPrice").text()).value() ?? 0,
+        volume: numeral(quoteBar.find("span.totalVolumeTraded").text()).value() ?? 0,
         updated: quoteBar.find("span.updated").text(),
 
         type: parseCallOrPut(getPI(1)),
         optionType: parseOptionType(getPI(3)),
         expires: getPI(2),
-        strike: numeral(getPI(4)).value(),
-        parity: numeral(getPI(5)).value(),
+        strike: numeral(getPI(4)).value() ?? 0,
+        parity: numeral(getPI(5)).value() ?? 0,
 
         // buyIV: getGreek(0).num() / 100,
         delta: getGreek(2).num(),

@@ -1,20 +1,11 @@
-import { CallOrPutType, InstrumentDetails, OptionDetails, OptionType, Resolvers } from "../types/gen-types";
+import { CallOrPutType, InstrumentDetails, OptionDetails, OptionType, OptionsMatrix } from "../types";
 import { getInstruments, getOptionInfo, getOptionsList } from "./fetch-data";
 import { mergeOptionsLists, ParsedOptionsData, parseOptionDetails, parseOptionsOverview, parseOptionsPage, parseOptionsQuote, parseStockList } from "./parse-data";
 import * as cheerio from 'cheerio';
-import { getDaysFromNow } from '@theta-gang/shared/src/date';
+import { getDaysFromNow } from '../utils/date';
 import { transformOverview } from "./transform-data";
 import { DateTime } from "luxon";
-import { calcGreeksCall, calcGreeksPut } from "@theta-gang/shared/src/calc-greeks";
-
-async function getOptionDetails(id: string | undefined): Promise<OptionDetails> {
-    if (!id)
-        return {};
-
-    const html = await getOptionInfo(id);
-    const doc = cheerio.load(html);
-    return parseOptionDetails(doc);
-}
+import { calcGreeksCall, calcGreeksPut } from "../utils/calc-greeks";
 
 function calcGreeks(underlying: InstrumentDetails, option: OptionDetails) {
 
@@ -66,7 +57,7 @@ async function loadAndParseOptionsList(id: string, type: OptionType, expires: st
     }
 }
 
-async function loadOptionsMatrix(id: string, type: OptionType, expires: string) {
+export async function loadOptionsMatrix(id: string, type: OptionType, expires: string) : Promise<OptionsMatrix> {
     const start = DateTime.now();
     const [overview, quote] = await Promise.all([
         loadAndParseOptionsList(id, type, expires, "overview"),
@@ -92,18 +83,19 @@ async function loadOptionsMatrix(id: string, type: OptionType, expires: string) 
     return matrix;
 }
 
-export const resolvers: Resolvers = {
-    Query: {
-        instruments: async () => {
-            const html = await getInstruments();
-            const doc = cheerio.load(html);
-            return parseStockList(doc);
-        },
-        matrix: async (_, { id, type, expires, includeDetails }) => {
-            return loadOptionsMatrix(id, type, expires);
-        },
-        optionDetails: async (_, { id }) => {
-            return await getOptionDetails(id);
-        }
-    }
+export async function loadInstruments() {
+    console.log("Get instruments from avanza");
+    const html = await getInstruments();
+    const doc = cheerio.load(html);
+    return parseStockList(doc);
 }
+
+export async function loadOptionDetails(id: string | undefined): Promise<OptionDetails> {
+    if (!id)
+        return {};
+
+    const html = await getOptionInfo(id);
+    const doc = cheerio.load(html);
+    return parseOptionDetails(doc);
+}
+
