@@ -24,7 +24,7 @@
     }
 
     .matrix-table td {
-        @apply font-sans text-xs font-normal tracking-tight
+        @apply font-sans text-xs tracking-tight
     }
 
 }

@@ -1,10 +1,11 @@
 import { html } from 'hono/html';
 import { Hono } from 'hono';
 import { jsx } from 'hono/jsx';
+import { Fragment } from 'hono/jsx'
 import type { FC } from 'hono/jsx'
 import fs from 'fs/promises';
 import { loadInstruments, loadOptionsMatrix } from './resolvers';
-import { getNextMonths } from './utils';
+import { getDaysFromNow, getNextMonths } from './utils';
 import { OptionType } from './types';
 import numeral from 'numeral';
 
@@ -40,26 +41,6 @@ export const app = new Hono()
                     </div>
 
                     <div class="p-4" id="matrix">
-
-                        <div>
-                            <table class="matrix-table">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Change</th>
-                                        <th>Percent</th>
-                                        <th>Last</th>
-                                        <th>Bid</th>
-                                        <th>Ask</th>
-                                        <th>High</th>
-                                        <th>Low</th>
-                                        <th>Updated</th>
-                                        <th>Volume</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
                     </div>
                 </body>
             </BaseHtml>
@@ -86,7 +67,7 @@ export const app = new Hono()
                     </Select>
                 </div>
                 <div class="mt-4">
-                <button hx-post="/matrix" class="py-1.5 px-3 font-sans uppercase bg-blue-500 rounded-sm text-white hover:bg-blue-800">Refresh</button>
+                    <button hx-post="/matrix" class="py-1.5 px-3 font-sans uppercase bg-blue-500 rounded-sm text-white hover:bg-blue-800">Refresh</button>
                 </div>
             </form>
         );
@@ -104,7 +85,7 @@ export const app = new Hono()
                 <table class="matrix-table">
                     <thead class="p-2">
                         <tr class="border-b">
-                            <th class="p-1 pl-3 text-left">Name</th>
+                            <th class="p-1 pl-4 text-left">Name</th>
                             <th class="text-right">Change</th>
                             <th class="text-right">Percent</th>
                             <th class="text-right">Last</th>
@@ -113,12 +94,12 @@ export const app = new Hono()
                             <th class="text-right">High</th>
                             <th class="text-right">Low</th>
                             <th class="text-right">Updated</th>
-                            <th class="pr-3 text-right">Volume</th>
+                            <th class="pr-4 text-right">Volume</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="p-1 pl-3 text-left">{underlying?.name}</td>
+                            <td class="p-1 pl-4 text-left">{underlying?.name}</td>
                             <td class="text-right">{underlying?.change}</td>
                             <td class="text-right">{numeral(underlying?.changePercent).format("0.00%")}</td>
                             <td class="text-right">{underlying?.lastPrice}</td>
@@ -127,8 +108,73 @@ export const app = new Hono()
                             <td class="text-right">{underlying?.highestPrice}</td>
                             <td class="text-right">{underlying?.lowestPrice}</td>
                             <td class="text-right">{underlying?.updated}</td>
-                            <td class="pr-3 text-right">{underlying?.totalVolumeTraded}</td>
+                            <td class="pr-4 text-right">{underlying?.totalVolumeTraded}</td>
                         </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4">
+                <table class="matrix-table border-collapse">
+                    <thead>
+                        <tr class="border-b">
+                            <th class="p-1 pl-4 text-right">Vega</th>
+                            <th class="text-right">Theta</th>
+                            <th class="text-right">Gamma</th>
+                            <th class="text-right">Delta</th>
+                            <th class="text-right">IV</th>
+                            <th class="text-right">Vol</th>
+                            <th class="text-right">Spread</th>
+                            <th class="text-right">Last</th>
+                            <th class="text-right">Bid</th>
+                            <th class="text-right">Ask</th>
+                            <th class="text-center">Strike</th>
+                            <th class="text-right">Ask</th>
+                            <th class="text-right">Bid</th>
+                            <th class="text-right">Last</th>
+                            <th class="text-right">Spread</th>
+                            <th class="text-right">Vol</th>
+                            <th class="text-right">IV</th>
+                            <th class="text-right">Delta</th>
+                            <th class="text-right">Gamma</th>
+                            <th class="text-right">Theta</th>
+                            <th class="pr-4 text-right">Vega</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {matrix.map(m => (<Fragment>
+                            <tr class="border-b ">
+                                <td colspan="9" class="p-1 font-medium text-center">CALLS</td>
+                                <td colspan="3" class="font-medium text-center">EXP: {m.expires} DTE: {getDaysFromNow(m.expires)}</td>
+                                <td colspan="9" class="font-medium text-center">PUTS</td>
+                            </tr>
+                            {m.options.map(o => (<tr class="border-b">
+                                <td class="p-0.5 pl-4 text-right">{numeral(o.call?.vega).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.call?.theta).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.call?.gamma).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.call?.delta).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.call?.IV).format("0.00%")}</td>
+                                <td class="text-right">{numeral(o.call?.volume).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.call?.spread).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.call?.last).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.call?.bid).format("0.00")}</td>
+                                <td class="text-right mx-2">{numeral(o.call?.ask).format("0.00")}</td>
+                                <td class="text-center bg-yellow-400">{numeral(o.strike).format("0")}</td>
+                                <td class="text-right">{numeral(o.put?.ask).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.put?.bid).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.put?.last).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.put?.spread).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.put?.volume).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.put?.IV).format("0.00%")}</td>
+                                <td class="text-right">{numeral(o.put?.delta).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.put?.gamma).format("0.00")}</td>
+                                <td class="text-right">{numeral(o.put?.theta).format("0.00")}</td>
+                                <td class="pr-4 text-right">{numeral(o.put?.vega).format("0.00")}</td>
+                            </tr>
+                            ))}
+                        </Fragment>
+                        ))}
+                        <tr></tr>
                     </tbody>
                 </table>
             </div>
