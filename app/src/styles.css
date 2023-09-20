@@ -12,9 +12,9 @@
         padding-right: 2.5rem;
     }
 
-    .matrix-table {
-        @apply w-full shadow-md border border-gray-100
-    }
+    /* .matrix-table { */
+    /*     @apply w-full shadow-md border border-gray-100 */
+    /* } */
 
     .matrix-table th {
         @apply font-sans text-xs font-medium tracking-tight

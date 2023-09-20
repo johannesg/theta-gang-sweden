@@ -28,9 +28,6 @@ export const app = new Hono()
             <BaseHtml>
                 <body
                     class="flex flex-col w-full h-screen"
-                // hx-get="/todos"
-                // hx-swap="innerHTML"
-                // hx-trigger="load"
                 >
                     <div class="w-full bg-primary-600 h-16 drop-shadow-xl p-6 flex items-center">
                         <p class="text-white tracking-wide  font-medium font-sans text-xl">Theta Gang Sweden</p>
@@ -53,7 +50,7 @@ export const app = new Hono()
             <form hx-post="/matrix" hx-trigger="change" hx-target="#matrix">
                 <div class="flex gap-3">
                     <Select name="instrument" label="Instrument">
-                        <option selected>Choose an instrument</option>
+                        <option value="" selected>Choose an instrument</option>
                         {instruments.map(i => (<option value={i.id}>{i.name}</option>))}
                     </Select>
 
@@ -67,7 +64,9 @@ export const app = new Hono()
                     </Select>
                 </div>
                 <div class="mt-4">
-                    <button hx-post="/matrix" class="py-1.5 px-3 font-sans uppercase bg-blue-500 rounded-sm text-white hover:bg-blue-800">Refresh</button>
+                <button hx-post="/matrix" class="py-1.5 px-3 font-sans uppercase bg-primary-600 rounded-sm text-white hover:bg-blue-800 flex items-center justify-center">
+                    Refresh
+                </button>
                 </div>
             </form>
         );

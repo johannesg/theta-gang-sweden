@@ -1,8 +1,6 @@
 import { app } from './app';
-import { serve } from 'bun';
+import { serve } from '@hono/node-server'
 import { watch } from 'fs';
-
-// const watchDir = import.meta.dir;
 
 const watchDir = "./tailwind-gen/styles.css";
 
@@ -21,3 +19,6 @@ process.on("SIGINT", () => {
 });
 
 serve(app);
+
+console.log(`Hono is running at http://localhost:3000`);
+

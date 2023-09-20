@@ -3,7 +3,7 @@
   "module": "src/index.tsx",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"tsx watch src/index.tsx\" \"npm run tw:dev\"",
+    "dev": "concurrently \"tsx src/main-node.ts\" \"npm run tw:dev\"",
     "bun:dev": "concurrently \"bun --hot src/main-bun.ts\" \"bun run bun:tw:dev\"",
     "bun:tw:dev": "bunx tailwindcss -i ./src/styles.css -o ./tailwind-gen/styles.css --watch",
     "tw": "npx tailwindcss -i ./src/styles.css -o ./tailwind-gen/styles.css",
