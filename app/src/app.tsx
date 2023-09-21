@@ -1,13 +1,10 @@
-import { html } from 'hono/html';
-import { Hono } from 'hono';
-import { jsx } from 'hono/jsx';
-import { Fragment } from 'hono/jsx'
-import type { FC } from 'hono/jsx'
-import fs from 'fs/promises';
+import { Elysia, t } from "elysia";
+import { html } from "@elysiajs/html";
 import { loadInstruments, loadOptionsMatrix } from './resolvers';
 import { getDaysFromNow, getNextMonths } from './utils';
 import { OptionType } from './types';
 import numeral from 'numeral';
+import { PropsWithChildren } from "@kitajs/html";
 
 type Option = {
     label: string
@@ -20,9 +17,8 @@ const options: Option[] = [
     { label: "Three", value: "3" }
 ];
 
-export const app = new Hono()
-    //
-    // .use(html())
+export const app = new Elysia()
+    .use(html())
     .get("/", ({ html }) =>
         html(
             <BaseHtml>
@@ -71,8 +67,8 @@ export const app = new Hono()
             </form>
         );
     })
-    .post("/matrix", async ({ req, html }) => {
-        const { instrument, type, expiry } = await req.parseBody();
+    .post("/matrix", async ({ body: { instrument, type, expiry}, html } : any) => {
+        // const { instrument, type, expiry } = await req.parseBody();
 
         const { matrix, underlying } = await loadOptionsMatrix(instrument, type, expiry);
         return html(<div>
@@ -100,7 +96,7 @@ export const app = new Hono()
                         <tr>
                             <td class="p-1 pl-4 text-left">{underlying?.name}</td>
                             <td class="text-right">{underlying?.change}</td>
-                            <td class="text-right">{numeral(underlying?.changePercent).format("0.00%")}</td>
+                            <td class="text-right" safe>{numeral(underlying?.changePercent).format("0.00%")}</td>
                             <td class="text-right">{underlying?.lastPrice}</td>
                             <td class="text-right">{underlying?.buyPrice}</td>
                             <td class="text-right">{underlying?.sellPrice}</td>
@@ -141,37 +137,37 @@ export const app = new Hono()
                         </tr>
                     </thead>
                     <tbody>
-                        {matrix.map(m => (<Fragment>
+                        {matrix.map(m => (<>
                             <tr class="border-b ">
                                 <td colspan="9" class="p-1 font-medium text-center">CALLS</td>
-                                <td colspan="3" class="font-medium text-center">EXP: {m.expires} DTE: {getDaysFromNow(m.expires)}</td>
+                                <td colspan="3" class="font-medium text-center" safe>EXP: {m.expires} DTE: {getDaysFromNow(m.expires)}</td>
                                 <td colspan="9" class="font-medium text-center">PUTS</td>
                             </tr>
                             {m.options.map(o => (<tr class="border-b">
-                                <td class="p-0.5 pl-4 text-right">{numeral(o.call?.vega).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.call?.theta).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.call?.gamma).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.call?.delta).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.call?.IV).format("0.00%")}</td>
-                                <td class="text-right">{numeral(o.call?.volume).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.call?.spread).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.call?.last).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.call?.bid).format("0.00")}</td>
-                                <td class="text-right mx-2">{numeral(o.call?.ask).format("0.00")}</td>
-                                <td class="text-center bg-yellow-400">{numeral(o.strike).format("0")}</td>
-                                <td class="text-right">{numeral(o.put?.ask).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.put?.bid).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.put?.last).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.put?.spread).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.put?.volume).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.put?.IV).format("0.00%")}</td>
-                                <td class="text-right">{numeral(o.put?.delta).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.put?.gamma).format("0.00")}</td>
-                                <td class="text-right">{numeral(o.put?.theta).format("0.00")}</td>
-                                <td class="pr-4 text-right">{numeral(o.put?.vega).format("0.00")}</td>
+                                <td class="p-0.5 pl-4 text-right" safe>{numeral(o.call?.vega).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.call?.theta).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.call?.gamma).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.call?.delta).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.call?.IV).format("0.00%")}</td>
+                                <td class="text-right" safe>{numeral(o.call?.volume).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.call?.spread).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.call?.last).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.call?.bid).format("0.00")}</td>
+                                <td class="text-right mx-2" safe>{numeral(o.call?.ask).format("0.00")}</td>
+                                <td class="text-center bg-yellow-400" safe>{numeral(o.strike).format("0")}</td>
+                                <td class="text-right" safe>{numeral(o.put?.ask).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.put?.bid).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.put?.last).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.put?.spread).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.put?.volume).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.put?.IV).format("0.00%")}</td>
+                                <td class="text-right" safe>{numeral(o.put?.delta).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.put?.gamma).format("0.00")}</td>
+                                <td class="text-right" safe>{numeral(o.put?.theta).format("0.00")}</td>
+                                <td class="pr-4 text-right" safe>{numeral(o.put?.vega).format("0.00")}</td>
                             </tr>
                             ))}
-                        </Fragment>
+                        </>
                         ))}
                         <tr></tr>
                     </tbody>
@@ -179,15 +175,11 @@ export const app = new Hono()
             </div>
         </div>)
     })
-    // .get("/styles.css", () => Bun.file("./tailwind-gen/styles.css"));
-    .get("/styles.css", async (c) => {
-        c.header('Content-Type', "text/css");
-        return c.body(await fs.readFile("./tailwind-gen/styles.css")
-        );
-    });
+    .get("/styles.css", () => Bun.file("./tailwind-gen/styles.css"))
 
 
-const BaseHtml: FC = ({ children }) => html`<!DOCTYPE html>
+function BaseHtml({ children } : PropsWithChildren)  {
+    return `<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -203,13 +195,13 @@ const BaseHtml: FC = ({ children }) => html`<!DOCTYPE html>
 </head>
 
 ${children}
-`;
+`
+}
 
-const Select: FC = ({ name, label, children }) => {
-    return (<label class="text-xs text-gray-500">{label}
+const Select = ({ name, label, children }: PropsWithChildren<{name: string, label: string}>) => {
+    return <label class="text-xs text-gray-500">{label}
         <select name={name} class="custom-select py-2.5 px-0 w-full text-base leading-none font-normal text-gray-800 bg-transparent border-0 border-b border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 hover:border-gray-200 peer">
             {children}
         </select>
-    </label>
-    );
+    </label>;
 }

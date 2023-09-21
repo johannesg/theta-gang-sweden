@@ -6,3 +6,10 @@ declare module "jstat" {
         }
     }
 }
+
+declare namespace JSX {
+  interface HtmlTag {
+    _?: string;
+  }
+}
+
