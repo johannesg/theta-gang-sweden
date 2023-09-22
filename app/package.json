@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"bun run --hot src/main-bun.ts\" \"bun run tw:dev\"",
-    "tw": "bunx tailwindcss -i ./src/styles.css -o ./tailwind-gen/styles.css",
-    "tw:dev": "bunx tailwindcss -i ./src/styles.css -o ./tailwind-gen/styles.css --watch",
+    "tw": "bunx tailwindcss -i ./src/styles.css -o ./public/styles.css",
+    "tw:dev": "bunx tailwindcss -i ./src/styles.css -o ./public/styles.css --watch",
     "test": "jest",
     "testw": "jest --watch"
   },
@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@elysiajs/html": "^0.7.0",
+    "@elysiajs/static": "^0.7.0",
     "@hono/node-server": "^1.1.1",
     "@kitajs/html": "^2.2.2",
     "@kitajs/ts-html-plugin": "^1.0.2",

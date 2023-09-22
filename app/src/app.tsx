@@ -191,7 +191,8 @@ function BaseHtml({ children } : PropsWithChildren)  {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="/styles.css" rel="stylesheet">
+  <link href="/public/styles.css" rel="stylesheet">
+  <script src="/public/reload.js"></script>
 </head>
 
 ${children}
