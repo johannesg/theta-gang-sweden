@@ -7,7 +7,7 @@ if (loc.protocol === "https:") {
 new_uri += "//" + loc.host;
 new_uri += loc.pathname + "ws/hmr";
 
-const ws = new WebSocket(new_uri);
+const ws = new WebSocket('ws://localhost:3001/ws/hmr');
 
 ws.addEventListener("open", () => {
     console.log("Socket open");
@@ -19,7 +19,7 @@ ws.addEventListener("close", ({ reason }) => {
 });
 
 ws.addEventListener("message", ({ data }) => {
-    console.log(data);
+    // console.log(data);
     if (data === "RELOAD") {
         reloadCss();
     }

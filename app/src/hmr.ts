@@ -4,7 +4,7 @@ import { watch } from 'fs';
 // const watchDir = import.meta.dir;
 const watchDir = "./public/styles.css";
 
-export const hmr = new Elysia()
+const hmr = new Elysia()
     .ws('/ws/hmr', {
         message(ws, message) {
             console.log(`Incoming message: ${message}`);
@@ -32,3 +32,5 @@ process.on("SIGINT", () => {
 
   process.exit(0);
 });
+
+hmr.listen(3001);

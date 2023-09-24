@@ -39,7 +39,7 @@ async function instruments() {
         <div class="flex gap-3">
             <Select name="instrument" label="Instrument">
                 <option value="" selected>Choose an instrument</option>
-                {instruments.map(i => (<option value={i.id}>{i.name}</option>))}
+                {instruments.map(i => (<option value={i.id} safe>{i.name}</option>))}
             </Select>
 
             <Select name="type" label="Type">
@@ -48,7 +48,7 @@ async function instruments() {
             </Select>
 
             <Select name="expiry" label="Expiry">
-                {months.map(m => (<option>{m}</option>))}
+                {months.map(m => (<option safe>{m}</option>))}
             </Select>
         </div>
         <div class="mt-4">
@@ -105,7 +105,7 @@ async function matrix(instrument: string, type: string, expiry: string) {
             <table class="matrix-table border-collapse">
                 <thead>
                     <tr class="border-b">
-                        <th class="p-1 pl-4 text-right">Vega</th>
+                        <th class="p-1 pl-4 text-right bg-yellow-300">Vega</th>
                         <th class="text-right">Theta</th>
                         <th class="text-right">Gamma</th>
                         <th class="text-right">Delta</th>
