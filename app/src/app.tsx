@@ -1,3 +1,5 @@
+/// <reference types="@kitajs/html/htmx.d.ts" />
+
 import { Elysia, t } from "elysia";
 import { html } from "@elysiajs/html";
 import { loadInstruments, loadOptionsMatrix } from './resolvers';
@@ -5,13 +7,16 @@ import { getDaysFromNow, getNextMonths } from './utils';
 import { OptionType } from './types';
 import numeral from 'numeral';
 import { PropsWithChildren } from "@kitajs/html";
+//
+// Unique import to the top of your main.ts file.
+import '@kitajs/html/register'
 
 export const app = new Elysia()
     .use(html())
     .get("/", ({ html }) => html(index()))
     .get("/instruments", async ({ html }) => html(await instruments()))
     .post("/matrix", async ({ body: { instrument, type, expiry }, html }: any) =>
-        html(await matrix(instruments, type, expiry)))
+        html(await matrix(instrument, type, expiry)))
     .get("/styles.css", () => Bun.file("./tailwind-gen/styles.css"));
 
 function index() {
@@ -38,7 +43,7 @@ async function instruments() {
     return <form hx-post="/matrix" hx-trigger="change" hx-target="#matrix">
         <div class="flex gap-3">
             <Select name="instrument" label="Instrument">
-                <option value="" selected>Choose an instrument</option>
+                <option value="" selected="">Choose an instrument</option>
                 {instruments.map(i => (<option value={i.id} safe>{i.name}</option>))}
             </Select>
 
@@ -105,7 +110,7 @@ async function matrix(instrument: string, type: string, expiry: string) {
             <table class="matrix-table border-collapse">
                 <thead>
                     <tr class="border-b">
-                        <th class="p-1 pl-4 text-right bg-yellow-300">Vega</th>
+                        <th class="p-1 pl-4 text-right">Vega</th>
                         <th class="text-right">Theta</th>
                         <th class="text-right">Gamma</th>
                         <th class="text-right">Delta</th>
@@ -169,28 +174,30 @@ async function matrix(instrument: string, type: string, expiry: string) {
 }
 
 function BaseHtml({ children }: PropsWithChildren) {
-    return `<!DOCTYPE html>
-<html lang="en">
+    return <>
+        {'<!DOCTYPE html>'}
+        <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THE BETH STACK</title>
-  <script src="https://unpkg.com/htmx.org@1.9.3"></script>
-  <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link href="/public/styles.css" rel="stylesheet">
-  <script src="/public/reload.js"></script>
-</head>
+            <head>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <title>THE BETH STACK</title>
+                <script src="https://unpkg.com/htmx.org@1.9.3"></script>
+                <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
+                <link rel="preconnect" href="https://fonts.googleapis.com" />
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+                <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet" />
+                <link href="/public/styles.css" rel="stylesheet" />
+                <script src="/public/reload.js"></script>
+            </head>
 
-${children}
-`
+            {children}
+        </html>
+    </>
 }
 
 const Select = ({ name, label, children }: PropsWithChildren<{ name: string, label: string }>) => {
-    return <label class="text-xs text-gray-500">{label}
+    return <label class="text-xs text-gray-500">{Html.escapeHtml(label)}
         <select name={name} class="custom-select py-2.5 px-0 w-full text-base leading-none font-normal text-gray-800 bg-transparent border-0 border-b border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 hover:border-gray-200 peer">
             {children}
         </select>
