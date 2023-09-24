@@ -21,11 +21,15 @@ ws.addEventListener("close", ({ reason }) => {
 ws.addEventListener("message", ({ data }) => {
     console.log(data);
     if (data === "RELOAD") {
-        console.log("reloading css");
-        document.querySelectorAll("link[rel=stylesheet]").forEach(link => {
-            if (!link.href.startsWith("http://localhost"))
-                return;
-            link.href = link.href.replace(/\?.*|$/, "?" + Date.now())}
-        );
+        reloadCss();
     }
 });
+
+function reloadCss() {
+    console.log("reloading css");
+    document.querySelectorAll("link[rel=stylesheet]").forEach(link => {
+        if (!link.href.startsWith("http://localhost"))
+            return;
+        link.href = link.href.replace(/\?.*|$/, "?" + Date.now())
+    });
+}
